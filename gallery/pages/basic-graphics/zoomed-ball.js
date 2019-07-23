@@ -9,21 +9,26 @@ const canvas = document.getElementById('gl-canvas')
 const beam = new Beam(canvas)
 
 const plugin = beam.plugin(NormalGraphics)
-const camera = createCamera({ eye: [0, 10, 10] }, { canvas })
 const ball = createBall()
-
-const resources = [
+const bufferResources = [
   beam.resource(DataBuffers, ball.data),
-  beam.resource(IndexBuffer, ball.index),
-  beam.resource(Uniforms, camera)
+  beam.resource(IndexBuffer, ball.index)
 ]
+const camera = createCamera({ eye: [0, 10, 10] }, { canvas })
+let cameraResource = beam.resource(Uniforms, camera)
 
-let i = 0; let delta
+let i = 0; let d = 10
 const tick = () => {
-  i += 0.02; delta = 10 + Math.sin(i) * 5
-  camera.viewMat = createCamera({ eye: [0, delta, delta] }).viewMat
+  i += 0.02; d = 10 + Math.sin(i) * 5
+  const { viewMat } = createCamera({ eye: [0, d, d] })
+  // Perform partial update:
+  cameraResource.set('viewMat', viewMat)
 
-  beam.clear().draw(plugin, ...resources)
+  // Or perform full update with new resourse:
+  // camera.viewMat = viewMat
+  // cameraResource = beam.resource(Uniforms, camera)
+
+  beam.clear().draw(plugin, ...bufferResources, cameraResource)
   requestAnimationFrame(tick)
 }
 tick()

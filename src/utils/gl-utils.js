@@ -133,7 +133,9 @@ export const draw = (gl, plugin, dataBuffers, indexResource, uniforms) => {
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
       }
     }
-    uniformSetterMapping[type]()
+    // With unsynced optimization, we can only update uniforms you provided.
+    // If a key is padded by default, it should always be re-uploaded.
+    if (val !== undefined) uniformSetterMapping[type]()
   })
 
   const drawMode = schema.mode === GLTypes.triangles ? gl.TRIANGLES : gl.LINES
