@@ -19,7 +19,6 @@ export class Beam {
   draw (plugin, ...resources) {
     const groupedResources = miscUtils.groupResources(plugin, resources)
     glUtils.draw(this.gl, plugin, ...groupedResources)
-    miscUtils.updatePluginResourceMap(plugin, resources)
     return this
   }
 

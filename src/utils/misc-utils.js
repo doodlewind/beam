@@ -10,12 +10,6 @@ export const getNumComponents = bufferType => {
   return mapping[bufferType]
 }
 
-const getUnsyncedUniforms = (plugin, resource) => {
-  const { state } = resource
-  const unsyncedKeys = resource.unsyncedMap.get(plugin) || Object.keys(state)
-  return unsyncedKeys.reduce((obj, key) => ({ ...obj, [key]: state[key] }), {})
-}
-
 export const groupResources = (plugin, resources) => {
   const Types = ResourceTypes
   let [dataBuffers, indexResource, uniforms] = [{}, null, {}]
@@ -29,28 +23,11 @@ export const groupResources = (plugin, resources) => {
     } else if (type === Types.IndexBuffer) {
       indexResource = resource
     } else if (type === Types.Uniforms) {
-      const uploaded = !!plugin.uniformResourceMap.get(resource)
-      uploaded
-        ? uniforms = { ...uniforms, ...getUnsyncedUniforms(plugin, resource) }
-        : uniforms = { ...uniforms, ...resource.state }
-
-      resource.unsyncedMap.set(plugin, [])
+      uniforms = { ...uniforms, ...resource.state }
     } else if (type === Types.Textures) {
       // TODO
     }
   }
 
   return [dataBuffers, indexResource, uniforms]
-}
-
-export const updatePluginResourceMap = (plugin, resources) => {
-  const Types = ResourceTypes
-  const { uniformResourceMap } = plugin
-  for (let i = 0; i < resources.length; i++) {
-    const resource = resources[i]
-    const { type } = resource
-    if (type === Types.Uniforms && !uniformResourceMap.get(resource)) {
-      uniformResourceMap.set(resource, true)
-    }
-  }
 }

@@ -42,14 +42,9 @@ export const createResource = (gl, type, state) => {
     constructor (state) {
       super(state)
       this.type = Types.Uniforms
-      // Use plugin as its key, unsynced uniform keys as its value
-      this.unsyncedMap = new Map()
     }
 
     set (key, val) {
-      this.unsyncedMap.forEach(keys => {
-        if (!keys.includes(key)) keys.push(key)
-      })
       this.state[key] = val
     }
   }

@@ -139,8 +139,8 @@ export const draw = (
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
       }
     }
-    // With unsynced optimization, we can only update uniforms you provided.
-    // If a key is padded by default, it should always be re-uploaded.
+    // With built-in optimization, we can only update uniforms you provided.
+    // But if a key is padded by default, it should always be re-uploaded.
     if (val !== undefined) uniformSetterMapping[type]()
   })
 

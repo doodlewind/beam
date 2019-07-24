@@ -17,9 +17,6 @@ export class ShadePlugin {
     this.shaderRefs = glUtils.initShaderRefs(
       beam.gl, defines, this.schema, vs, fs
     )
-
-    // Set value to true if a uniform resource is used and uploaded
-    this.uniformResourceMap = new WeakMap()
   }
 
   set ({ vs, fs, defines }) {
