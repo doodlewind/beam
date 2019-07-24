@@ -35,6 +35,8 @@ export const groupResources = (plugin, resources) => {
         : uniforms = { ...uniforms, ...resource.state }
 
       resource.unsyncedMap.set(plugin, [])
+    } else if (type === Types.Textures) {
+      // TODO
     }
   }
 

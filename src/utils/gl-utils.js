@@ -40,7 +40,7 @@ const initShader = (gl, defines, vs, fs) => {
   gl.linkProgram(shaderProgram)
 
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    console.error('Failed to init program', gl.getProgramInfoLog(shaderProgram))
+    console.error('Error initing program', gl.getProgramInfoLog(shaderProgram))
     return null
   }
 
@@ -77,7 +77,9 @@ const padDefault = (schema, key, val) => {
   return val !== undefined ? val : schema.uniforms[key].default
 }
 
-export const draw = (gl, plugin, dataBuffers, indexResource, uniforms) => {
+export const draw = (
+  gl, plugin, dataBuffers, indexResource, uniforms, texturesResources
+) => {
   const { schema, shaderRefs } = plugin
   gl.useProgram(shaderRefs.program)
   Object.keys(shaderRefs.attributes).forEach(key => {
@@ -98,7 +100,11 @@ export const draw = (gl, plugin, dataBuffers, indexResource, uniforms) => {
   let unit = -1
   Object.keys(shaderRefs.uniforms).forEach(key => {
     const { type, location } = shaderRefs.uniforms[key]
-    const val = padDefault(schema, key, uniforms[key])
+    let val
+    if (type !== SchemaTypes.tex2D && type !== SchemaTypes.texCube) {
+      val = padDefault(schema, key, uniforms[key])
+    }
+
     const uniformSetterMapping = {
       [SchemaTypes.vec4]: () => gl.uniform4fv(location, val),
       [SchemaTypes.vec3]: () => gl.uniform3fv(location, val),

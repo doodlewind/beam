@@ -77,7 +77,7 @@ export const WireframeGraphics = {
 
 const imageVS = `
 precision highp float;
-attribute vec4 pos;
+attribute vec4 position;
 attribute vec2 texCoord;
 
 uniform mat4 modelMat;

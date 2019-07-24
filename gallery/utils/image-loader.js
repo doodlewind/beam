@@ -6,4 +6,4 @@ const loadImage = url => new Promise(resolve => {
   image.src = url
 })
 
-export const loadImages = urls => Promise.all(urls.map(loadImage))
+export const loadImages = (...urls) => Promise.all(urls.map(loadImage))

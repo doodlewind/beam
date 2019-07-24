@@ -54,10 +54,18 @@ export const createResource = (gl, type, state) => {
     }
   }
 
+  class TexturesResource extends Resource {
+    constructor (state) {
+      super(state)
+      this.type = Types.Textures
+    }
+  }
+
   const resourceCreatorMap = {
     [Types.DataBuffers]: () => new DataBuffersResource(state),
     [Types.IndexBuffer]: () => new IndexBufferResource(state),
-    [Types.Uniforms]: () => new UniformsResource(state)
+    [Types.Uniforms]: () => new UniformsResource(state),
+    [Types.Textures]: () => new TexturesResource(state)
   }
   return resourceCreatorMap[type]()
 }
