@@ -1,5 +1,7 @@
 import { SchemaTypes, ResourceTypes } from '../consts.js'
 
+export const isPowerOf2 = value => (value & (value - 1)) === 0
+
 export const mapValue = (obj, valueMapper) => Object
   .keys(obj)
   .reduce((newObj, key) => ({ ...newObj, [key]: valueMapper(obj, key) }), {})
@@ -10,9 +12,9 @@ export const getNumComponents = bufferType => {
   return mapping[bufferType]
 }
 
-export const groupResources = (plugin, resources) => {
+export const groupResources = resources => {
   const Types = ResourceTypes
-  let [dataBuffers, indexResource, uniforms] = [{}, null, {}]
+  let [dataBuffers, indexResource, uniforms, textures] = [{}, null, {}, {}]
 
   for (let i = 0; i < resources.length; i++) {
     const resource = resources[i]
@@ -25,9 +27,9 @@ export const groupResources = (plugin, resources) => {
     } else if (type === Types.Uniforms) {
       uniforms = { ...uniforms, ...resource.state }
     } else if (type === Types.Textures) {
-      // TODO
+      textures = { ...textures, ...resource.textures }
     }
   }
 
-  return [dataBuffers, indexResource, uniforms]
+  return [dataBuffers, indexResource, uniforms, textures]
 }

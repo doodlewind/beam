@@ -78,7 +78,7 @@ const padDefault = (schema, key, val) => {
 }
 
 export const draw = (
-  gl, plugin, dataBuffers, indexResource, uniforms, texturesResources
+  gl, plugin, dataBuffers, indexResource, uniforms, textures
 ) => {
   const { schema, shaderRefs } = plugin
   gl.useProgram(shaderRefs.program)
@@ -101,7 +101,8 @@ export const draw = (
   Object.keys(shaderRefs.uniforms).forEach(key => {
     const { type, location } = shaderRefs.uniforms[key]
     let val
-    if (type !== SchemaTypes.tex2D && type !== SchemaTypes.texCube) {
+    const isTexure = type === SchemaTypes.tex2D || type === SchemaTypes.texCube
+    if (!isTexure) {
       val = padDefault(schema, key, uniforms[key])
     }
 
@@ -124,7 +125,7 @@ export const draw = (
       [SchemaTypes.mat2]: () => gl.uniformMatrix2fv(location, false, val),
       [SchemaTypes.tex2D]: () => {
         unit++
-        const texture = null // TOOD
+        const texture = textures[key]
         if (!texture) console.warn(`Missing texture ${key} at unit ${unit}`)
         gl.uniform1i(location, unit)
         gl.activeTexture(gl.TEXTURE0 + unit)
@@ -139,12 +140,10 @@ export const draw = (
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
       }
     }
-    // With built-in optimization, we can only update uniforms you provided.
-    // But if a key is padded by default, it should always be re-uploaded.
-    if (val !== undefined) uniformSetterMapping[type]()
+    // FIXME uniform keys padded by default are always re-uploaded.
+    if (val !== undefined || isTexure) uniformSetterMapping[type]()
   })
 
   const drawMode = schema.mode === GLTypes.triangles ? gl.TRIANGLES : gl.LINES
-
   gl.drawElements(drawMode, count, gl.UNSIGNED_INT, offset * 4)
 }

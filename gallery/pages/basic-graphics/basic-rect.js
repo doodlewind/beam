@@ -13,15 +13,14 @@ const camera = createCamera({ eye: [0, 0, 10] }, { canvas })
 const rect = createRect()
 
 const render = ([image]) => {
-  // document.body.appendChild(image)
-  const imageResource = beam.resource(Textures, image)
-  console.log(imageResource)
+  const imageState = { img: { image, flip: true } }
 
   beam.clear().draw(
     plugin,
     beam.resource(DataBuffers, rect.data),
     beam.resource(IndexBuffer, rect.index),
-    beam.resource(Uniforms, camera)
+    beam.resource(Uniforms, camera),
+    beam.resource(Textures, imageState)
   )
 }
 
