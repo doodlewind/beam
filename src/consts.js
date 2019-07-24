@@ -1,7 +1,8 @@
 export const ResourceTypes = {
   DataBuffers: 'DataBuffers',
   IndexBuffer: 'IndexBuffer',
-  Uniforms: 'Uniforms'
+  Uniforms: 'Uniforms',
+  Textures: 'Textures'
 }
 
 export const SchemaTypes = {

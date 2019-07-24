@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { NormalGraphics } from '../../plugins/graphics-plugins.js'
-import { createBall } from '../../utils/shape-utils.js'
+import { NormalGraphics } from '../../plugins/basic-graphics-plugins.js'
+import { createBall } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
