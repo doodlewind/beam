@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Beam WebGL Library</title>
+<style>
+body { display: flex; margin: 0; height: 100%; }
+nav { width: 150px; cursor: default; height: 100vh; overflow: auto; }
+ul {
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 14px;
+  list-style: none;
+  cursor: pointer;
+}
+a { color: #2254F4; text-decoration: none; } /* Gaoding Blue */
+h3 { margin: 8px 10px; }
+h4 { margin: 0 10px; font-size: 14px; }
+iframe { flex: 1; height: 100vh; }
+</style>
+  </head>
+  <body>
+    <nav>
+      <!--
+      <h3><a href="./" target="_blank">Docs</a></h3>
+      <hr/>
+      -->
+      <h3>Examples</h3>
+
+      <h4>Basic Graphics</h4>
+      <ul>
+        <li>Basic Ball</li>
+        <li>Zoom Box</li>
+        <li>Image Ball</li>
+      </ul>
+
+      <h4>Image Processing</h4>
+      <ul>
+        <li>Load SVG</li>
+        <li>Mix Images</li>
+      </ul>
+    </nav>
+    <iframe frameborder="0" scrolling="no"></iframe>
+  </body>
+<script>
+const iframe = document.querySelector('iframe')
+iframe.src = window.location.hash
+  ? './gallery/pages/' + window.location.hash.replace('#', '') + '.html'
+  : './gallery/pages/basic-graphics/basic-ball.html'
+
+const toKebab = str => str.split(' ').map(x => x.toLowerCase()).join('-')
+const toSrc = (title, li) => `${toKebab(title)}/${toKebab(li)}`
+
+document.querySelectorAll('ul').forEach(ul => {
+  const list = [...ul.children]
+  const title = ul.previousElementSibling.innerText
+  list.forEach(li => {
+    li.onclick = () => {
+      const src = toSrc(title, li.innerText)
+      window.location.hash = src
+      iframe.src = './gallery/pages/' + src + '.html'
+    }
+  })
+})
+</script>
+</html>

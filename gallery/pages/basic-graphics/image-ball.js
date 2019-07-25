@@ -7,6 +7,8 @@ const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.getElementById('gl-canvas')
 const beam = new Beam(canvas)
+canvas.height = document.body.offsetHeight
+canvas.width = document.body.offsetWidth
 
 const plugin = beam.plugin(ImageGraphics)
 const camera = createCamera({ eye: [0, 0, 10] }, { canvas })
