@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { NormalGraphics } from '../../plugins/basic-graphics-plugins.js'
-import { createBall } from '../../utils/graphics-utils.js'
+import { createBox } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
@@ -9,18 +9,18 @@ const canvas = document.getElementById('gl-canvas')
 const beam = new Beam(canvas)
 
 const plugin = beam.plugin(NormalGraphics)
-const ball = createBall()
+const box = createBox()
 const bufferResources = [
-  beam.resource(DataBuffers, ball.data),
-  beam.resource(IndexBuffer, ball.index)
+  beam.resource(DataBuffers, box.data),
+  beam.resource(IndexBuffer, box.index)
 ]
-const camera = createCamera({ eye: [0, 10, 10] }, { canvas })
+const camera = createCamera({ eye: [10, 10, 10] }, { canvas })
 let cameraResource = beam.resource(Uniforms, camera)
 
 let i = 0; let d = 10
 const tick = () => {
   i += 0.02; d = 10 + Math.sin(i) * 5
-  const { viewMat } = createCamera({ eye: [0, d, d] })
+  const { viewMat } = createCamera({ eye: [d, d, d] })
   // Perform partial update:
   cameraResource.set('viewMat', viewMat)
 

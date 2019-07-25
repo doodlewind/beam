@@ -118,6 +118,6 @@ export const ImageGraphics = {
     projectionMat: { type: mat4 }
   },
   textures: {
-    img: { type: tex2D, flip: true }
+    img: { type: tex2D }
   }
 }

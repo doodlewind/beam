@@ -9,11 +9,11 @@ const canvas = document.getElementById('gl-canvas')
 const beam = new Beam(canvas)
 
 const plugin = beam.plugin(ImageGraphics)
-const camera = createCamera({ eye: [0, 0, 10] }, { canvas })
-const rect = createRect()
+const camera = createCamera({ eye: [0, 0, 5] }, { canvas })
 
 const render = ([image]) => {
   const imageState = { img: { image, flip: true } }
+  const rect = createRect([0, 0, 0], image.height / image.width)
 
   beam.clear().draw(
     plugin,
@@ -24,4 +24,4 @@ const render = ([image]) => {
   )
 }
 
-loadImages('../../assets/images/black-hole.jpg').then(render)
+loadImages('../../assets/images/gaoding.svg').then(render)
