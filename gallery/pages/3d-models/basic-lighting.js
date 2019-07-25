@@ -13,13 +13,13 @@ canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)
 const plugin = beam.plugin(LambertLighting)
 const camera = createCamera({ eye: [0, 6, 6] }, { canvas })
-const cameraResource = beam.resource(Uniforms, camera)
+const matrixResource = beam.resource(Uniforms, camera)
 const lightResource = beam.resource(Uniforms, {})
 let dataResource
 let indexResource
 
 const render = () => beam.clear().draw(
-  plugin, dataResource, indexResource, cameraResource, lightResource
+  plugin, dataResource, indexResource, matrixResource, lightResource
 )
 
 fetch('../../assets/models/bunny.obj').then(resp => resp.text()).then(str => {
@@ -39,7 +39,7 @@ const $modelZ = document.getElementById('model-z')
     rotate(modelMat, modelMat, rx / 180 * Math.PI, [1, 0, 0])
     rotate(modelMat, modelMat, ry / 180 * Math.PI, [0, 1, 0])
     rotate(modelMat, modelMat, rz / 180 * Math.PI, [0, 0, 1])
-    cameraResource.set('modelMat', modelMat)
+    matrixResource.set('modelMat', modelMat)
     render()
   })
 })
