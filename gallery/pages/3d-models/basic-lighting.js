@@ -4,6 +4,7 @@ import { Beam, ResourceTypes } from '../../../src/index.js'
 import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
 import { parseOBJ } from '../../utils/obj-loader.js'
 import { createCamera } from '../../utils/camera.js'
+import { create, rotate } from '../../utils/mat4.js'
 const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
 const canvas = document.getElementById('gl-canvas')
@@ -26,6 +27,21 @@ fetch('../../assets/models/bunny.obj').then(resp => resp.text()).then(str => {
   dataResource = beam.resource(DataBuffers, model.data)
   indexResource = beam.resource(IndexBuffer, model.index)
   render()
+})
+
+const $modelX = document.getElementById('model-x')
+const $modelY = document.getElementById('model-y')
+const $modelZ = document.getElementById('model-z')
+  ;[$modelX, $modelY, $modelZ].forEach(input => {
+  input.addEventListener('input', () => {
+    const [rx, ry, rz] = [$modelX.value, $modelY.value, $modelZ.value]
+    const modelMat = create()
+    rotate(modelMat, modelMat, rx / 180 * Math.PI, [1, 0, 0])
+    rotate(modelMat, modelMat, ry / 180 * Math.PI, [0, 1, 0])
+    rotate(modelMat, modelMat, rz / 180 * Math.PI, [0, 0, 1])
+    cameraResource.set('modelMat', modelMat)
+    render()
+  })
 })
 
 const $dirX = document.getElementById('dir-x')
