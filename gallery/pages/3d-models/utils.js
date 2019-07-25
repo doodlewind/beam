@@ -1,5 +1,6 @@
 import { createCamera } from '../../utils/camera.js'
-import { multiply } from '../../utils/mat4.js'
+import { create, multiply, rotate } from '../../utils/mat4.js'
+import { rotateY } from '../../utils/vec3.js'
 
 export const rendererConfig = {
   extensions: [
@@ -36,6 +37,18 @@ export const createMaterialImages = () => {
   }
 }
 
+export const computeModelMat = (rx, ry, rz) => {
+  const modelMat = create()
+  rotate(modelMat, modelMat, rx / 180 * Math.PI, [1, 0, 0])
+  rotate(modelMat, modelMat, ry / 180 * Math.PI, [0, 1, 0])
+  rotate(modelMat, modelMat, rz / 180 * Math.PI, [0, 0, 1])
+  return modelMat
+}
+
+export const computeEye = (eye, r) => {
+  return rotateY([], eye, [0, 0, 0], r / 180 * Math.PI)
+}
+
 export const computeMVPMat = (modelMat, eye, canvas) => {
   const { viewMat, projectionMat } = createCamera({ eye }, { canvas })
   const viewProjectionMat = multiply([], projectionMat, viewMat)
@@ -43,9 +56,9 @@ export const computeMVPMat = (modelMat, eye, canvas) => {
 }
 
 export const createPointLights = () => ({
-  'u_Lights[0].direction': [1, 0, 0],
+  'u_Lights[0].direction': [0, 0, 0],
   'u_Lights[0].color': [1, 1, 1],
-  'u_Lights[0].strength': 1,
+  'u_Lights[0].strength': 0,
   'u_Lights[1].direction': [0, 0, 0],
   'u_Lights[1].color': [1, 1, 1],
   'u_Lights[1].strength': 0,

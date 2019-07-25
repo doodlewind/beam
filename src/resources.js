@@ -47,6 +47,7 @@ export const createResource = (gl, type, state) => {
 
     set (key, val) {
       this.state[key] = val
+      return this
     }
   }
 
