@@ -39,7 +39,7 @@ void main() {
 }
 `
 
-const { float, vec3, vec4, mat4, index } = SchemaTypes
+const { float, vec3, vec4, mat4 } = SchemaTypes
 const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 
 export const LambertLighting = {

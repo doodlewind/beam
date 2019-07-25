@@ -24,7 +24,7 @@ void main() {
 }
 `
 
-const { vec2, vec4, mat4, tex2D, index } = SchemaTypes
+const { vec2, vec4, mat4, tex2D } = SchemaTypes
 const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 
 export const NormalGraphics = {
