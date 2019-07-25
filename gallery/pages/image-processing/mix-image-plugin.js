@@ -33,15 +33,14 @@ void main() {
 }
 `
 
-const { vec2, vec4, mat4, tex2D, index } = SchemaTypes
+const { vec2, vec4, mat4, tex2D } = SchemaTypes
 
 export const MixImage = {
   vs,
   fs,
   buffers: {
     position: { type: vec4, n: 3 },
-    texCoord: { type: vec2 },
-    index: { type: index }
+    texCoord: { type: vec2 }
   },
   uniforms: {
     viewMat: { type: mat4 },

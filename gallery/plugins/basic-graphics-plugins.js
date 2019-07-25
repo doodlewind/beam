@@ -32,8 +32,7 @@ export const NormalGraphics = {
   fs: normalFS,
   buffers: {
     position: { type: vec4, n: 3 },
-    normal: { type: vec4, n: 3 },
-    index: { type: index }
+    normal: { type: vec4, n: 3 }
   },
   uniforms: {
     modelMat: { type: mat4, default: identityMat },
@@ -64,8 +63,7 @@ export const WireframeGraphics = {
   vs: wireframeVS,
   fs: wireframeFS,
   buffers: {
-    position: { type: vec4, n: 3 },
-    index: { type: index }
+    position: { type: vec4, n: 3 }
   },
   uniforms: {
     modelMat: { type: mat4, default: identityMat },
@@ -109,8 +107,7 @@ export const ImageGraphics = {
   fs: imageFS,
   buffers: {
     position: { type: vec4, n: 3 },
-    texCoord: { type: vec2 },
-    index: { type: index }
+    texCoord: { type: vec2 }
   },
   uniforms: {
     modelMat: { type: mat4, default: identityMat },

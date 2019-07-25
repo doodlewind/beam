@@ -15,8 +15,7 @@ export const SchemaTypes = {
   mat3: 'mat3',
   mat2: 'mat2',
   tex2D: 'tex2D',
-  texCube: 'texCube',
-  index: 'index'
+  texCube: 'texCube'
 }
 
 export const GLTypes = {

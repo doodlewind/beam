@@ -47,8 +47,7 @@ export const LambertLighting = {
   fs,
   buffers: {
     position: { type: vec4, n: 3 },
-    normal: { type: vec4, n: 3 },
-    index: { type: index }
+    normal: { type: vec4, n: 3 }
   },
   uniforms: {
     modelMat: { type: mat4, default: identityMat },
