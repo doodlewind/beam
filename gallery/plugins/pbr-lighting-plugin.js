@@ -1,14 +1,14 @@
 import { SchemaTypes } from '../../src/index.js'
 import { vs, fs } from './pbr-lighting-shaders.js'
 
-const { float, vec2, vec3, vec4, mat4, tex2D } = SchemaTypes
+const { float, vec2, vec3, vec4, mat4, tex2D, texCube } = SchemaTypes
 const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 
 export const PBRLighting = {
   vs,
   fs,
   defines: {
-    // USE_IBL: 1,
+    USE_IBL: 1,
     HAS_NORMALS: 1,
     HAS_UV: 1,
     HAS_BASECOLORMAP: 1,
@@ -50,8 +50,8 @@ export const PBRLighting = {
     u_ScaleIBLAmbient: { type: vec4, default: [1, 1, 1, 1] }
   },
   textures: {
-    // u_DiffuseEnvSampler: { type: texCube },
-    // u_SpecularEnvSampler: { type: texCube },
+    u_DiffuseEnvSampler: { type: texCube },
+    u_SpecularEnvSampler: { type: texCube },
     u_brdfLUT: { type: tex2D },
     u_BaseColorSampler: { type: tex2D, repeat: true },
     u_NormalSampler: { type: tex2D, repeat: true },

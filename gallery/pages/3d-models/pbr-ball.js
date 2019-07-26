@@ -41,18 +41,18 @@ const materialImagesResource = beam.resource(Textures, createMaterialImages())
 
 // Resources: environment maps and BRDF map
 let brdfResource
-// let envResource
+let envResource
 
 // Resourecs: other options
 const optionResource = beam.resource(Uniforms, {
-  u_MetallicRoughnessValues: [1, 0]
+  u_MetallicRoughnessValues: [0, 0]
 })
 
 const render = () => beam.clear().draw(
   plugin, dataResource,
   indexResource,
   brdfResource,
-  // envResource,
+  envResource,
   pointLightsResource,
   materialImagesResource,
   matrixResource,
@@ -64,12 +64,10 @@ Promise.all([
   loadEnvMaps(base + 'ibl/helipad'), loadImages(base + 'ibl/brdfLUT.png')
 ]).then(([[diffuseMaps, specularMaps], [brdf]]) => {
   brdfResource = beam.resource(Textures, { u_brdfLUT: { image: brdf } })
-  /*
   envResource = beam.resource(Textures, {
     u_DiffuseEnvSampler: diffuseMaps,
     u_SpecularEnvSampler: specularMaps
   })
-  */
   render()
 })
 

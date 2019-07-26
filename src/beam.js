@@ -8,7 +8,7 @@ export class Beam {
   constructor (canvas, config = {}) {
     this.gl = glUtils.getWebGLInstance(canvas)
     this.config = { ...RendererConfig, ...config }
-    this.extensions = glUtils.getExtensions(this.gl, this.config)
+    this.gl.extensions = glUtils.getExtensions(this.gl, this.config)
   }
 
   clear (color = [0, 0, 0, 0]) {

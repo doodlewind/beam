@@ -99,36 +99,82 @@ export const initIndexBuffer = (gl, state) => {
   return buffer
 }
 
+const init2DTexture = (gl, state, key) => {
+  const texture = gl.createTexture()
+  gl.activeTexture(gl.TEXTURE0)
+  gl.bindTexture(gl.TEXTURE_2D, texture)
+  const space = gl.RGBA
+
+  const { flip, image, repeat } = state[key]
+  if (flip) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
+  gl.texImage2D(gl.TEXTURE_2D, 0, space, space, gl.UNSIGNED_BYTE, image)
+
+  const { isPowerOf2 } = miscUtils
+  if (
+    image && isPowerOf2(image.width) && isPowerOf2(image.height) &&
+    image.nodeName !== 'VIDEO'
+  ) {
+    gl.generateMipmap(gl.TEXTURE_2D)
+    if (!repeat) {
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+    } else {
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
+    }
+  } else {
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+  }
+  return texture
+}
+
+const initCubeTexture = (gl, state, key) => {
+  const { level, images, flip } = state[key]
+  const faces = [
+    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+  ]
+  const texture = gl.createTexture()
+  gl.activeTexture(gl.TEXTURE0)
+  gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
+  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+  if (level < 2) {
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+  } else {
+    gl.texParameteri(
+      gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR
+    )
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+  }
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, !!flip)
+
+  let count = 0
+  for (let i = 0; i < faces.length; i++) {
+    for (let j = 0; j <= level; j++) {
+      const face = faces[i]
+      const { extensions } = gl
+      const space = extensions.EXT_SRGB.SRGB_EXT
+      gl.texImage2D(face, j, space, space, gl.UNSIGNED_BYTE, images[count])
+      count++
+    }
+  }
+  return texture
+}
+
 export const initTextures = (gl, state) => {
   const textures = {}
   Object.keys(state).forEach(key => {
-    const texture = gl.createTexture()
-    gl.activeTexture(gl.TEXTURE0)
-    gl.bindTexture(gl.TEXTURE_2D, texture)
-    const space = gl.RGBA
-
-    const { flip, image, repeat } = state[key]
-    if (flip) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
-    gl.texImage2D(gl.TEXTURE_2D, 0, space, space, gl.UNSIGNED_BYTE, image)
-
-    const { isPowerOf2 } = miscUtils
-    if (
-      image && isPowerOf2(image.width) && isPowerOf2(image.height) &&
-      image.nodeName !== 'VIDEO'
-    ) {
-      gl.generateMipmap(gl.TEXTURE_2D)
-      if (!repeat) {
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-      } else {
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
-      }
-    } else {
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-    }
+    const texture = state[key].image
+      ? init2DTexture(gl, state, key)
+      : initCubeTexture(gl, state, key)
     textures[key] = texture
   })
   return textures
@@ -194,7 +240,7 @@ export const draw = (
       },
       [SchemaTypes.texCube]: () => {
         unit++
-        const texture = null // TOOD
+        const texture = textures[key]
         if (!texture) console.warn(`Missing texture ${key} at unit ${unit}`)
         gl.uniform1i(location, unit)
         gl.activeTexture(gl.TEXTURE0 + unit)
