@@ -18,7 +18,6 @@ const createSolidCanvas = (color, width = 16, height = 16) => {
   canvas.height = height
   ctx.fillStyle = color
   ctx.fillRect(0, 0, canvas.width, canvas.height)
-  // document.body.appendChild(canvas)
   return canvas
 }
 
@@ -49,8 +48,8 @@ export const computeEye = (eye, r) => {
   return rotateY([], eye, [0, 0, 0], r / 180 * Math.PI)
 }
 
-export const computeMVPMat = (modelMat, eye, canvas) => {
-  const { viewMat, projectionMat } = createCamera({ eye }, { canvas })
+export const computeMVPMat = (modelMat, eye, center, canvas) => {
+  const { viewMat, projectionMat } = createCamera({ eye, center }, { canvas })
   const viewProjectionMat = multiply([], projectionMat, viewMat)
   return multiply([], viewProjectionMat, modelMat)
 }

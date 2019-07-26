@@ -26,11 +26,12 @@ const indexResource = beam.resource(IndexBuffer, ball.index)
 
 // Resources: camera and model matrices
 const baseEye = [0, 0, 10]
+const center = [0, 0, 0]
 const modelMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 const matrixResource = beam.resource(Uniforms, {
   u_Camera: baseEye,
   u_ModelMatrix: modelMat,
-  u_MVPMatrix: computeMVPMat(modelMat, baseEye, canvas)
+  u_MVPMatrix: computeMVPMat(modelMat, baseEye, center, canvas)
 })
 
 // Resources: point light states
@@ -84,7 +85,7 @@ const updateMats = () => {
   matrixResource
     .set('u_ModelMatrix', modelMat)
     .set('u_Camera', eye)
-    .set('u_MVPMatrix', computeMVPMat(modelMat, eye, canvas))
+    .set('u_MVPMatrix', computeMVPMat(modelMat, eye, center, canvas))
   render()
 }
 ;[$xRotate, $yRotate, $zRotate, $cameraRotate].forEach($input => {
