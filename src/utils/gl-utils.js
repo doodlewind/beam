@@ -75,6 +75,65 @@ export const clear = (gl, color) => {
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 }
 
+export const initDataBuffers = (gl, state) => {
+  const buffers = {}
+  const bufferKeys = Object.keys(state)
+  bufferKeys.forEach(key => {
+    const buffer = gl.createBuffer()
+    const data = state[key] instanceof Float32Array
+      ? state[key] : new Float32Array(state[key])
+    buffers[key] = buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
+  })
+  return buffers
+}
+
+export const initIndexBuffer = (gl, state) => {
+  const { array } = state
+  const buffer = gl.createBuffer()
+  const data = array instanceof Uint32Array
+    ? array : new Uint32Array(array)
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW)
+  return buffer
+}
+
+export const initTextures = (gl, state) => {
+  const textures = {}
+  Object.keys(state).forEach(key => {
+    const texture = gl.createTexture()
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+    const space = gl.RGBA
+
+    const { flip, image, repeat } = state[key]
+    if (flip) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
+    gl.texImage2D(gl.TEXTURE_2D, 0, space, space, gl.UNSIGNED_BYTE, image)
+
+    const { isPowerOf2 } = miscUtils
+    if (
+      image && isPowerOf2(image.width) && isPowerOf2(image.height) &&
+      image.nodeName !== 'VIDEO'
+    ) {
+      gl.generateMipmap(gl.TEXTURE_2D)
+      if (!repeat) {
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+      } else {
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
+      }
+    } else {
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+    }
+    textures[key] = texture
+  })
+  return textures
+}
+
 const padDefault = (schema, key, val) => {
   return val !== undefined ? val : schema.uniforms[key].default
 }

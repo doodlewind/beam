@@ -64,10 +64,12 @@ Promise.all([
   loadEnvMaps(base + 'ibl/helipad'), loadImages(base + 'ibl/brdfLUT.png')
 ]).then(([[diffuseMaps, specularMaps], [brdf]]) => {
   brdfResource = beam.resource(Textures, { u_brdfLUT: { image: brdf } })
-  // envResource = beam.resource(Textures, {
-  //   u_DiffuseEnvSampler: diffuseMaps,
-  //   u_SpecularEnvSampler: specularMaps
-  // })
+  /*
+  envResource = beam.resource(Textures, {
+    u_DiffuseEnvSampler: diffuseMaps,
+    u_SpecularEnvSampler: specularMaps
+  })
+  */
   render()
 })
 
@@ -117,9 +119,10 @@ for (let i = 0; i < 1; i++) {
       parseInt(hex.slice(3, 5), 16) / 256,
       parseInt(hex.slice(5, 7), 16) / 256
     ]
-    pointLightsResource.set(`u_Lights[${i}].direction`, direction)
-    pointLightsResource.set(`u_Lights[${i}].strength`, $lightStrength.value)
-    pointLightsResource.set(`u_Lights[${i}].color]`, rgb)
+    pointLightsResource
+      .set(`u_Lights[${i}].direction`, direction)
+      .set(`u_Lights[${i}].strength`, $lightStrength.value)
+      .set(`u_Lights[${i}].color]`, rgb)
     render()
   }
   ;[$lightX, $lightY, $lightZ, $lightStrength, $lightColor].forEach($input => {
