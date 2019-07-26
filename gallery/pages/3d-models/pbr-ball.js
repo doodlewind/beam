@@ -124,7 +124,7 @@ for (let i = 0; i < 1; i++) {
     pointLightsResource
       .set(`u_Lights[${i}].direction`, direction)
       .set(`u_Lights[${i}].strength`, $lightStrength.value)
-      .set(`u_Lights[${i}].color]`, rgb)
+      .set(`u_Lights[${i}].color`, rgb)
     render()
   }
   ;[$lightX, $lightY, $lightZ, $lightStrength, $lightColor].forEach($input => {

@@ -81,3 +81,30 @@ Promise.all([
   })
   render()
 })
+
+// Update Lights
+for (let i = 0; i < 1; i++) {
+  const $lightX = document.getElementById(`light-${i}-x`)
+  const $lightY = document.getElementById(`light-${i}-y`)
+  const $lightZ = document.getElementById(`light-${i}-z`)
+  const $lightStrength = document.getElementById(`light-${i}-strength`)
+  const $lightColor = document.getElementById(`light-${i}-color`)
+  const updatePointLights = () => {
+    const direction = [$lightX.value, $lightY.value, $lightZ.value]
+    const hex = $lightColor.value
+    const rgb = [
+      parseInt(hex.slice(1, 3), 16) / 256,
+      parseInt(hex.slice(3, 5), 16) / 256,
+      parseInt(hex.slice(5, 7), 16) / 256
+    ]
+
+    pointLightsResource
+      .set(`u_Lights[${i}].direction`, direction)
+      .set(`u_Lights[${i}].strength`, $lightStrength.value)
+      .set(`u_Lights[${i}].color`, rgb)
+    render()
+  }
+  ;[$lightX, $lightY, $lightZ, $lightStrength, $lightColor].forEach($input => {
+    $input.addEventListener('input', updatePointLights)
+  })
+}

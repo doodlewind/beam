@@ -7,8 +7,33 @@
     * { margin: auto 0; padding: 0; }
     body { height: 100vh; }
     canvas { width: 100%; height: 100% }
+    #control {
+      position: fixed; top: 0; right: 0; width: 300px;
+      padding: 10px; box-sizing: border-box;
+      background: white; opacity: 0.3; color: #666;
+    }
   </style>
   <body>
+    <div id="control">
+      <!-- BEGIN point light 0 -->
+      <input type="range" min="-1" max="1" value="0" step="0.01" id="light-0-x">
+      <label for="light-0-x">Light 0 X</label>
+
+      <input type="range" min="-1" max="1" value="0" step="0.01" id="light-0-y">
+      <label for="light-0-y">Light 0 Y</label>
+
+      <input type="range" min="-1" max="1" value="0" step="0.01" id="light-0-z">
+      <label for="light-0-z">Light 0 Z</label>
+
+      <input type="range" min="0" max="2" value="0" step="0.01" id="light-0-strength">
+      <label for="light-0-strength">Light 0 Strength</label>
+
+      <br/>
+      <input type="color" value="#ffffff" id="light-0-color">
+      <label for="light-0-color">Light 0 Color</label>
+      <br/>
+      <!-- END point light 0 -->
+    </div>
     <canvas id="gl-canvas"></canvas>
     <script type="module" src="./material-balls.js"></script>
   </body>
