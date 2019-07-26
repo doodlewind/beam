@@ -21,10 +21,10 @@ let i = 0; let d = 10
 const tick = () => {
   i += 0.02; d = 10 + Math.sin(i) * 5
   const { viewMat } = createCamera({ eye: [d, d, d] })
-  // Perform partial update:
+  // Perform update:
   cameraResource.set('viewMat', viewMat)
 
-  // Or perform full update with new resourse:
+  // Or perform update with new resourse:
   // camera.viewMat = viewMat
   // cameraResource = beam.resource(Uniforms, camera)
 
