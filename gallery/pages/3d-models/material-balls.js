@@ -50,13 +50,12 @@ const render = () => {
   for (let i = 1; i < 10; i++) {
     for (let j = 1; j < 10; j++) {
       const modelMat = translate([], baseModelMat, [i * 2, j * 2, 0])
+      optionResource.set('u_MetallicRoughnessValues', [i / 10, j / 10])
       matrixResource
         .set('u_ModelMatrix', modelMat)
         .set('u_MVPMatrix', computeMVPMat(modelMat, eye, center, canvas))
-      optionResource.set('u_MetallicRoughnessValues', [i / 10, j / 10])
 
-      beam.draw(
-        plugin,
+      const resources = [
         dataResource,
         indexResource,
         brdfResource,
@@ -65,7 +64,8 @@ const render = () => {
         materialImagesResource,
         matrixResource,
         optionResource
-      )
+      ]
+      beam.draw(plugin, ...resources)
     }
   }
 }

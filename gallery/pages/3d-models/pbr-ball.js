@@ -49,16 +49,19 @@ const optionResource = beam.resource(Uniforms, {
   u_MetallicRoughnessValues: [0, 0]
 })
 
-const render = () => beam.clear().draw(
-  plugin, dataResource,
-  indexResource,
-  brdfResource,
-  envResource,
-  pointLightsResource,
-  materialImagesResource,
-  matrixResource,
-  optionResource
-)
+const render = () => {
+  const resources = [
+    dataResource,
+    indexResource,
+    brdfResource,
+    envResource,
+    pointLightsResource,
+    materialImagesResource,
+    matrixResource,
+    optionResource
+  ]
+  beam.clear().draw(plugin, ...resources)
+}
 
 const base = '../../assets/'
 Promise.all([
