@@ -6,7 +6,7 @@ import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
 const { DataBuffers, IndexBuffer, Textures, Uniforms } = ResourceTypes
 
-const canvas = document.getElementById('gl-canvas')
+const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
 const brightnessContrast = beam.plugin(BrightnessContrast)

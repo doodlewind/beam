@@ -7,7 +7,7 @@ import { rotate } from '../../utils/mat4.js'
 import { loadImages } from '../../utils/image-loader.js'
 const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
-const canvas = document.getElementById('gl-canvas')
+const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth

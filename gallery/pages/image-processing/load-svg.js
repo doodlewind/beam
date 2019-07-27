@@ -5,7 +5,7 @@ import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'
 const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
-const canvas = document.getElementById('gl-canvas')
+const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
 const plugin = beam.plugin(ImageGraphics)

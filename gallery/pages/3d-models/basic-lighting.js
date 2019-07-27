@@ -7,7 +7,7 @@ import { createCamera } from '../../utils/camera.js'
 import { create, rotate } from '../../utils/mat4.js'
 const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
-const canvas = document.getElementById('gl-canvas')
+const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)

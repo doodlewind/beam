@@ -5,7 +5,7 @@ import { createBox } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
-const canvas = document.getElementById('gl-canvas')
+const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
 const plugin = beam.plugin(NormalGraphics)
