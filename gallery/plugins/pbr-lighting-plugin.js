@@ -22,7 +22,7 @@ export const PBRLighting = {
   },
   buffers: {
     position: { type: vec4, n: 3 },
-    texCoord: { type: vec2, n: 2 },
+    texCoord: { type: vec2 },
     normal: { type: vec4, n: 3 }
   },
   uniforms: {

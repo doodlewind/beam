@@ -9,8 +9,9 @@ const beam = new Beam(canvas)
 
 const plugin = beam.plugin(OriginalImage)
 
-let dataResource
-let indexResource
+const rect = createRect()
+const dataResource = beam.resource(DataBuffers, rect.data)
+const indexResource = beam.resource(IndexBuffer, rect.index)
 let imageResource
 
 const updateImage = name => {
@@ -18,9 +19,6 @@ const updateImage = name => {
     const aspectRatio = image.naturalWidth / image.naturalHeight
     canvas.height = 400
     canvas.width = 400 * aspectRatio
-    const rect = createRect()
-    dataResource = beam.resource(DataBuffers, rect.data)
-    indexResource = beam.resource(IndexBuffer, rect.index)
     imageResource = beam.resource(Textures, { img: { image, flip: true } })
 
     beam.clear().draw(plugin, dataResource, indexResource, imageResource)

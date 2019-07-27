@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Demo</title>
+    <style>
+      * { margin: auto 0; padding: 0; }
+      #control {
+        position: fixed; top: 0; right: 0; width: 300px;
+        padding: 10px; box-sizing: border-box;
+        background: white; opacity: 0.3; color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="control">
+      <select id="image-select">
+        <option value="ivan.jpg">Ivan</option>
+        <option value="jade.jpg">Jade</option>
+        <option value="prague.jpg">Prague</option>
+        <option value="xiaomi.jpg">Xiaomi</option>
+      </select>
+      <label for="image-select">Image</label>
+      <br/>
+      <select id="filter-select">
+        <option value="brightness-contrast">Brightness Contrast</option>
+        <option value="hue-saturation">Hue Saturation</option>
+        <option value="vignette">Vignette</option>
+      </select>
+      <label for="filter-select">Filter</label>
+      <br/>
+
+      <div id="brightness-contrast-group">
+        <input type="range" min="-0.5" max="0.5" value="0" step="0.01" id="brightness">
+        <label for="brightness">Brightness</label>
+        <input type="range" min="-0.3" max="0.3" value="0" step="0.01" id="contrast">
+        <label for="contrast">Contrast</label>
+      </div>
+      <div id="hue-saturation-group" hidden>
+        <input type="range" min="-1" max="1" value="0" step="0.01" id="hue">
+        <label for="hue">Hue</label>
+        <input type="range" min="-0.5" max="0.5" value="0" step="0.005" id="saturation">
+        <label for="saturation">Saturation</label>
+      </div>
+      <div id="vignette-group" hidden>
+        <input type="range" min="0" max="1" value="0" step="0.005" id="vignette">
+        <label for="vignette">Vignette</label>
+      </div>
+      <br/>
+    </div>
+    <canvas id="gl-canvas"></canvas>
+    <script type="module" src="./single-filter.js"></script>
+  </body>
+</html>
