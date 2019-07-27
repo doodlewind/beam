@@ -180,6 +180,43 @@ export const initTextures = (gl, state) => {
   return textures
 }
 
+export const initOffscreen = (gl, state) => {
+  const fbo = gl.createFramebuffer()
+  const rbo = gl.createRenderbuffer()
+  const texture = gl.createTexture()
+
+  const { cube, size } = state
+  if (cube) {
+    const pixels = new Uint8Array(size * size * 4)
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
+    for (let i = 0; i < 6; i++) {
+      const target = gl.TEXTURE_CUBE_MAP_POSITIVE_X + i
+      gl.texImage2D(
+        target, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels
+      )
+    }
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(
+      gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR
+    )
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+    gl.generateMipmap(gl.TEXTURE_CUBE_MAP)
+  } else {
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+    gl.texImage2D(
+      gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
+    )
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+
+    gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, size, size)
+  }
+
+  return { fbo, rbo, texture }
+}
+
 const padDefault = (schema, key, val) => {
   return val !== undefined ? val : schema.uniforms[key].default
 }

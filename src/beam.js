@@ -27,7 +27,7 @@ export class Beam {
     return plugin
   }
 
-  resource (type, state) {
+  resource (type, state = {}) {
     return createResource(this.gl, type, state)
   }
 }

@@ -4,7 +4,9 @@ import {
 } from '../../plugins/image-filter-plugins.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { DataBuffers, IndexBuffer, Textures, Uniforms } = ResourceTypes
+const {
+  DataBuffers, IndexBuffer, Textures, Uniforms, Offscreen
+} = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -16,7 +18,10 @@ const vignette = beam.plugin(Vignette)
 const rect = createRect()
 const dataResource = beam.resource(DataBuffers, rect.data)
 const indexResource = beam.resource(IndexBuffer, rect.index)
-const argsResource = beam.resource(Uniforms, {})
+const argsResource = beam.resource(Uniforms)
+const offscreenResource = beam.resource(Offscreen)
+console.log(offscreenResource)
+
 let imageResource
 
 const base = '../../assets/images/'

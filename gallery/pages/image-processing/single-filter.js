@@ -17,7 +17,7 @@ let plugin = brightnessContrast
 const rect = createRect()
 const dataResource = beam.resource(DataBuffers, rect.data)
 const indexResource = beam.resource(IndexBuffer, rect.index)
-const argsResource = beam.resource(Uniforms, {})
+const argsResource = beam.resource(Uniforms)
 let imageResource
 
 const base = '../../assets/images/'

@@ -2,7 +2,8 @@ export const ResourceTypes = {
   DataBuffers: 'DataBuffers',
   IndexBuffer: 'IndexBuffer',
   Uniforms: 'Uniforms',
-  Textures: 'Textures'
+  Textures: 'Textures',
+  Offscreen: 'Offscreen'
 }
 
 export const SchemaTypes = {

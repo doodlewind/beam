@@ -14,7 +14,7 @@ const beam = new Beam(canvas)
 const plugin = beam.plugin(LambertLighting)
 const camera = createCamera({ eye: [0, 6, 6] }, { canvas })
 const matrixResource = beam.resource(Uniforms, camera)
-const lightResource = beam.resource(Uniforms, {})
+const lightResource = beam.resource(Uniforms)
 let dataResource
 let indexResource
 
