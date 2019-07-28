@@ -49,7 +49,7 @@ uniform mat4 viewMat;
 uniform mat4 projectionMat;
 
 void main() {
-  gl_Position = projectionMat * viewMat * modelMat * pos;
+  gl_Position = projectionMat * viewMat * modelMat * position;
 }
 `
 

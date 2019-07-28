@@ -223,3 +223,21 @@ export const createRect = (center = [0, 0, 0], aspectRatio = 1) => {
     index: { array: [0, 1, 2, 0, 2, 3] }
   }
 }
+
+export const toWireframe = index => {
+  const { array = [] } = index
+
+  const wireframe = new Array(array.length * 2)
+  for (let i = 0; i < array.length; i += 3) {
+    wireframe[i * 2] = array[i]
+    wireframe[i * 2 + 1] = array[i + 1]
+
+    wireframe[i * 2 + 2] = array[i + 1]
+    wireframe[i * 2 + 3] = array[i + 2]
+
+    wireframe[i * 2 + 4] = array[i]
+    wireframe[i * 2 + 5] = array[i + 2]
+  }
+
+  return { array: wireframe }
+}
