@@ -1,4 +1,4 @@
-import { Beam, ResourceTypes } from '../../../src/index.js'
+import { Beam, ResourceTypes, Pass2DCommand } from '../../../src/index.js'
 import {
   BrightnessContrast, HueSaturation, Vignette
 } from '../../plugins/image-filter-plugins.js'
@@ -10,6 +10,7 @@ const {
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
+beam.define(Pass2DCommand)
 
 const brightnessContrast = beam.plugin(BrightnessContrast)
 const hueSaturation = beam.plugin(HueSaturation)
@@ -19,23 +20,36 @@ const rect = createRect()
 const dataResource = beam.resource(DataBuffers, rect.data)
 const indexResource = beam.resource(IndexBuffer, rect.index)
 const argsResource = beam.resource(Uniforms)
-const offscreenResource = beam.resource(Offscreen)
-console.log(offscreenResource)
+const offscreenA = beam.resource(Offscreen)
+const offscreenB = beam.resource(Offscreen)
 
-let imageResource
+let inputImage
 
 const base = '../../assets/images/'
 const updateImage = name => loadImages(base + name).then(([image]) => {
+  inputImage = image
   const aspectRatio = image.naturalWidth / image.naturalHeight
   canvas.height = 400
   canvas.width = 400 * aspectRatio
-  imageResource = beam.resource(Textures, { img: { image, flip: true } })
 })
 
 const render = () => {
+  const imageState = { img: { image: inputImage, flip: true } }
+  const imageResource = beam.resource(Textures, imageState) // FIXME
+
   const resources = [dataResource, indexResource, argsResource, imageResource]
-  const plugin = brightnessContrast || hueSaturation || vignette // FIXME
-  beam.clear().draw(plugin, ...resources)
+
+  beam.clear()
+  imageResource.set('img', { image: inputImage, flip: true })
+  beam.pass2D(offscreenA, () => {
+    beam.draw(brightnessContrast, ...resources)
+  })
+  imageResource.set('img', offscreenA)
+  beam.pass2D(offscreenB, () => {
+    beam.draw(hueSaturation, ...resources)
+  })
+  imageResource.set('img', offscreenB)
+  beam.draw(vignette, ...resources)
 }
 
 updateImage('ivan.jpg').then(render)

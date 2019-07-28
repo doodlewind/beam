@@ -1,3 +1,6 @@
 export { ResourceTypes, SchemaTypes, GLTypes } from './consts.js'
 export { Beam } from './beam.js'
 export { BeamRenderer } from './beam-renderer.js'
+
+// Built-in common commands
+export { Pass2DCommand } from './commands.js'

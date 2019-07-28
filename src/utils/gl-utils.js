@@ -238,7 +238,8 @@ export const draw = (
     gl.vertexAttribPointer(location, numComponents, gl.FLOAT, false, 0, 0)
     gl.enableVertexAttribArray(location)
   })
-  const { buffer, count, offset } = indexResource
+  const { buffer, state } = indexResource
+  const { offset, count } = state
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
 
   let unit = -1

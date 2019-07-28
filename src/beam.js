@@ -30,4 +30,12 @@ export class Beam {
   resource (type, state = {}) {
     return createResource(this.gl, type, state)
   }
+
+  define ({ name, onBefore, onAfter }) {
+    this[name] = (arg, modifier = () => {}) => {
+      if (onBefore) onBefore(this.gl, arg)
+      modifier(arg)
+      if (onAfter) onAfter(this.gl, arg)
+    }
+  }
 }
