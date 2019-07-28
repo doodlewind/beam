@@ -20,8 +20,9 @@ const rect = createRect()
 const dataResource = beam.resource(DataBuffers, rect.data)
 const indexResource = beam.resource(IndexBuffer, rect.index)
 const argsResource = beam.resource(Uniforms)
-const offscreenA = beam.resource(Offscreen)
-const offscreenB = beam.resource(Offscreen)
+const inputResource = beam.resource(Textures)
+const offscreenCaches = [beam.resource(Offscreen), beam.resource(Offscreen)]
+const cacheResources = [beam.resource(Textures), beam.resource(Textures)]
 
 let inputImage
 
@@ -34,22 +35,19 @@ const updateImage = name => loadImages(base + name).then(([image]) => {
 })
 
 const render = () => {
-  const imageState = { img: { image: inputImage, flip: true } }
-  const imageResource = beam.resource(Textures, imageState) // FIXME
-
-  const resources = [dataResource, indexResource, argsResource, imageResource]
+  const resources = [dataResource, indexResource, argsResource]
 
   beam.clear()
-  imageResource.set('img', { image: inputImage, flip: true })
-  beam.pass2D(offscreenA, () => {
-    beam.draw(brightnessContrast, ...resources)
+  inputResource.set('img', { image: inputImage, flip: true })
+  beam.pass2D(offscreenCaches[0], () => {
+    beam.draw(brightnessContrast, ...[...resources, inputResource])
   })
-  imageResource.set('img', offscreenA)
-  beam.pass2D(offscreenB, () => {
-    beam.draw(hueSaturation, ...resources)
+  cacheResources[0].set('img', offscreenCaches[0])
+  beam.pass2D(offscreenCaches[1], () => {
+    beam.draw(hueSaturation, ...[...resources, cacheResources[0]])
   })
-  imageResource.set('img', offscreenB)
-  beam.draw(vignette, ...resources)
+  cacheResources[1].set('img', offscreenCaches[1])
+  beam.draw(vignette, ...[...resources, cacheResources[1]])
 }
 
 updateImage('ivan.jpg').then(render)

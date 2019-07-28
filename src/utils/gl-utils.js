@@ -99,8 +99,7 @@ export const initIndexBuffer = (gl, state) => {
   return buffer
 }
 
-const init2DTexture = (gl, state, key) => {
-  const texture = gl.createTexture()
+export const update2DTexutre = (gl, texture, state, key) => {
   gl.activeTexture(gl.TEXTURE0)
   gl.bindTexture(gl.TEXTURE_2D, texture)
   const space = gl.RGBA
@@ -130,7 +129,7 @@ const init2DTexture = (gl, state, key) => {
   return texture
 }
 
-const initCubeTexture = (gl, state, key) => {
+export const updateCubeTexture = (gl, texture, state, key) => {
   const { level, images, flip } = state[key]
   const faces = [
     gl.TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -140,7 +139,6 @@ const initCubeTexture = (gl, state, key) => {
     gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
     gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
   ]
-  const texture = gl.createTexture()
   gl.activeTexture(gl.TEXTURE0)
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
   gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
@@ -169,9 +167,26 @@ const initCubeTexture = (gl, state, key) => {
   return texture
 }
 
+const init2DTexture = (gl, state, key) => {
+  const texture = gl.createTexture()
+  update2DTexutre(gl, texture, state, key)
+  return texture
+}
+
+const initCubeTexture = (gl, state, key) => {
+  const texture = gl.createTexture()
+  updateCubeTexture(gl, texture, state, key)
+  return texture
+}
+
 export const initTextures = (gl, state) => {
   const textures = {}
   Object.keys(state).forEach(key => {
+    if (state[key].texture) {
+      textures[key] = state[key].texture
+      return
+    }
+
     const texture = state[key].image
       ? init2DTexture(gl, state, key)
       : initCubeTexture(gl, state, key)

@@ -34,8 +34,16 @@ export const createResource = (gl, type, state) => {
     }
 
     set (key, val) {
-      this.state[key] = val // FIXME should sync image texture
-      if (val.texture) this.textures[key] = val.texture
+      const { state } = this
+      if (this.textures[key] && (state[key].image || state[key].images)) {
+        gl.deleteTexture(this.textures[key])
+      }
+
+      this.textures = {
+        ...this.textures,
+        ...glUtils.initTextures(gl, { [key]: val })
+      }
+      state[key] = val
       return this
     }
   }
