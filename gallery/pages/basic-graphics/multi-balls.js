@@ -1,4 +1,3 @@
-/* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { NormalGraphics } from '../../plugins/basic-graphics-plugins.js'
 import { createBall } from '../../utils/graphics-utils.js'
