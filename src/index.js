@@ -3,4 +3,4 @@ export { Beam } from './beam.js'
 export { BeamRenderer } from './beam-renderer.js'
 
 // Built-in common commands
-export { Pass2DCommand } from './commands.js'
+export { Offscreen2DCommand } from './commands.js'

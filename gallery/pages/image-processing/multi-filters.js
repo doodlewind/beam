@@ -1,4 +1,4 @@
-import { Beam, ResourceTypes, Pass2DCommand } from '../../../src/index.js'
+import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
 import {
   BrightnessContrast, HueSaturation, Vignette
 } from '../../plugins/image-filter-plugins.js'
@@ -10,7 +10,7 @@ const {
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
-beam.define(Pass2DCommand)
+beam.define(Offscreen2DCommand)
 
 const brightnessContrast = beam.plugin(BrightnessContrast)
 const hueSaturation = beam.plugin(HueSaturation)
@@ -20,34 +20,43 @@ const rect = createRect()
 const dataResource = beam.resource(DataBuffers, rect.data)
 const indexResource = beam.resource(IndexBuffer, rect.index)
 const argsResource = beam.resource(Uniforms)
-const inputResource = beam.resource(Textures)
-const offscreenCaches = [beam.resource(Offscreen), beam.resource(Offscreen)]
-const cacheResources = [beam.resource(Textures), beam.resource(Textures)]
 
-let inputImage
+let image
 
 const base = '../../assets/images/'
-const updateImage = name => loadImages(base + name).then(([image]) => {
-  inputImage = image
+const updateImage = name => loadImages(base + name).then(([_image]) => {
+  image = _image
   const aspectRatio = image.naturalWidth / image.naturalHeight
   canvas.height = 400
   canvas.width = 400 * aspectRatio
 })
 
-const render = () => {
-  const resources = [dataResource, indexResource, argsResource]
+// Different shade plugins
+const plugins = [brightnessContrast, hueSaturation, vignette]
+// Input image textures
+const chain = [
+  beam.resource(Textures), beam.resource(Textures), beam.resource(Textures)
+]
+// Offscreen cache objects
+const caches = [beam.resource(Offscreen), beam.resource(Offscreen)]
 
+const resources = [dataResource, indexResource, argsResource]
+const draw = (plugin, input) => beam.draw(plugin, ...[...resources, input])
+const render = () => {
   beam.clear()
-  inputResource.set('img', { image: inputImage, flip: true })
-  beam.pass2D(offscreenCaches[0], () => {
-    beam.draw(brightnessContrast, ...[...resources, inputResource])
+  chain[0].set('img', { image, flip: true })
+  // Draw to caches[0] with chain[0] as input
+  beam.offscreen2D(caches[0], () => {
+    draw(plugins[0], chain[0])
   })
-  cacheResources[0].set('img', offscreenCaches[0])
-  beam.pass2D(offscreenCaches[1], () => {
-    beam.draw(hueSaturation, ...[...resources, cacheResources[0]])
+  // Draw to caches[1] with chain[1] as input
+  chain[1].set('img', caches[0])
+  beam.offscreen2D(caches[1], () => {
+    draw(plugins[1], chain[1])
   })
-  cacheResources[1].set('img', offscreenCaches[1])
-  beam.draw(vignette, ...[...resources, cacheResources[1]])
+  // Draw to screen with caches[1] as input
+  chain[2].set('img', caches[1])
+  draw(plugins[2], chain[2])
 }
 
 updateImage('ivan.jpg').then(render)

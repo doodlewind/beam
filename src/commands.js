@@ -1,5 +1,5 @@
-export const Pass2DCommand = {
-  name: 'pass2D',
+export const Offscreen2DCommand = {
+  name: 'offscreen2D',
   onBefore: (gl, resource) => {
     const { state, texture, fbo, rbo } = resource
     const { size } = state
