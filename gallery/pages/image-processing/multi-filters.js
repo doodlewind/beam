@@ -31,32 +31,28 @@ const updateImage = name => loadImages(base + name).then(([_image]) => {
   canvas.width = 400 * aspectRatio
 })
 
-// Different shade plugins
-const plugins = [brightnessContrast, hueSaturation, vignette]
-// Input image textures
-const chain = [
-  beam.resource(Textures), beam.resource(Textures), beam.resource(Textures)
-]
-// Offscreen cache objects
-const caches = [beam.resource(Offscreen), beam.resource(Offscreen)]
+// Input image texture resource
+const input = beam.resource(Textures)
+// Output texture resources
+const outputResources = [beam.resource(Textures), beam.resource(Textures)]
+// Offscreen FBO resources
+const offscreens = [beam.resource(Offscreen), beam.resource(Offscreen)]
+
+outputResources[0].set('img', offscreens[0])
+outputResources[1].set('img', offscreens[1])
 
 const resources = [dataResource, indexResource, argsResource]
 const draw = (plugin, input) => beam.draw(plugin, ...[...resources, input])
 const render = () => {
   beam.clear()
-  chain[0].set('img', { image, flip: true })
-  // Draw to caches[0] with chain[0] as input
-  beam.offscreen2D(caches[0], () => {
-    draw(plugins[0], chain[0])
-  })
-  // Draw to caches[1] with chain[1] as input
-  chain[1].set('img', caches[0])
-  beam.offscreen2D(caches[1], () => {
-    draw(plugins[1], chain[1])
-  })
-  // Draw to screen with caches[1] as input
-  chain[2].set('img', caches[1])
-  draw(plugins[2], chain[2])
+  input.set('img', { image, flip: true })
+  beam
+    // Draw brightness contrast shader with original input
+    .offscreen2D(offscreens[0], () => draw(brightnessContrast, input))
+    // Draw hue saturation shader with output from previous step
+    .offscreen2D(offscreens[1], () => draw(hueSaturation, outputResources[0]))
+  // Draw vignette shader to screen with outout from previous step
+  draw(vignette, outputResources[1])
 }
 
 updateImage('ivan.jpg').then(render)

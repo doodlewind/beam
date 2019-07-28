@@ -36,6 +36,7 @@ export class Beam {
       if (onBefore) onBefore(this.gl, arg)
       modifier(arg)
       if (onAfter) onAfter(this.gl, arg)
+      return this
     }
   }
 }

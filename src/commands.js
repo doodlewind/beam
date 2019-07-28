@@ -1,6 +1,6 @@
 export const Offscreen2DCommand = {
   name: 'offscreen2D',
-  onBefore: (gl, resource) => {
+  onBefore (gl, resource) {
     const { state, texture, fbo, rbo } = resource
     const { size } = state
 
@@ -17,7 +17,7 @@ export const Offscreen2DCommand = {
     )
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
   },
-  onAfter: (gl, resource) => {
+  onAfter (gl, resource) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
     gl.viewport(0, 0, gl.canvas.clientWidth, gl.canvas.clientHeight)
   }
