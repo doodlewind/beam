@@ -17,7 +17,7 @@ export const Offscreen2DCommand = {
     )
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
   },
-  onAfter (gl, resource) {
+  onAfter (gl) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
     gl.viewport(0, 0, gl.canvas.clientWidth, gl.canvas.clientHeight)
   }
