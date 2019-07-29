@@ -46,7 +46,7 @@ loadImages('../../assets/images/world-map.svg').then(([image]) => {
     // Using the defined 'alpha' command
     beam
       .clear([1, 1, 1, 1])
-      .alpha() // Try commenting out it!
+      .alpha() // Try commenting this out!
       .draw(plugin, ...resources)
 
     requestAnimationFrame(tick)
