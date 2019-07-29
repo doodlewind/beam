@@ -54,7 +54,7 @@ export const LambertLighting = {
     viewMat: { type: mat4 },
     projectionMat: { type: mat4 },
     normalMat: { type: mat4, default: identityMat },
-    'dirLight.direction': { type: vec3, default: [1, 0, 1] },
+    'dirLight.direction': { type: vec3, default: [1, 1, 1] },
     'dirLight.color': { type: vec3, default: [1, 1, 1] },
     'dirLight.strength': { type: float, default: 0.5 }
   }

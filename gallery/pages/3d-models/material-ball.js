@@ -9,7 +9,7 @@ import {
   computeEye,
   computeMVPMat,
   createPointLights
-} from './utils.js'
+} from './pbr-utils.js'
 const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')

@@ -5,7 +5,7 @@ import { loadImages, loadEnvMaps } from '../../utils/image-loader.js'
 import { translate } from '../../utils/mat4.js'
 import {
   rendererConfig, createMaterialImages, computeMVPMat, createPointLights
-} from './utils.js'
+} from './pbr-utils.js'
 const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
