@@ -1,5 +1,12 @@
 const push = (arr, x) => { arr[arr.length] = x }
 
+const concat = (baseArr, newArr) => {
+  const baseLength = baseArr.length
+  for (let i = 0; i < newArr.length; i++) {
+    baseArr[baseLength + i] = newArr[i]
+  }
+}
+
 export const createBox = (center = [0, 0, 0]) => {
   const basePositions = [
     // Front face
@@ -190,13 +197,13 @@ export const createBall = (
   }
 }
 
-export const createRect = (center = [0, 0, 0], aspectRatio = 1) => {
+export const createRect = (center = [0, 0, 0], aspectRatio = 1, scale = 1) => {
   const basePositions = [
     -1.0, -1.0 * aspectRatio, 0.0,
     1.0, -1.0 * aspectRatio, 0.0,
     1.0, 1.0 * aspectRatio, 0.0,
     -1.0, 1.0 * aspectRatio, 0.0
-  ]
+  ].map(x => x * scale)
   const position = []
   for (let i = 0; i < basePositions.length; i += 3) {
     push(position, basePositions[i] + center[0])
@@ -240,4 +247,28 @@ export const toWireframe = index => {
   }
 
   return { array: wireframe }
+}
+
+export const mergeGraphics = (...graphicsObjects) => {
+  const base = {
+    data: { position: [], normal: [], texCoord: [] },
+    index: { array: [] }
+  }
+
+  for (let i = 0; i < graphicsObjects.length; i++) {
+    const graphics = graphicsObjects[i]
+    const { array } = graphics.index
+    const offsetArray = new Array(array.length)
+    const offset = base.data.position.length / 3
+    for (let j = 0; j < array.length; j++) {
+      offsetArray[j] = array[j] + offset
+    }
+    concat(base.index.array, offsetArray)
+
+    concat(base.data.position, graphics.data.position)
+    concat(base.data.normal, graphics.data.normal)
+    concat(base.data.texCoord, graphics.data.texCoord)
+  }
+
+  return base
 }

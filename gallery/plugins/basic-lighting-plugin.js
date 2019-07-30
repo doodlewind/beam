@@ -33,7 +33,7 @@ varying vec4 vNormal;
 
 void main() {
   vec3 normalDir = normalize(vec3(normalMat * vNormal));
-  float nDotL = max(dot(normalDir, dirLight.direction), 0.0);
+  float nDotL = max(dot(normalDir, normalize(dirLight.direction)), 0.0);
   vec4 dirLight = vec4(dirLight.color * nDotL * dirLight.strength, 1.0);
   gl_FragColor = dirLight;
 }
