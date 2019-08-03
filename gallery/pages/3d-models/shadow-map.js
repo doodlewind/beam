@@ -1,3 +1,5 @@
+// TODO correct shadow map
+
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
 import {
