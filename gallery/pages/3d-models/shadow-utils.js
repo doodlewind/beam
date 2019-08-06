@@ -1,10 +1,12 @@
-export const Offscreen2DCommand = {
-  name: 'offscreen2D',
+export const DepthTextureCommand = {
+  name: 'depthTexture',
   onBefore (gl, resource) {
     const { state, colorTexture, fbo, rbo } = resource
     const { size } = state
 
     gl.viewport(0, 0, size, size)
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_2D, colorTexture)
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
     gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
     gl.renderbufferStorage(

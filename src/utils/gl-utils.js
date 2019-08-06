@@ -1,6 +1,8 @@
 import { SchemaTypes, GLTypes } from '../consts.js'
 import * as miscUtils from './misc-utils.js'
 
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+
 export const getWebGLInstance = canvas => {
   return canvas.getContext('webgl')
 }
@@ -157,7 +159,9 @@ export const updateCubeTexture = (gl, texture, state, key) => {
     for (let j = 0; j <= level; j++) {
       const face = faces[i]
       const { extensions } = gl
-      const space = extensions.EXT_SRGB.SRGB_EXT
+      const space = !isSafari && extensions.EXT_SRGB
+        ? extensions.EXT_SRGB.SRGB_EXT
+        : gl.RGBA
       gl.texImage2D(face, j, space, space, gl.UNSIGNED_BYTE, images[count])
       count++
     }
@@ -180,8 +184,12 @@ const initCubeTexture = (gl, state, key) => {
 export const initTextures = (gl, state) => {
   const textures = {}
   Object.keys(state).forEach(key => {
-    if (state[key].texture) {
-      textures[key] = state[key].texture
+    // Offscreen Resource
+    if (state[key].constructor.name !== 'Object') {
+      const offscreenRes = state[key]
+      textures[key] = offscreenRes.state.depth
+        ? offscreenRes.depthTexture
+        : offscreenRes.colorTexture
       return
     }
 
@@ -190,44 +198,45 @@ export const initTextures = (gl, state) => {
       : initCubeTexture(gl, state, key)
     textures[key] = texture
   })
+
   return textures
 }
 
 export const initOffscreen = (gl, state) => {
   const fbo = gl.createFramebuffer()
   const rbo = gl.createRenderbuffer()
-  const texture = gl.createTexture()
+  const colorTexture = gl.createTexture()
+  const depthTexture = null // TODO
 
-  const { cube, size } = state
-  if (cube) {
-    const pixels = new Uint8Array(size * size * 4)
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
-    for (let i = 0; i < 6; i++) {
-      const target = gl.TEXTURE_CUBE_MAP_POSITIVE_X + i
-      gl.texImage2D(
-        target, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels
-      )
-    }
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(
-      gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR
-    )
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-    gl.generateMipmap(gl.TEXTURE_CUBE_MAP)
-  } else {
-    gl.bindTexture(gl.TEXTURE_2D, texture)
-    gl.texImage2D(
-      gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
-    )
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+  const { size } = state
+  gl.bindTexture(gl.TEXTURE_2D, colorTexture)
+  gl.texImage2D(
+    gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
+  )
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 
-    gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, size, size)
+  gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, size, size)
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+  gl.framebufferTexture2D(
+    gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colorTexture, 0
+  )
+  gl.framebufferRenderbuffer(
+    gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rbo
+  )
+
+  const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
+  if (gl.FRAMEBUFFER_COMPLETE !== e) {
+    console.error('Frame buffer object is incomplete: ' + e.toString())
   }
 
-  return { fbo, rbo, texture }
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+  gl.bindTexture(gl.TEXTURE_2D, null)
+  gl.bindRenderbuffer(gl.RENDERBUFFER, null)
+
+  return { fbo, rbo, colorTexture, depthTexture }
 }
 
 const padDefault = (schema, key, val) => {

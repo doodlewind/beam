@@ -1,7 +1,8 @@
+// TODO correct shadow map
+
 import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
-import {
-  LambertLighting, ShadowMap
-} from '../../plugins/basic-lighting-plugin.js'
+import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
+import { OriginalImage } from '../../plugins/image-filter-plugins.js'
 import {
   createBall, createRect, mergeGraphics
 } from '../../utils/graphics-utils.js'
@@ -14,52 +15,44 @@ const {
 const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
-const beam = new Beam(canvas)
+const beam = new Beam(canvas, {
+  extensions: ['OES_element_index_uint', 'WEBGL_depth_texture']
+})
 beam.define(Offscreen2DCommand)
+window.beam = beam
+const lightingPlugin = beam.plugin(LambertLighting)
+const imagePlugin = beam.plugin(OriginalImage)
 
-const lighting = beam.plugin(LambertLighting)
-const shadow = beam.plugin(ShadowMap)
-
-let lightPos = [0, 0, 10]
-const shadowCameraState = createCamera({ eye: lightPos }, { canvas })
-const shadowCamera = beam.resource(
-  Uniforms,
-  {
-    viewMat: shadowCameraState.viewMat,
-    projectionMat: shadowCameraState.projectionMat,
-    lightViewMat: shadowCameraState.viewMat,
-    lightProjectionMat: shadowCameraState.projectionMat
-  }
-)
-const shadowCache = beam.resource(Textures, { depth: true })
-shadowCache.set('shadowMap', beam.resource(Offscreen))
-
-const actualCamera = beam.resource(
-  Uniforms, createCamera({ eye: [0, 0, 20] }, { canvas })
-)
-const light = beam.resource(Uniforms)
-light.set('dirLight.direction', [0, 0, 1])
+const camera = createCamera({ eye: [0, 0, 50] }, { canvas })
+const matRes = beam.resource(Uniforms, camera)
+const lightRes = beam.resource(Uniforms)
+lightRes.set('dirLight.direction', [0, 0, 1])
 
 const ball = createBall()
-const rect = createRect([0, 0, -1], 1, 2.5)
+const rect = createRect([0, 0, -3], 1, 5)
 const graphics = mergeGraphics(ball, rect)
-const buffers = [
-  beam.resource(DataBuffers, graphics.data),
-  beam.resource(IndexBuffer, graphics.index)
-]
+const dataRes = beam.resource(DataBuffers, graphics.data)
+const indexRes = beam.resource(IndexBuffer, graphics.index)
+
+const offscreenRes = beam.resource(Offscreen)
+const imgRes = beam.resource(Textures)
+imgRes.set('img', offscreenRes)
+
+// screen quad
+const quad = createRect()
+const quadDataRes = beam.resource(DataBuffers, quad.data)
+const quadIndexRes = beam.resource(IndexBuffer, quad.index)
 
 const render = () => {
   beam.clear()
-
-  beam.offscreen2D(shadowCache.state.shadowMap, () => {
-    beam.clear().draw(shadow, ...buffers, shadowCamera)
+  beam.offscreen2D(offscreenRes, () => {
+    // beam.clear() here will set wrong gl.viewport
+    beam.draw(lightingPlugin, dataRes, indexRes, matRes, lightRes)
   })
+  beam.draw(imagePlugin, quadDataRes, quadIndexRes, imgRes)
 
-  beam.draw(
-    lighting, ...buffers, shadowCamera, actualCamera, shadowCache, light
-  )
-
-  // beam.draw(shadow, ...buffers, shadowCamera)
+  // default draw to screen
+  // beam.clear().draw(lightingPlugin, dataRes, indexRes, matRes, lightRes)
 }
 
 render()
@@ -74,7 +67,7 @@ const $modelZ = document.getElementById('model-z')
     rotate(modelMat, modelMat, rx / 180 * Math.PI, [1, 0, 0])
     rotate(modelMat, modelMat, ry / 180 * Math.PI, [0, 1, 0])
     rotate(modelMat, modelMat, rz / 180 * Math.PI, [0, 0, 1])
-    actualCamera.set('modelMat', modelMat)
+    matRes.set('modelMat', modelMat)
     render()
   })
 })
@@ -85,23 +78,14 @@ const $dirZ = document.getElementById('dir-z')
   ;[$dirX, $dirY, $dirZ].forEach(input => {
   input.addEventListener('input', () => {
     const [dx, dy, dz] = [$dirX.value, $dirY.value, $dirZ.value]
-    light.set('dirLight.direction', [dx, dy, dz])
-
-    lightPos = [dx, dy, dz]
-    const shadowCameraState = createCamera({ eye: lightPos }, { canvas })
-    shadowCamera
-      .set('viewMat', shadowCameraState.viewMat)
-      .set('projectionMat', shadowCameraState.projectionMat)
-      .set('lightViewMat', shadowCameraState.viewMat)
-      .set('lightProjectionMat', shadowCameraState.projectionMat)
-
+    lightRes.set('dirLight.direction', [dx, dy, dz])
     render()
   })
 })
 
 const $dirStrength = document.getElementById('dir-strength')
 $dirStrength.addEventListener('input', () => {
-  light.set('dirLight.strength', $dirStrength.value)
+  lightRes.set('dirLight.strength', $dirStrength.value)
   render()
 })
 
@@ -113,6 +97,6 @@ $dirColor.addEventListener('input', () => {
     parseInt(hex.slice(3, 5), 16) / 256,
     parseInt(hex.slice(5, 7), 16) / 256
   ]
-  light.set('dirLight.color', rgb)
+  lightRes.set('dirLight.color', rgb)
   render()
 })

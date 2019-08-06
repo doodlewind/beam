@@ -17,6 +17,9 @@ canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas, rendererConfig)
 
+if (beam.gl.extensions.EXT_shader_texture_lod) {
+  PBRLighting.defines.USE_TEX_LOD = 1
+}
 const plugin = beam.plugin(PBRLighting)
 
 // Resources: data buffers and index buffer
@@ -134,3 +137,5 @@ for (let i = 0; i < 1; i++) {
     $input.addEventListener('input', updatePointLights)
   })
 }
+
+window.beam = beam

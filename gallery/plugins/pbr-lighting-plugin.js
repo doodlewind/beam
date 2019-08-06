@@ -17,7 +17,7 @@ export const PBRLighting = {
     // HAS_EMISSIVEMAP: 1,
     // HAS_OCCLUSIONMAP: 1,
     // HAS_TANGENTS: 1,
-    USE_TEX_LOD: 1,
+    // USE_TEX_LOD: 1,
     NR_POINT_LIGHTS: 3
   },
   buffers: {

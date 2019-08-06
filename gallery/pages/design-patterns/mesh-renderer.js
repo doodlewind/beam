@@ -6,25 +6,24 @@ import {
   createBall, createBox, toWireframe
 } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
-import { create } from '../../utils/mat4.js'
+import { create, translate } from '../../utils/mat4.js'
 const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
-const identityMat = create()
-
 class Mesh {
-  constructor (beam, { data, index }, modelMat = identityMat) {
+  constructor (beam, { data, index }, modelMat) {
     this.beam = beam
     this.data = beam.resource(DataBuffers, data)
     this.defaultIndex = beam.resource(IndexBuffer, index)
     this.wireframeIndex = beam.resource(IndexBuffer, toWireframe(index))
-    this.modelMat = modelMat
+    this.modelMat = modelMat || create()
   }
 
-  /* TODO support mesh transform chaining
-  translate () {
+  translate ([x, y, z]) {
+    translate(this.modelMat, this.modelMat, [x, y, z])
     return this
   }
 
+  /* TODO support mesh transform chaining
   rotate () {
     return this
   }
