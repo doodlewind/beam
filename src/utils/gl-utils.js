@@ -30,7 +30,7 @@ const compileShader = (gl, type, source) => {
 
 const initShader = (gl, defines, vs, fs) => {
   const defineStr = Object.keys(defines).reduce((str, key) => (
-    str + `#define ${key} ${defines[key]}\n`
+    defines[key] ? str + `#define ${key} ${defines[key]}\n` : ''
   ), '')
 
   const vertexShader = compileShader(gl, gl.VERTEX_SHADER, defineStr + vs)

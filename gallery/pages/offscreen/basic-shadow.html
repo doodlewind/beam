@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Demo</title>
+  </head>
+  <style>
+    * { margin: auto 0; padding: 0; }
+    body { height: 100vh; }
+    #control {
+      position: fixed; top: 0; right: 0; width: 300px;
+      padding: 10px; box-sizing: border-box;
+      background: white; opacity: 0.3; color: #666;
+    }
+  </style>
+  <body>
+    <div id="control">
+      <input type="range" min="0" max="40" value="20" step="1" id="dir-x">
+      <label for="dir-x">Light X</label>
+      <input type="range" min="30" max="70" value="50" step="1" id="dir-y">
+      <label for="dir-y">Light Y</label>
+    </div>
+    <canvas></canvas>
+    <script type="module" src="./basic-shadow.js"></script>
+  </body>
+</html>

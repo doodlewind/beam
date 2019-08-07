@@ -1,3 +1,5 @@
+import { lookAt, ortho } from '../../utils/mat4.js'
+
 export const initOffscreen = (gl, state) => {
   const { size } = state
 
@@ -59,4 +61,13 @@ export const Offscreen2DCommand = {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
     gl.viewport(0, 0, gl.canvas.clientWidth, gl.canvas.clientHeight)
   }
+}
+
+export const createShadowCamera = (eye, center, size) => {
+  const viewMat = lookAt([], eye, center, [0, 1, 0])
+  const aspect = 1
+  const projectionMat = ortho(
+    [], -size * aspect, size * aspect, -size, size, 0.1, 100
+  )
+  return { viewMat, projectionMat }
 }

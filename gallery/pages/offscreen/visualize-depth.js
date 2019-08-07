@@ -1,8 +1,6 @@
-// TODO correct shadow map
-
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
-import { CheckDepth } from './check-depth.js'
+import { CheckDepth } from './shadow-plugins.js'
 import {
   createBall, createRect
 } from '../../utils/graphics-utils.js'
@@ -22,7 +20,6 @@ const beam = new Beam(canvas, {
   ]
 })
 beam.define(Offscreen2DCommand)
-window.beam = beam
 const lightingPlugin = beam.plugin(LambertLighting)
 const checkDepthPlugin = beam.plugin(CheckDepth)
 
@@ -41,8 +38,7 @@ const dataRes = beam.resource(DataBuffers, ball.data)
 const indexRes = beam.resource(IndexBuffer, ball.index)
 
 const offscreenRes = beam.resource(Offscreen, {
-  depth: true,
-  init: initOffscreen
+  depth: true, init: initOffscreen
 })
 const imgRes = beam.resource(Textures)
 imgRes.set('img', offscreenRes)
@@ -76,32 +72,3 @@ const render = () => {
 }
 
 render()
-
-const $dirX = document.getElementById('dir-x')
-const $dirY = document.getElementById('dir-y')
-const $dirZ = document.getElementById('dir-z')
-  ;[$dirX, $dirY, $dirZ].forEach(input => {
-  input.addEventListener('input', () => {
-    const [dx, dy, dz] = [$dirX.value, $dirY.value, $dirZ.value]
-    lightRes.set('dirLight.direction', [dx, dy, dz])
-    render()
-  })
-})
-
-const $dirStrength = document.getElementById('dir-strength')
-$dirStrength.addEventListener('input', () => {
-  lightRes.set('dirLight.strength', $dirStrength.value)
-  render()
-})
-
-const $dirColor = document.getElementById('dir-color')
-$dirColor.addEventListener('input', () => {
-  const hex = $dirColor.value
-  const rgb = [
-    parseInt(hex.slice(1, 3), 16) / 256,
-    parseInt(hex.slice(3, 5), 16) / 256,
-    parseInt(hex.slice(5, 7), 16) / 256
-  ]
-  lightRes.set('dirLight.color', rgb)
-  render()
-})

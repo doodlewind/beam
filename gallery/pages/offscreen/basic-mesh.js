@@ -1,5 +1,3 @@
-// TODO correct shadow map
-
 import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
 import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
 import { OriginalImage } from '../../plugins/image-filter-plugins.js'
@@ -75,7 +73,7 @@ const $modelZ = document.getElementById('model-z')
 const $dirX = document.getElementById('dir-x')
 const $dirY = document.getElementById('dir-y')
 const $dirZ = document.getElementById('dir-z')
-  ;[$dirX, $dirY, $dirZ].forEach(input => {
+;[$dirX, $dirY, $dirZ].forEach(input => {
   input.addEventListener('input', () => {
     const [dx, dy, dz] = [$dirX.value, $dirY.value, $dirZ.value]
     lightRes.set('dirLight.direction', [dx, dy, dz])

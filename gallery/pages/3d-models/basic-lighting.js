@@ -47,7 +47,7 @@ const $modelZ = document.getElementById('model-z')
 const $dirX = document.getElementById('dir-x')
 const $dirY = document.getElementById('dir-y')
 const $dirZ = document.getElementById('dir-z')
-  ;[$dirX, $dirY, $dirZ].forEach(input => {
+;[$dirX, $dirY, $dirZ].forEach(input => {
   input.addEventListener('input', () => {
     const [dx, dy, dz] = [$dirX.value, $dirY.value, $dirZ.value]
     lightResource.set('dirLight.direction', [dx, dy, dz])
