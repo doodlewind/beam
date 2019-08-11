@@ -9,22 +9,23 @@ const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
 const plugin = beam.plugin(MixImage)
-const camera = createCamera({ eye: [0, 0, 5] }, { canvas })
-const rect = createRect()
+const cameraMats = createCamera({ eye: [0, 0, 5] }, { canvas })
+// Fill screen unit quad
+const quad = createRect()
 
 // Mask the logo with the black hole's red channel
 const render = ([imageA, imageB]) => {
-  const imageState = {
+  const imageStates = {
     img0: { image: imageA, flip: true },
     img1: { image: imageB, flip: true }
   }
 
   beam.clear().draw(
     plugin,
-    beam.resource(DataBuffers, rect.data),
-    beam.resource(IndexBuffer, rect.index),
-    beam.resource(Uniforms, camera),
-    beam.resource(Textures, imageState)
+    beam.resource(DataBuffers, quad.data),
+    beam.resource(IndexBuffer, quad.index),
+    beam.resource(Uniforms, cameraMats),
+    beam.resource(Textures, imageStates)
   )
 }
 

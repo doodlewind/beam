@@ -14,22 +14,26 @@ const hueSaturation = beam.plugin(HueSaturation)
 const vignette = beam.plugin(Vignette)
 let plugin = brightnessContrast
 
-const rect = createRect()
-const dataResource = beam.resource(DataBuffers, rect.data)
-const indexResource = beam.resource(IndexBuffer, rect.index)
-const argsResource = beam.resource(Uniforms)
-let imageResource
+// Fill screen with unit quad
+const quad = createRect()
+const quadBuffers = [
+  beam.resource(DataBuffers, quad.data),
+  beam.resource(IndexBuffer, quad.index)
+]
+const filterOptions = beam.resource(Uniforms)
+let textures
 
 const base = '../../assets/images/'
 const updateImage = name => loadImages(base + name).then(([image]) => {
+  const imageState = { image, flip: true }
   const aspectRatio = image.naturalWidth / image.naturalHeight
   canvas.height = 400
   canvas.width = 400 * aspectRatio
-  imageResource = beam.resource(Textures, { img: { image, flip: true } })
+  textures = beam.resource(Textures, { img: imageState })
 })
 
 const render = () => {
-  const resources = [dataResource, indexResource, argsResource, imageResource]
+  const resources = [...quadBuffers, filterOptions, textures]
   beam.clear().draw(plugin, ...resources)
 }
 
@@ -44,7 +48,7 @@ const fields = ['brightness', 'contrast', 'hue', 'saturation', 'vignette']
 fields.forEach(field => {
   const $field = document.getElementById(field)
   $field.addEventListener('input', () => {
-    argsResource.set(field, $field.value)
+    filterOptions.set(field, $field.value)
     render()
   })
 })

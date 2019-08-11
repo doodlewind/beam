@@ -16,10 +16,13 @@ const brightnessContrast = beam.plugin(BrightnessContrast)
 const hueSaturation = beam.plugin(HueSaturation)
 const vignette = beam.plugin(Vignette)
 
-const rect = createRect()
-const dataResource = beam.resource(DataBuffers, rect.data)
-const indexResource = beam.resource(IndexBuffer, rect.index)
-const argsResource = beam.resource(Uniforms)
+// Fill screen with unit quad
+const quad = createRect()
+const quadBuffers = [
+  beam.resource(DataBuffers, quad.data),
+  beam.resource(IndexBuffer, quad.index)
+]
+const filterOptions = beam.resource(Uniforms)
 
 let image
 
@@ -32,27 +35,32 @@ const updateImage = name => loadImages(base + name).then(([_image]) => {
 })
 
 // Input image texture resource
-const input = beam.resource(Textures)
+const inputTextures = beam.resource(Textures)
 // Output texture resources
-const outputResources = [beam.resource(Textures), beam.resource(Textures)]
+const outputTextures = [beam.resource(Textures), beam.resource(Textures)]
 // Offscreen FBO resources
 const offscreens = [beam.resource(Offscreen), beam.resource(Offscreen)]
 
-outputResources[0].set('img', offscreens[0])
-outputResources[1].set('img', offscreens[1])
+// TODO better offscreen texture attach API
+outputTextures[0].set('img', offscreens[0])
+outputTextures[1].set('img', offscreens[1])
 
-const resources = [dataResource, indexResource, argsResource]
-const draw = (plugin, input) => beam.draw(plugin, ...[...resources, input])
+const baseResources = [...quadBuffers, filterOptions]
+const draw = (plugin, input) => beam.draw(plugin, ...[...baseResources, input])
 const render = () => {
   beam.clear()
-  input.set('img', { image, flip: true })
+  inputTextures.set('img', { image, flip: true })
   beam
     // Draw brightness contrast shader with original input
-    .offscreen2D(offscreens[0], () => draw(brightnessContrast, input))
+    .offscreen2D(offscreens[0], () => {
+      draw(brightnessContrast, inputTextures)
+    })
     // Draw hue saturation shader with output from previous step
-    .offscreen2D(offscreens[1], () => draw(hueSaturation, outputResources[0]))
+    .offscreen2D(offscreens[1], () => {
+      draw(hueSaturation, outputTextures[0])
+    })
   // Draw vignette shader to screen with outout from previous step
-  draw(vignette, outputResources[1])
+  draw(vignette, outputTextures[1])
 }
 
 updateImage('ivan.jpg').then(render)
@@ -66,7 +74,7 @@ const fields = ['brightness', 'contrast', 'hue', 'saturation', 'vignette']
 fields.forEach(field => {
   const $field = document.getElementById(field)
   $field.addEventListener('input', () => {
-    argsResource.set(field, $field.value)
+    filterOptions.set(field, $field.value)
     render()
   })
 })
