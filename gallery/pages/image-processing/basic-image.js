@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { OriginalImage } from '../../plugins/image-filter-plugins.js'
+import { BasicImage } from '../../plugins/image-filter-plugins.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
 const { DataBuffers, IndexBuffer, Textures } = ResourceTypes
@@ -7,7 +7,7 @@ const { DataBuffers, IndexBuffer, Textures } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const plugin = beam.plugin(OriginalImage)
+const plugin = beam.plugin(BasicImage)
 
 // Fill screen with unit quad
 const quad = createRect()

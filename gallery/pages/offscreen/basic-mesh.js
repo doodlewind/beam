@@ -1,6 +1,6 @@
 import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
 import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
-import { OriginalImage } from '../../plugins/image-filter-plugins.js'
+import { BasicImage } from '../../plugins/image-filter-plugins.js'
 import {
   createBall, createRect, mergeGraphics
 } from '../../utils/graphics-utils.js'
@@ -17,7 +17,7 @@ const beam = new Beam(canvas)
 beam.define(Offscreen2DCommand)
 window.beam = beam
 const lightingPlugin = beam.plugin(LambertLighting)
-const imagePlugin = beam.plugin(OriginalImage)
+const imagePlugin = beam.plugin(BasicImage)
 
 const cameraMats = createCamera({ eye: [0, 0, 50] }, { canvas })
 const matrices = beam.resource(Uniforms, cameraMats)

@@ -26,7 +26,7 @@ void main() {
 
 const { vec2, vec4, float, tex2D } = SchemaTypes
 
-export const OriginalImage = {
+export const BasicImage = {
   vs: defaultVS,
   fs: defaultFS,
   buffers: {
@@ -59,7 +59,7 @@ void main() {
 `
 
 export const BrightnessContrast = {
-  ...OriginalImage,
+  ...BasicImage,
   fs: brighnessContrastFS,
   uniforms: {
     brightness: { type: float, default: 0 },
@@ -101,7 +101,7 @@ void main() {
 `
 
 export const HueSaturation = {
-  ...OriginalImage,
+  ...BasicImage,
   fs: hueSaturationFS,
   uniforms: {
     hue: { type: float, default: 0 },
@@ -133,7 +133,7 @@ void main() {
 `
 
 export const Vignette = {
-  ...OriginalImage,
+  ...BasicImage,
   fs: vignetteFS,
   uniforms: {
     vignette: { type: float, default: 0 }
