@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { ImageGraphics } from '../../plugins/basic-graphics-plugins.js'
+import { ImageColor } from '../../plugins/basic-graphics-plugins.js'
 import { createBall } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { rotate } from '../../utils/mat4.js'
@@ -23,14 +23,14 @@ beam.define(AlphaCommand)
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 
-const plugin = beam.plugin(ImageGraphics)
+const plugin = beam.plugin(ImageColor)
 const eye = [0, 0, 10]
 const baseViewMat = createCamera({ eye }).viewMat
-const camera = createCamera({ eye }, { canvas })
+const cameraMats = createCamera({ eye }, { canvas })
 const ball = createBall()
-const data = beam.resource(DataBuffers, ball.data)
-const index = beam.resource(IndexBuffer, ball.index)
-const cameraResource = beam.resource(Uniforms, camera)
+const dataBuffer = beam.resource(DataBuffers, ball.data)
+const indexBuffer = beam.resource(IndexBuffer, ball.index)
+const cameraResource = beam.resource(Uniforms, cameraMats)
 
 loadImages('../../assets/images/world-map.svg').then(([image]) => {
   const imageState = { img: { image, flip: true } }
@@ -41,7 +41,7 @@ loadImages('../../assets/images/world-map.svg').then(([image]) => {
     i += 0.02
     const viewMat = rotate([], baseViewMat, i, [0, 1, 0])
     cameraResource.set('viewMat', viewMat)
-    const resources = [data, index, cameraResource, imageResource]
+    const resources = [dataBuffer, indexBuffer, cameraResource, imageResource]
 
     // Using the defined 'alpha' command
     beam

@@ -1,6 +1,6 @@
 import { BeamRenderer, ResourceTypes } from '../../../src/index.js'
 import {
-  NormalGraphics, WireframeGraphics
+  NormalColor, RedWireframe
 } from '../../plugins/basic-graphics-plugins.js'
 import {
   createBall, createBox, toWireframe
@@ -51,8 +51,8 @@ class BallMesh extends Mesh {
 export class MeshRenderer extends BeamRenderer {
   constructor (canvas) {
     super(canvas)
-    this.defaultPlugin = this.beam.plugin(NormalGraphics)
-    this.wireframePlugin = this.beam.plugin(WireframeGraphics)
+    this.defaultPlugin = this.beam.plugin(NormalColor)
+    this.wireframePlugin = this.beam.plugin(RedWireframe)
     this.wireframe = true
     this.meshes = []
     this.camera = this.beam.resource(Uniforms, createCamera({}, { canvas }))
