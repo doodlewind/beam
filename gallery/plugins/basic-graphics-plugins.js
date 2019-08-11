@@ -27,7 +27,7 @@ void main() {
 const { vec2, vec4, mat4, tex2D } = SchemaTypes
 const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 
-export const NormalGraphics = {
+export const NormalColor = {
   vs: normalVS,
   fs: normalFS,
   buffers: {
@@ -59,7 +59,7 @@ void main() {
 }
 `
 
-export const WireframeGraphics = {
+export const RedWireframe = {
   vs: wireframeVS,
   fs: wireframeFS,
   buffers: {
@@ -102,7 +102,7 @@ void main() {
 }
 `
 
-export const ImageGraphics = {
+export const ImageColor = {
   vs: imageVS,
   fs: imageFS,
   buffers: {
