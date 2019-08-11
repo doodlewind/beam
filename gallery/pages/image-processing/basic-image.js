@@ -15,7 +15,7 @@ const quadBuffers = [
   beam.resource(DataBuffers, quad.data),
   beam.resource(IndexBuffer, quad.index)
 ]
-let textures // TODO optimize with resourse setter
+const textures = beam.resource(Textures)
 
 const updateImage = name => {
   loadImages('../../assets/images/' + name).then(([image]) => {
@@ -23,7 +23,7 @@ const updateImage = name => {
     const imageState = { image, flip: true }
     canvas.height = 400
     canvas.width = 400 * aspectRatio
-    textures = beam.resource(Textures, { img: imageState })
+    textures.set('img', imageState)
     beam.clear().draw(plugin, ...quadBuffers, textures)
   })
 }

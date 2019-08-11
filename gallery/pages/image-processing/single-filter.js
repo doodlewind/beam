@@ -21,7 +21,7 @@ const quadBuffers = [
   beam.resource(IndexBuffer, quad.index)
 ]
 const filterOptions = beam.resource(Uniforms)
-let textures
+const textures = beam.resource(Textures)
 
 const base = '../../assets/images/'
 const updateImage = name => loadImages(base + name).then(([image]) => {
@@ -29,7 +29,7 @@ const updateImage = name => loadImages(base + name).then(([image]) => {
   const aspectRatio = image.naturalWidth / image.naturalHeight
   canvas.height = 400
   canvas.width = 400 * aspectRatio
-  textures = beam.resource(Textures, { img: imageState })
+  textures.set('img', imageState)
 })
 
 const render = () => {
