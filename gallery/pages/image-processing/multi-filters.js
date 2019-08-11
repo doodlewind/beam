@@ -5,7 +5,7 @@ import {
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
 const {
-  DataBuffers, IndexBuffer, Textures, Uniforms, Offscreen
+  DataBuffers, IndexBuffer, Textures, Uniforms, OffscreenTarget
 } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
@@ -39,11 +39,13 @@ const inputTextures = beam.resource(Textures)
 // Output texture resources
 const outputTextures = [beam.resource(Textures), beam.resource(Textures)]
 // Offscreen FBO resources
-const offscreens = [beam.resource(Offscreen), beam.resource(Offscreen)]
+const offscreenTargets = [
+  beam.resource(OffscreenTarget), beam.resource(OffscreenTarget)
+]
 
 // TODO better offscreen texture attach API
-outputTextures[0].set('img', offscreens[0])
-outputTextures[1].set('img', offscreens[1])
+outputTextures[0].set('img', offscreenTargets[0])
+outputTextures[1].set('img', offscreenTargets[1])
 
 const baseResources = [...quadBuffers, filterOptions]
 const draw = (plugin, input) => beam.draw(plugin, ...[...baseResources, input])
@@ -52,11 +54,11 @@ const render = () => {
   inputTextures.set('img', { image, flip: true })
   beam
     // Draw brightness contrast shader with original input
-    .offscreen2D(offscreens[0], () => {
+    .offscreen2D(offscreenTargets[0], () => {
       draw(brightnessContrast, inputTextures)
     })
     // Draw hue saturation shader with output from previous step
-    .offscreen2D(offscreens[1], () => {
+    .offscreen2D(offscreenTargets[1], () => {
       draw(hueSaturation, outputTextures[0])
     })
   // Draw vignette shader to screen with outout from previous step

@@ -8,7 +8,7 @@ import {
   initOffscreen, Offscreen2DCommand, createShadowCamera
 } from './utils.js'
 const {
-  DataBuffers, IndexBuffer, Uniforms, Textures, Offscreen
+  DataBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
 } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
@@ -35,11 +35,13 @@ const ballBuffers = [
   beam.resource(IndexBuffer, ball.index)
 ]
 
-const offscreen = beam.resource(Offscreen, { depth: true, init: initOffscreen })
+const offscreenTarget = beam.resource(
+  OffscreenTarget, { depth: true, init: initOffscreen }
+)
 const textures = beam.resource(Textures)
 textures
-  .set('img', offscreen)
-  .set('shadowMap', offscreen)
+  .set('img', offscreenTarget)
+  .set('shadowMap', offscreenTarget)
 
 // screen quad
 const quadRect = createRect()
@@ -86,7 +88,7 @@ const drawLighting = () => {
 
 const render = () => {
   beam.clear()
-  beam.offscreen2D(offscreen, () => {
+  beam.offscreen2D(offscreenTarget, () => {
     uniforms
       .set('viewMat', shadowCamera.viewMat)
       .set('projectionMat', shadowCamera.projectionMat)

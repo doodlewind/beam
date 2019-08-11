@@ -1,14 +1,12 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
 import { InspectDepth } from './shadow-plugins.js'
-import {
-  createBall, createRect
-} from '../../utils/graphics-utils.js'
+import { createBall, createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate } from '../../utils/mat4.js'
 import { initOffscreen, Offscreen2DCommand } from './utils.js'
 const {
-  DataBuffers, IndexBuffer, Uniforms, Textures, Offscreen
+  DataBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
 } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
@@ -39,9 +37,11 @@ const ballBuffers = [
   beam.resource(IndexBuffer, ball.index)
 ]
 
-const offscreen = beam.resource(Offscreen, { depth: true, init: initOffscreen })
+const offscreenTarget = beam.resource(
+  OffscreenTarget, { depth: true, init: initOffscreen }
+)
 const textures = beam.resource(Textures)
-textures.set('img', offscreen)
+textures.set('img', offscreenTarget)
 
 // screen quad
 const quad = createRect()
@@ -64,7 +64,7 @@ const drawBalls = () => {
 
 const render = () => {
   beam.clear()
-  beam.offscreen2D(offscreen, drawBalls)
+  beam.offscreen2D(offscreenTarget, drawBalls)
 
   const options = beam.resource(Uniforms, { nearPlane: 0.1, farPlane: 100 })
   beam.draw(inspectDepthPlugin, ...quadBuffers, textures, options)

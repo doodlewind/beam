@@ -48,7 +48,7 @@ export const createResource = (gl, type, state) => {
     }
   }
 
-  class OffscreenResource extends Resource {
+  class OffscreenTargetResource extends Resource {
     constructor () {
       super()
       const { size = 2048 } = this.state
@@ -72,7 +72,7 @@ export const createResource = (gl, type, state) => {
     [Types.IndexBuffer]: () => new IndexBufferResource(),
     [Types.Uniforms]: () => new UniformsResource(),
     [Types.Textures]: () => new TexturesResource(),
-    [Types.Offscreen]: () => new OffscreenResource()
+    [Types.OffscreenTarget]: () => new OffscreenTargetResource()
   }
   return resourceCreatorMap[type]()
 }

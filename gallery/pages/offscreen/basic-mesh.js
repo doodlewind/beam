@@ -7,7 +7,7 @@ import {
 import { createCamera } from '../../utils/camera.js'
 import { create, rotate } from '../../utils/mat4.js'
 const {
-  DataBuffers, IndexBuffer, Uniforms, Textures, Offscreen
+  DataBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
 } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
@@ -32,9 +32,9 @@ const graphicsBuffers = [
   beam.resource(IndexBuffer, graphics.index)
 ]
 
-const offscreen = beam.resource(Offscreen)
+const offscreenTarget = beam.resource(OffscreenTarget)
 const textures = beam.resource(Textures)
-textures.set('img', offscreen)
+textures.set('img', offscreenTarget)
 
 // screen quad
 const quad = createRect()
@@ -45,7 +45,7 @@ const quadBuffers = [
 
 const render = () => {
   beam.clear()
-  beam.offscreen2D(offscreen, () => {
+  beam.offscreen2D(offscreenTarget, () => {
     // beam.clear() here will set wrong gl.viewport
     beam.draw(lightingPlugin, ...graphicsBuffers, matrices, light)
   })
