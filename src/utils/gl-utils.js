@@ -99,12 +99,13 @@ export const initIndexBuffer = (gl, state) => {
   return buffer
 }
 
-export const update2DTexutre = (gl, texture, state, key) => {
+export const update2DTexutre = (gl, texture, val) => {
+  const { flip, image, repeat } = val
+
   gl.activeTexture(gl.TEXTURE0)
   gl.bindTexture(gl.TEXTURE_2D, texture)
-  const space = gl.RGBA
 
-  const { flip, image, repeat } = state[key]
+  const space = gl.RGBA
   if (flip) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
   gl.texImage2D(gl.TEXTURE_2D, 0, space, space, gl.UNSIGNED_BYTE, image)
 
@@ -129,16 +130,9 @@ export const update2DTexutre = (gl, texture, state, key) => {
   return texture
 }
 
-export const updateCubeTexture = (gl, texture, state, key) => {
-  const { level, images, flip } = state[key]
-  const faces = [
-    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
-  ]
+export const updateCubeTexture = (gl, texture, val) => {
+  const { level, images, flip } = val
+
   gl.activeTexture(gl.TEXTURE0)
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
   gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
@@ -153,6 +147,15 @@ export const updateCubeTexture = (gl, texture, state, key) => {
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
   }
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, !!flip)
+
+  const faces = [
+    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+  ]
 
   let count = 0
   for (let i = 0; i < faces.length; i++) {
@@ -169,33 +172,24 @@ export const updateCubeTexture = (gl, texture, state, key) => {
   return texture
 }
 
-const init2DTexture = (gl, state, key) => {
+export const init2DTexture = (gl, val) => {
   const texture = gl.createTexture()
-  update2DTexutre(gl, texture, state, key)
+  update2DTexutre(gl, texture, val)
   return texture
 }
 
-const initCubeTexture = (gl, state, key) => {
+export const initCubeTexture = (gl, val) => {
   const texture = gl.createTexture()
-  updateCubeTexture(gl, texture, state, key)
+  updateCubeTexture(gl, texture, val)
   return texture
 }
 
 export const initTextures = (gl, state) => {
   const textures = {}
   Object.keys(state).forEach(key => {
-    // Offscreen Resource
-    if (state[key].constructor.name !== 'Object') {
-      const offscreenRes = state[key]
-      textures[key] = offscreenRes.state.depth
-        ? offscreenRes.depthTexture
-        : offscreenRes.colorTexture
-      return
-    }
-
     const texture = state[key].image
-      ? init2DTexture(gl, state, key)
-      : initCubeTexture(gl, state, key)
+      ? init2DTexture(gl, state[key])
+      : initCubeTexture(gl, state[key])
     textures[key] = texture
   })
 

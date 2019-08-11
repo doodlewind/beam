@@ -34,15 +34,23 @@ export const createResource = (gl, type, state) => {
     }
 
     set (key, val) {
-      const { state } = this
-      if (this.textures[key] && (state[key].image || state[key].images)) {
-        gl.deleteTexture(this.textures[key])
+      const { textures, state } = this
+      let texture
+      if (val.constructor.name !== 'Object') {
+        const offscreenTarget = val
+        texture = offscreenTarget.state.depth
+          ? offscreenTarget.depthTexture
+          : offscreenTarget.colorTexture
+      } else if (state[key]) {
+        texture = state[key].image // TODO ensure same target
+          ? glUtils.update2DTexutre(gl, textures[key], val)
+          : glUtils.updateCubeTexture(gl, textures[key], val)
+      } else {
+        texture = val.image
+          ? glUtils.init2DTexture(gl, val)
+          : glUtils.initCubeTexture(gl, val)
       }
-
-      this.textures = {
-        ...this.textures,
-        ...glUtils.initTextures(gl, { [key]: val })
-      }
+      textures[key] = texture
       state[key] = val
       return this
     }
