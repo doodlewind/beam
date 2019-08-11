@@ -18,53 +18,54 @@ canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas, rendererConfig)
 
 if (beam.gl.extensions.EXT_shader_texture_lod) {
-  PBRLighting.defines.USE_TEX_LOD = 1
+  PBRLighting.defines.USE_TEX_LOD = 1 // COMPAT Android fallback
 }
 const plugin = beam.plugin(PBRLighting)
 
 // Resources: data buffers and index buffer
 const ball = createBall()
-const dataResource = beam.resource(DataBuffers, ball.data)
-const indexResource = beam.resource(IndexBuffer, ball.index)
+const ballBuffers = [
+  beam.resource(DataBuffers, ball.data),
+  beam.resource(IndexBuffer, ball.index)
+]
 
 // Resources: camera and model matrices
 const baseEye = [0, 0, 10]
 const center = [0, 0, 0]
 const modelMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-const matrixResource = beam.resource(Uniforms, {
+const matrices = beam.resource(Uniforms, {
   u_Camera: baseEye,
   u_ModelMatrix: modelMat,
   u_MVPMatrix: computeMVPMat(modelMat, baseEye, center, canvas)
 })
 
 // Resources: point light states
-const pointLightsResource = beam.resource(Uniforms, createPointLights())
-pointLightsResource
+const pointLights = beam.resource(Uniforms, createPointLights())
+pointLights
   .set(`u_Lights[0].direction`, [1, 1, 1])
   .set(`u_Lights[0].strength`, 1)
 
 // Resources: material images
-const materialImagesResource = beam.resource(Textures, createMaterialImages())
+const materialMaps = beam.resource(Textures, createMaterialImages())
 
 // Resources: environment maps and BRDF map
-let brdfResource
-let envResource
+let brdfMap
+let envMaps
 
 // Resourecs: other options
-const optionResource = beam.resource(Uniforms, {
+const pbrOptions = beam.resource(Uniforms, {
   u_MetallicRoughnessValues: [0, 0]
 })
 
 const render = () => {
   const resources = [
-    dataResource,
-    indexResource,
-    brdfResource,
-    envResource,
-    pointLightsResource,
-    materialImagesResource,
-    matrixResource,
-    optionResource
+    ...ballBuffers,
+    brdfMap,
+    envMaps,
+    materialMaps,
+    matrices,
+    pointLights,
+    pbrOptions
   ]
   beam.clear().draw(plugin, ...resources)
 }
@@ -73,8 +74,8 @@ const base = '../../assets/'
 Promise.all([
   loadEnvMaps(base + 'ibl/helipad'), loadImages(base + 'ibl/brdfLUT.png')
 ]).then(([[diffuseMaps, specularMaps], [brdf]]) => {
-  brdfResource = beam.resource(Textures, { u_brdfLUT: { image: brdf } })
-  envResource = beam.resource(Textures, {
+  brdfMap = beam.resource(Textures, { u_brdfLUT: { image: brdf } })
+  envMaps = beam.resource(Textures, {
     u_DiffuseEnvSampler: diffuseMaps,
     u_SpecularEnvSampler: specularMaps
   })
@@ -91,7 +92,7 @@ const updateMats = () => {
   const cameraRotate = $cameraRotate.value
   const modelMat = computeModelMat(rx, ry, rz)
   const eye = computeEye(baseEye, cameraRotate)
-  matrixResource
+  matrices
     .set('u_ModelMatrix', modelMat)
     .set('u_Camera', eye)
     .set('u_MVPMatrix', computeMVPMat(modelMat, eye, center, canvas))
@@ -106,7 +107,7 @@ const $metallic = document.getElementById('metallic')
 const $roughness = document.getElementById('roughness')
 const updateMetalRoughness = () => {
   const mr = [$metallic.value, $roughness.value]
-  optionResource.set('u_MetallicRoughnessValues', mr)
+  pbrOptions.set('u_MetallicRoughnessValues', mr)
   render()
 }
 $metallic.addEventListener('input', updateMetalRoughness)
@@ -127,7 +128,7 @@ for (let i = 0; i < 1; i++) {
       parseInt(hex.slice(3, 5), 16) / 256,
       parseInt(hex.slice(5, 7), 16) / 256
     ]
-    pointLightsResource
+    pointLights
       .set(`u_Lights[${i}].direction`, direction)
       .set(`u_Lights[${i}].strength`, $lightStrength.value)
       .set(`u_Lights[${i}].color`, rgb)

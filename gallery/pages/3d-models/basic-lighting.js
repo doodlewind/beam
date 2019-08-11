@@ -12,20 +12,17 @@ canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)
 const plugin = beam.plugin(LambertLighting)
-const camera = createCamera({ eye: [0, 6, 6] }, { canvas })
-const matrixResource = beam.resource(Uniforms, camera)
-const lightResource = beam.resource(Uniforms)
-let dataResource
-let indexResource
+const cameraMats = createCamera({ eye: [0, 6, 6] }, { canvas })
+const matrices = beam.resource(Uniforms, cameraMats)
+const light = beam.resource(Uniforms)
+const modelBuffers = []
 
-const render = () => beam.clear().draw(
-  plugin, dataResource, indexResource, matrixResource, lightResource
-)
+const render = () => beam.clear().draw(plugin, ...modelBuffers, matrices, light)
 
 fetch('../../assets/models/bunny.obj').then(resp => resp.text()).then(str => {
   const [model] = parseOBJ(str)
-  dataResource = beam.resource(DataBuffers, model.data)
-  indexResource = beam.resource(IndexBuffer, model.index)
+  modelBuffers[0] = beam.resource(DataBuffers, model.data)
+  modelBuffers[1] = beam.resource(IndexBuffer, model.index)
   render()
 })
 
@@ -39,7 +36,7 @@ const $modelZ = document.getElementById('model-z')
     rotate(modelMat, modelMat, rx / 180 * Math.PI, [1, 0, 0])
     rotate(modelMat, modelMat, ry / 180 * Math.PI, [0, 1, 0])
     rotate(modelMat, modelMat, rz / 180 * Math.PI, [0, 0, 1])
-    matrixResource.set('modelMat', modelMat)
+    matrices.set('modelMat', modelMat)
     render()
   })
 })
@@ -50,14 +47,14 @@ const $dirZ = document.getElementById('dir-z')
 ;[$dirX, $dirY, $dirZ].forEach(input => {
   input.addEventListener('input', () => {
     const [dx, dy, dz] = [$dirX.value, $dirY.value, $dirZ.value]
-    lightResource.set('dirLight.direction', [dx, dy, dz])
+    light.set('dirLight.direction', [dx, dy, dz])
     render()
   })
 })
 
 const $dirStrength = document.getElementById('dir-strength')
 $dirStrength.addEventListener('input', () => {
-  lightResource.set('dirLight.strength', $dirStrength.value)
+  light.set('dirLight.strength', $dirStrength.value)
   render()
 })
 
@@ -69,6 +66,6 @@ $dirColor.addEventListener('input', () => {
     parseInt(hex.slice(3, 5), 16) / 256,
     parseInt(hex.slice(5, 7), 16) / 256
   ]
-  lightResource.set('dirLight.color', rgb)
+  light.set('dirLight.color', rgb)
   render()
 })
