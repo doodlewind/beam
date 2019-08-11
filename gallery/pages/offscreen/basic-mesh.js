@@ -13,9 +13,7 @@ const {
 const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
-const beam = new Beam(canvas, {
-  extensions: ['OES_element_index_uint', 'WEBGL_depth_texture']
-})
+const beam = new Beam(canvas)
 beam.define(Offscreen2DCommand)
 window.beam = beam
 const lightingPlugin = beam.plugin(LambertLighting)
