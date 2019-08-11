@@ -47,6 +47,8 @@ export const loadEnvMaps = (
 
   Promise.all(loadPromises).then(imageGroups => {
     imageGroups.forEach((images, i) => { cubeMaps[i].images = images })
+    delete cubeMaps[0].type
+    delete cubeMaps[1].type
     resolve(cubeMaps)
   })
 })
