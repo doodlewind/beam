@@ -19,36 +19,40 @@ window.beam = beam
 const lightingPlugin = beam.plugin(LambertLighting)
 const imagePlugin = beam.plugin(OriginalImage)
 
-const camera = createCamera({ eye: [0, 0, 50] }, { canvas })
-const matRes = beam.resource(Uniforms, camera)
-const lightRes = beam.resource(Uniforms)
-lightRes.set('dirLight.direction', [0, 0, 1])
+const cameraMats = createCamera({ eye: [0, 0, 50] }, { canvas })
+const matrices = beam.resource(Uniforms, cameraMats)
+const light = beam.resource(Uniforms)
+light.set('dirLight.direction', [0, 0, 1])
 
 const ball = createBall()
 const rect = createRect([0, 0, -3], 1, 5)
 const graphics = mergeGraphics(ball, rect)
-const dataRes = beam.resource(DataBuffers, graphics.data)
-const indexRes = beam.resource(IndexBuffer, graphics.index)
+const graphicsBuffers = [
+  beam.resource(DataBuffers, graphics.data),
+  beam.resource(IndexBuffer, graphics.index)
+]
 
-const offscreenRes = beam.resource(Offscreen)
-const imgRes = beam.resource(Textures)
-imgRes.set('img', offscreenRes)
+const offscreen = beam.resource(Offscreen)
+const textures = beam.resource(Textures)
+textures.set('img', offscreen)
 
 // screen quad
 const quad = createRect()
-const quadDataRes = beam.resource(DataBuffers, quad.data)
-const quadIndexRes = beam.resource(IndexBuffer, quad.index)
+const quadBuffers = [
+  beam.resource(DataBuffers, quad.data),
+  beam.resource(IndexBuffer, quad.index)
+]
 
 const render = () => {
   beam.clear()
-  beam.offscreen2D(offscreenRes, () => {
+  beam.offscreen2D(offscreen, () => {
     // beam.clear() here will set wrong gl.viewport
-    beam.draw(lightingPlugin, dataRes, indexRes, matRes, lightRes)
+    beam.draw(lightingPlugin, ...graphicsBuffers, matrices, light)
   })
-  beam.draw(imagePlugin, quadDataRes, quadIndexRes, imgRes)
+  beam.draw(imagePlugin, ...quadBuffers, textures)
 
   // default draw to screen
-  // beam.clear().draw(lightingPlugin, dataRes, indexRes, matRes, lightRes)
+  // beam.clear().draw(lightingPlugin, ...graphicsBuffers, matrices, light)
 }
 
 render()
@@ -63,7 +67,7 @@ const $modelZ = document.getElementById('model-z')
     rotate(modelMat, modelMat, rx / 180 * Math.PI, [1, 0, 0])
     rotate(modelMat, modelMat, ry / 180 * Math.PI, [0, 1, 0])
     rotate(modelMat, modelMat, rz / 180 * Math.PI, [0, 0, 1])
-    matRes.set('modelMat', modelMat)
+    matrices.set('modelMat', modelMat)
     render()
   })
 })
@@ -74,14 +78,14 @@ const $dirZ = document.getElementById('dir-z')
 ;[$dirX, $dirY, $dirZ].forEach(input => {
   input.addEventListener('input', () => {
     const [dx, dy, dz] = [$dirX.value, $dirY.value, $dirZ.value]
-    lightRes.set('dirLight.direction', [dx, dy, dz])
+    light.set('dirLight.direction', [dx, dy, dz])
     render()
   })
 })
 
 const $dirStrength = document.getElementById('dir-strength')
 $dirStrength.addEventListener('input', () => {
-  lightRes.set('dirLight.strength', $dirStrength.value)
+  light.set('dirLight.strength', $dirStrength.value)
   render()
 })
 
@@ -93,6 +97,6 @@ $dirColor.addEventListener('input', () => {
     parseInt(hex.slice(3, 5), 16) / 256,
     parseInt(hex.slice(5, 7), 16) / 256
   ]
-  lightRes.set('dirLight.color', rgb)
+  light.set('dirLight.color', rgb)
   render()
 })

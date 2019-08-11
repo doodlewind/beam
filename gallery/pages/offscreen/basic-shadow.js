@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { CheckDepth, ShadowLighting, VoidDepth } from './shadow-plugins.js'
+import { InspectDepth, ShadowLighting, VoidDepth } from './shadow-plugins.js'
 import { createBall, createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate, multiply } from '../../utils/mat4.js'
@@ -26,19 +26,20 @@ const lightingPlugin = beam.plugin(ShadowLighting)
 
 const ball = createBall()
 const plane = createRect([10, 5, -5], 1, 15)
-const planeData = beam.resource(DataBuffers, plane.data)
-const planeIndex = beam.resource(IndexBuffer, plane.index)
+const planeBuffers = [
+  beam.resource(DataBuffers, plane.data),
+  beam.resource(IndexBuffer, plane.index)
+]
+const ballBuffers = [
+  beam.resource(DataBuffers, ball.data),
+  beam.resource(IndexBuffer, ball.index)
+]
 
-const ballData = beam.resource(DataBuffers, ball.data)
-const ballIndex = beam.resource(IndexBuffer, ball.index)
-
-const offscreenRes = beam.resource(Offscreen, {
-  depth: true, init: initOffscreen
-})
-const imgRes = beam.resource(Textures)
-const shadowMap = beam.resource(Textures)
-imgRes.set('img', offscreenRes)
-shadowMap.set('shadowMap', offscreenRes)
+const offscreen = beam.resource(Offscreen, { depth: true, init: initOffscreen })
+const textures = beam.resource(Textures)
+textures
+  .set('img', offscreen)
+  .set('shadowMap', offscreen)
 
 // screen quad
 const quadRect = createRect()
@@ -61,31 +62,31 @@ uniforms.set('dirLight.direction', lightDir)
 
 const drawDepth = () => {
   uniforms.set('modelMat', create())
-  beam.draw(voidDepthPlugin, planeData, planeIndex, uniforms)
+  beam.draw(voidDepthPlugin, ...planeBuffers, uniforms)
   for (let i = 1; i < 10; i++) {
     for (let j = 1; j < 10; j++) {
       const modelMat = translate([], baseModelMat, [i * 2, j * 2, 0])
       uniforms.set('modelMat', modelMat)
-      beam.draw(voidDepthPlugin, ballData, ballIndex, uniforms)
+      beam.draw(voidDepthPlugin, ...ballBuffers, uniforms)
     }
   }
 }
 
 const drawLighting = () => {
   uniforms.set('modelMat', create())
-  beam.draw(lightingPlugin, planeData, planeIndex, shadowMap, uniforms)
+  beam.draw(lightingPlugin, ...planeBuffers, textures, uniforms)
   for (let i = 1; i < 10; i++) {
     for (let j = 1; j < 10; j++) {
       const modelMat = translate([], baseModelMat, [i * 2, j * 2, 0])
       uniforms.set('modelMat', modelMat)
-      beam.draw(lightingPlugin, ballData, ballIndex, shadowMap, uniforms)
+      beam.draw(lightingPlugin, ...ballBuffers, textures, uniforms)
     }
   }
 }
 
 const render = () => {
   beam.clear()
-  beam.offscreen2D(offscreenRes, () => {
+  beam.offscreen2D(offscreen, () => {
     uniforms
       .set('viewMat', shadowCamera.viewMat)
       .set('projectionMat', shadowCamera.projectionMat)
@@ -106,10 +107,10 @@ render()
 
 const SHOW_DEPTH = false // for debug
 if (SHOW_DEPTH) {
-  CheckDepth.defines.USE_ORTHO = true
-  const checkDepthPlugin = beam.plugin(CheckDepth)
+  InspectDepth.defines.USE_ORTHO = true
+  const inspectDepthPlugin = beam.plugin(InspectDepth)
   // for perspective, tweak nearPlane and farPlane uniforms
-  beam.draw(checkDepthPlugin, quadDataRes, quadIndexRes, uniforms, imgRes)
+  beam.draw(inspectDepthPlugin, quadDataRes, quadIndexRes, uniforms, textures)
 }
 
 const $dirX = document.getElementById('dir-x')

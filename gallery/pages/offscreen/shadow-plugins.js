@@ -3,7 +3,7 @@ import { SchemaTypes } from '../../../src/index.js'
 const { vec2, vec3, vec4, mat4, float, tex2D } = SchemaTypes
 const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 
-const checkDepthVS = `
+const inspectDepthVS = `
 attribute vec4 position;
 attribute vec2 texCoord;
 
@@ -15,7 +15,7 @@ void main() {
 }
 `
 
-const checkDepthFS = `
+const inspectDepthFS = `
 precision highp float;
 uniform sampler2D img;
 
@@ -42,9 +42,9 @@ void main() {
 }
 `
 
-export const CheckDepth = {
-  vs: checkDepthVS,
-  fs: checkDepthFS,
+export const InspectDepth = {
+  vs: inspectDepthVS,
+  fs: inspectDepthFS,
   defines: {
     USE_ORTHO: false
   },
