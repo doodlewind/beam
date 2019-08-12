@@ -10,7 +10,8 @@ attribute vec2 texCoord;
 uniform mat4 viewMat;
 uniform mat4 projectionMat;
 uniform mat4 rotateMat;
-uniform float iTime;
+uniform float progress;
+uniform float aspectRatio;
 
 varying vec2 vTexCoord;
 
@@ -22,7 +23,7 @@ float rand(vec2 co) {
 
 void main() {
   vec3 dir = normalize(vec3(center, 0) * rand(center) - camera);
-  vec3 translatedPos = vec3(position, 0) + dir * iTime;
+  vec3 translatedPos = vec3(position.x * aspectRatio, position.y, 0) + dir * progress;
   vec4 mvpPos = projectionMat * viewMat * vec4(translatedPos, 1);
 
   vTexCoord = texCoord;
@@ -33,10 +34,13 @@ void main() {
 const fs = `
 precision highp float;
 uniform sampler2D img;
+uniform float progress;
+
 varying highp vec2 vTexCoord;
 
 void main() {
-  gl_FragColor = texture2D(img, vTexCoord);
+  float a = 1.0 - progress / 16.0;
+  gl_FragColor = vec4(texture2D(img, vTexCoord).rgb * a, 1.0);
 }
 `
 
@@ -51,7 +55,8 @@ export const ImageExplode = {
     texCoord: { type: vec2 }
   },
   uniforms: {
-    iTime: { type: float, default: 0 },
+    progress: { type: float, default: 0 },
+    aspectRatio: { type: float, default: 1 },
     viewMat: { type: mat4 },
     projectionMat: { type: mat4 }
   },
