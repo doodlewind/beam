@@ -13,7 +13,7 @@ const beam = new Beam(canvas)
 
 const plugin = beam.plugin(ImageExplode)
 const buffers = []
-const cameraMats = createCamera({ eye: [0, 0, 5] }, { canvas })
+const cameraMats = createCamera({ eye: [0, 0, 8] }, { canvas })
 const options = beam.resource(Uniforms, cameraMats)
 const textures = beam.resource(Textures)
 
@@ -22,8 +22,9 @@ const tick = () => {
   options.set('iTime', i)
   i += 0.05
 
-  beam.clear().draw(plugin, ...buffers, options, textures)
-  requestAnimationFrame(tick) // for debug, comment this out
+  beam.clear([0, 0, 0, 1]).draw(plugin, ...buffers, options, textures)
+
+  // requestAnimationFrame(tick) // for debug, comment this out
 }
 
 loadImages('../../assets/images/ivan.jpg').then(([image]) => {
@@ -34,4 +35,16 @@ loadImages('../../assets/images/ivan.jpg').then(([image]) => {
   buffers[1] = beam.resource(IndexBuffer, particles.index)
   textures.set('img', { image, flip: true })
   tick()
+})
+
+const $pause = document.getElementById('pause')
+$pause.addEventListener('click', () => {
+  debugger // eslint-disable-line
+})
+
+const $groups = [0, 1, 2, 3].map(i => document.getElementById(`group-${i}`))
+const $imageCount = document.getElementById('image-count')
+$imageCount.addEventListener('input', () => {
+  const count = parseInt($imageCount.value)
+  for (let i = 0; i < 4; i++) $groups[i].hidden = (i >= count)
 })

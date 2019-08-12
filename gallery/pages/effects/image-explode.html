@@ -4,11 +4,68 @@
   <head>
     <title>Demo</title>
     <style>
-      * { background: black; margin: auto 0; padding: 0; }
+      html, body { margin: auto 0; padding: 0; }
       body { height: 100vh; }
+      #control {
+        position: fixed; top: 0; right: 0; width: 300px;
+        padding: 10px; box-sizing: border-box;
+        background: white; opacity: 0.3; color: #666;
+      }
     </style>
   </head>
   <body>
+    <div id="control">
+      <button id="pause">Pause</button>
+      <br/>
+
+      <input type="range" min="2" max="4" value="0" step="1" id="image-count">
+      <label for="image-count">Images</label>
+      <br/>
+
+      <div id="group-0">
+        <select id="image-select-0">
+          <option value="ivan.jpg">Ivan</option>
+          <option value="jade.jpg">Jade</option>
+          <option value="prague.jpg">Prague</option>
+          <option value="xiaomi.jpg">Xiaomi</option>
+        </select>
+        <label for="image-select-0">Image 0</label>
+        <br/>
+      </div>
+
+      <div id="group-1">
+        <select id="image-select-1">
+          <option value="ivan.jpg">Ivan</option>
+          <option value="jade.jpg" selected>Jade</option>
+          <option value="prague.jpg">Prague</option>
+          <option value="xiaomi.jpg">Xiaomi</option>
+        </select>
+        <label for="image-select-1">Image 1</label>
+        <br/>
+      </div>
+
+      <div id="group-2" hidden>
+        <select id="image-select-2">
+          <option value="ivan.jpg">Ivan</option>
+          <option value="jade.jpg">Jade</option>
+          <option value="prague.jpg" selected>Prague</option>
+          <option value="xiaomi.jpg">Xiaomi</option>
+        </select>
+        <label for="image-select-2">Image 2</label>
+        <br/>
+      </div>
+
+      <div id="group-3" hidden>
+        <select id="image-select-3">
+          <option value="ivan.jpg">Ivan</option>
+          <option value="jade.jpg">Jade</option>
+          <option value="prague.jpg">Prague</option>
+          <option value="xiaomi.jpg" selected>Xiaomi</option>
+        </select>
+        <label for="image-select-3">Image 3</label>
+        <br/>
+      </div>
+    </div>
     <canvas></canvas>
     <script type="module" src="./image-explode.js"></script>
   </body>
