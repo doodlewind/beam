@@ -40,7 +40,7 @@ const tick = () => {
   time += 0.02
 
   render()
-  // requestAnimationFrame(tick) // for debug, comment this out
+  requestAnimationFrame(tick) // for debug, comment this out
 }
 
 const $imagesSelects = [0, 1, 2]
@@ -76,8 +76,14 @@ $pause.addEventListener('click', () => {
 const $particleCount = document.getElementById('particle-count')
 $particleCount.addEventListener('input', () => {
   const n = parseInt($particleCount.value)
-  console.log(n)
-  // buffers[0].set('')
+  const { data, index } = createParticles(n)
+  buffers[0]
+    .set('position', data.position)
+    .set('center', data.center)
+    .set('texCoord', data.texCoord)
+  buffers[1].set(index)
+
+  resetAnimation()
 })
 
 const $groups = [0, 1, 2].map(i => document.getElementById(`group-${i}`))

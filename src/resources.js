@@ -17,7 +17,7 @@ export const createResource = (gl, type, state) => {
     set (key, val) {
       this.state[key] = val
       glUtils.updateDataBuffer(gl, this.buffers[key], val)
-      return this 
+      return this
     }
 
     destroy (key) {
@@ -44,8 +44,8 @@ export const createResource = (gl, type, state) => {
     }
 
     destroy () {
-     glUtils.destroyIndexBuffer(gl, this.buffer)
-     delete this.state 
+      glUtils.destroyIndexBuffer(gl, this.buffer)
+      delete this.state
     }
   }
 
