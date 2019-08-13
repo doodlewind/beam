@@ -41,14 +41,14 @@ export const createParticles = (n = 1, aspectRatio = 1) => {
 }
 
 // HOF that generates a state setter for animation, based on the chosen images
-export const createAnimateStateGetter = images => {
+export const createAnimationStateGetter = images => {
   // [A, B, C] -> [A, A, B, B, C, C]
   const paddedImages = images
     .map(image => [image, image])
     .reduce((a, b) => [...a, ...b], [])
 
   // Returns a funtion that:
-  // Inputs linear incresing time, returns { progress, image } for next frame
+  // Inputs linear increasing time, returns state for next frame
   return time => {
     const SCALE = 8
     const cycle = Math.floor(time / Math.PI) // 0, 1, 2, 3, 4, 5, 6...

@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { ImageExplode } from './explode-plugin.js'
-import { createParticles, createAnimateStateGetter } from './explode-utils.js'
+import { createParticles, createAnimationStateGetter } from './explode-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'
 const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
@@ -19,23 +19,28 @@ const buffers = [
   beam.resource(IndexBuffer, particles.index)
 ]
 const cameraMats = createCamera({ eye: [0, 0, 8] }, { canvas })
-const options = beam.resource(Uniforms, cameraMats)
+const uniforms = beam.resource(Uniforms, cameraMats)
 const textures = beam.resource(Textures)
 
-let time = 0
 const names = ['ivan.jpg', 'prague.jpg', 'xiaomi.jpg']
 let images = []
+let time = 0
 let currentImage = null
-let animateStateGetter = () => {}
+let animationStateGetter = () => {}
 
-const render = () => beam.clear().draw(plugin, ...buffers, options, textures)
+const render = () => beam.clear().draw(plugin, ...buffers, uniforms, textures)
 
 const tick = () => {
-  const { progress, image } = animateStateGetter(time)
-  options
+  // Query animation state for each frame, based on time
+  const { progress, image } = animationStateGetter(time)
+
+  // Update WebGL resources
+  uniforms
     .set('progress', progress)
     .set('aspectRatio', image.width / image.height)
   if (image !== currentImage) textures.set('img', { image, flip: true })
+
+  // Update "current" states
   currentImage = image
   time += 0.02
 
@@ -46,30 +51,30 @@ const tick = () => {
 const $imagesSelects = [0, 1, 2]
   .map(i => document.getElementById(`image-select-${i}`))
 
-const resetAnimation = () => {
+const restartAnimation = () => {
   time = 0
   const count = parseInt($imageCount.value)
-  const subImages = []
+  const selectedImages = []
   for (let i = 0; i < count; i++) {
     const selecedName = $imagesSelects[i].value
-    subImages.push(images[names.indexOf(selecedName)])
+    selectedImages.push(images[names.indexOf(selecedName)])
   }
-  animateStateGetter = createAnimateStateGetter(subImages)
+  animationStateGetter = createAnimationStateGetter(selectedImages)
 }
 
 const main = () => {
   const paths = names.map(name => '../../assets/images/' + name)
+  // Begin animation after all images are loaded
   loadImages(...paths).then(_images => {
     images = _images
-    resetAnimation()
+    restartAnimation()
     tick()
   })
 }
 
 main()
 
-const $pause = document.getElementById('pause')
-$pause.addEventListener('click', () => {
+document.getElementById('pause').addEventListener('click', () => {
   debugger // eslint-disable-line
 })
 
@@ -83,7 +88,7 @@ $particleCount.addEventListener('input', () => {
     .set('texCoord', data.texCoord)
   buffers[1].set(index)
 
-  resetAnimation()
+  restartAnimation()
 })
 
 const $groups = [0, 1, 2].map(i => document.getElementById(`group-${i}`))
@@ -92,9 +97,9 @@ $imageCount.addEventListener('input', () => {
   const count = parseInt($imageCount.value)
   for (let i = 0; i < 3; i++) $groups[i].hidden = (i >= count)
 
-  resetAnimation()
+  restartAnimation()
 })
 
 $imagesSelects.forEach($select => {
-  $select.addEventListener('input', resetAnimation)
+  $select.addEventListener('input', restartAnimation)
 })
