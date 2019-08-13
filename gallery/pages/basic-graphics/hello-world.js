@@ -25,4 +25,5 @@ const dataBuffer = beam.resource(DataBuffers, {
 // Init index buffer resource with 3 indices
 const indexBuffer = beam.resource(IndexBuffer, { array: [0, 1, 2] })
 
+// Clear the screen, then draw a frame with plugin and buffer resources
 beam.clear().draw(plugin, dataBuffer, indexBuffer)
