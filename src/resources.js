@@ -13,6 +13,17 @@ export const createResource = (gl, type, state) => {
       super()
       this.buffers = glUtils.initDataBuffers(gl, state)
     }
+
+    set (key, val) {
+      this.state[key] = val
+      glUtils.updateDataBuffer(gl, this.buffers[key], val)
+      return this 
+    }
+
+    destroy (key) {
+      glUtils.destroyDataBuffer(gl, this.buffers[key])
+      delete this.state[key]
+    }
   }
 
   class IndexBufferResource extends Resource {
@@ -22,6 +33,19 @@ export const createResource = (gl, type, state) => {
       this.state.offset = offset
       this.state.count = count
       this.buffer = glUtils.initIndexBuffer(gl, state)
+    }
+
+    set (state) {
+      const { offset = 0, count = state.array.length } = state
+      this.state.offset = offset
+      this.state.count = count
+      glUtils.updateIndexBuffer(gl, this.buffer, state.array)
+      return this
+    }
+
+    destroy () {
+     glUtils.destroyIndexBuffer(gl, this.buffer)
+     delete this.state 
     }
   }
 
@@ -43,7 +67,7 @@ export const createResource = (gl, type, state) => {
           : offscreenTarget.colorTexture
       } else if (state[key]) {
         texture = state[key].image // TODO ensure same target
-          ? glUtils.update2DTexutre(gl, textures[key], val)
+          ? glUtils.update2DTexture(gl, textures[key], val)
           : glUtils.updateCubeTexture(gl, textures[key], val)
       } else {
         texture = val.image
@@ -53,6 +77,11 @@ export const createResource = (gl, type, state) => {
       textures[key] = texture
       state[key] = val
       return this
+    }
+
+    destroy (key) {
+      glUtils.destroyTexture(gl, this.textures[key])
+      delete this.state[key]
     }
   }
 

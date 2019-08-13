@@ -80,26 +80,66 @@ export const initDataBuffers = (gl, state) => {
   const bufferKeys = Object.keys(state)
   bufferKeys.forEach(key => {
     const buffer = gl.createBuffer()
-    const data = state[key] instanceof Float32Array
-      ? state[key] : new Float32Array(state[key])
     buffers[key] = buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
+    updateDataBuffer(gl, buffers[key], state[key])
   })
   return buffers
+}
+
+export const updateDataBuffer = (gl, buffer, array) => {
+  const data = array instanceof Float32Array
+    ? array : new Float32Array(array)
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
+}
+
+export const destroyDataBuffer = (gl, buffer) => {
+  gl.deleteBuffer(buffer)
 }
 
 export const initIndexBuffer = (gl, state) => {
   const { array } = state
   const buffer = gl.createBuffer()
+  updateIndexBuffer(gl, buffer, array)
+  return buffer
+}
+
+export const updateIndexBuffer = (gl, buffer, array) => {
   const data = array instanceof Uint32Array
     ? array : new Uint32Array(array)
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW)
-  return buffer
 }
 
-export const update2DTexutre = (gl, texture, val) => {
+export const destroyIndexBuffer = (gl, buffer) => {
+  gl.deleteBuffer(buffer)
+}
+
+export const init2DTexture = (gl, val) => {
+  const texture = gl.createTexture()
+  update2DTexture(gl, texture, val)
+  return texture
+}
+
+export const initCubeTexture = (gl, val) => {
+  const texture = gl.createTexture()
+  updateCubeTexture(gl, texture, val)
+  return texture
+}
+
+export const initTextures = (gl, state) => {
+  const textures = {}
+  Object.keys(state).forEach(key => {
+    const texture = state[key].image
+      ? init2DTexture(gl, state[key])
+      : initCubeTexture(gl, state[key])
+    textures[key] = texture
+  })
+
+  return textures
+}
+
+export const update2DTexture = (gl, texture, val) => {
   const { flip, image, repeat } = val
 
   gl.activeTexture(gl.TEXTURE0)
@@ -172,28 +212,8 @@ export const updateCubeTexture = (gl, texture, val) => {
   return texture
 }
 
-export const init2DTexture = (gl, val) => {
-  const texture = gl.createTexture()
-  update2DTexutre(gl, texture, val)
-  return texture
-}
-
-export const initCubeTexture = (gl, val) => {
-  const texture = gl.createTexture()
-  updateCubeTexture(gl, texture, val)
-  return texture
-}
-
-export const initTextures = (gl, state) => {
-  const textures = {}
-  Object.keys(state).forEach(key => {
-    const texture = state[key].image
-      ? init2DTexture(gl, state[key])
-      : initCubeTexture(gl, state[key])
-    textures[key] = texture
-  })
-
-  return textures
+export const destroyTexture = (gl, texture) => {
+  gl.deleteTexture(texture)
 }
 
 export const initOffscreen = (gl, state) => {

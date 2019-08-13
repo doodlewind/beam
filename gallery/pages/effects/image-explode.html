@@ -18,8 +18,18 @@
       <button id="pause">Pause</button>
       <br/>
 
-      <input type="range" min="2" max="3" value="0" step="1" id="image-count">
-      <label for="image-count">Images</label>
+      <select id="particle-count">
+        <option value="2">4</option>
+        <option value="10">100</option>
+        <option value="32">1024</option>
+        <option value="100" selected>10000</option>
+        <option value="200">40000</option>
+      </select>
+      <label for="particle-count">Particle Count</label>
+      <br/>
+
+      <input type="range" min="1" max="3" value="1" step="1" id="image-count">
+      <label for="image-count">Image Count</label>
       <br/>
 
       <div id="group-0">
@@ -32,7 +42,7 @@
         <br/>
       </div>
 
-      <div id="group-1">
+      <div id="group-1" hidden>
         <select id="image-select-1">
           <option value="ivan.jpg">Ivan</option>
           <option value="prague.jpg" selected>Prague</option>

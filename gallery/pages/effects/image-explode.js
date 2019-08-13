@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { ImageExplode } from './explode-plugin.js'
-import { createParticles, createAnimateStateGetter } from './utils.js'
+import { createParticles, createAnimateStateGetter } from './explode-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'
 const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
@@ -40,7 +40,7 @@ const tick = () => {
   time += 0.02
 
   render()
-  requestAnimationFrame(tick) // for debug, comment this out
+  // requestAnimationFrame(tick) // for debug, comment this out
 }
 
 const $imagesSelects = [0, 1, 2]
@@ -71,6 +71,13 @@ main()
 const $pause = document.getElementById('pause')
 $pause.addEventListener('click', () => {
   debugger // eslint-disable-line
+})
+
+const $particleCount = document.getElementById('particle-count')
+$particleCount.addEventListener('input', () => {
+  const n = parseInt($particleCount.value)
+  console.log(n)
+  // buffers[0].set('')
 })
 
 const $groups = [0, 1, 2].map(i => document.getElementById(`group-${i}`))

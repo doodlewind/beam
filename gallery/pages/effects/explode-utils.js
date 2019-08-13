@@ -50,10 +50,11 @@ export const createAnimateStateGetter = images => {
   // Returns a funtion that:
   // Inputs linear incresing time, returns { progress, image } for next frame
   return time => {
-    const scale = 8
+    const SCALE = 8
     const cycle = Math.floor(time / Math.PI) // 0, 1, 2, 3, 4, 5, 6...
     return {
-      progress: (Math.sin(time - Math.PI / 2) + 1) * scale,
+      // starts from 0 and ranges from 0 to SCALE
+      progress: (Math.sin(time - Math.PI / 2) + 1) * SCALE,
       image: paddedImages[(cycle + 1) % paddedImages.length]
     }
   }
