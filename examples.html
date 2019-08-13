@@ -34,6 +34,7 @@ iframe { flex: 1; height: 100vh; }
 
       <h4>Basic Graphics</h4>
       <ul>
+        <li>Hello World</li>
         <li>Basic Ball</li>
         <li>Zooming Ball</li>
         <li>Multi Balls</li>
@@ -82,7 +83,7 @@ iframe { flex: 1; height: 100vh; }
 const iframe = document.querySelector('iframe')
 iframe.src = window.location.hash
   ? './gallery/pages/' + window.location.hash.replace('#', '') + '.html'
-  : './gallery/pages/basic-graphics/basic-ball.html'
+  : './gallery/pages/basic-graphics/hello-world.html'
 
 const toKebab = str => str.split(' ').map(x => x.toLowerCase()).join('-')
 const toSrc = (title, li) => `${toKebab(title)}/${toKebab(li)}`

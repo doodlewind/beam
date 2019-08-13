@@ -1,5 +1,36 @@
 import { SchemaTypes, GLTypes } from '../../src/index.js'
 
+const colorVS = `
+attribute vec4 position;
+attribute vec4 color;
+
+varying highp vec4 vColor;
+
+void main() {
+  vColor = color;
+  gl_Position = position;
+}
+`
+
+const colorFS = `
+varying highp vec4 vColor;
+
+void main() {
+  gl_FragColor = vColor;
+}
+`
+
+const { vec4 } = SchemaTypes
+
+export const PolygonColor = {
+  vs: colorVS,
+  fs: colorFS,
+  buffers: {
+    position: { type: vec4, n: 3 },
+    color: { type: vec4, n: 3 }
+  }
+}
+
 const normalVS = `
 attribute vec4 position;
 attribute vec4 normal;
@@ -16,16 +47,11 @@ void main() {
 }
 `
 
-const normalFS = `
-varying highp vec4 vColor;
+const normalFS = colorFS
 
-void main() {
-  gl_FragColor = vColor;
-}
-`
-
-const { vec2, vec4, mat4, tex2D } = SchemaTypes
 const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+
+const { vec2, mat4, tex2D } = SchemaTypes
 
 export const NormalColor = {
   vs: normalVS,
