@@ -10,7 +10,7 @@ const beam = new Beam(canvas)
 const plugin = beam.plugin(PolygonColor)
 
 // Init data buffer resource with triangle positions and colors
-const dataBuffer = beam.resource(DataBuffers, {
+const dataBuffers = beam.resource(DataBuffers, {
   position: [
     -1, -1, 0, // vertex 0
     0, 1, 0, // vertex 1
@@ -26,4 +26,4 @@ const dataBuffer = beam.resource(DataBuffers, {
 const indexBuffer = beam.resource(IndexBuffer, { array: [0, 1, 2] })
 
 // Clear the screen, then draw a frame with plugin and buffer resources
-beam.clear().draw(plugin, dataBuffer, indexBuffer)
+beam.clear().draw(plugin, dataBuffers, indexBuffer)
