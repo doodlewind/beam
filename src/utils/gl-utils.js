@@ -325,6 +325,6 @@ export const draw = (
     if (val !== undefined || isTexure) uniformSetterMapping[type]()
   })
 
-  const drawMode = schema.mode === GLTypes.triangles ? gl.TRIANGLES : gl.LINES
+  const drawMode = schema.mode === GLTypes.Triangles ? gl.TRIANGLES : gl.LINES
   gl.drawElements(drawMode, count, gl.UNSIGNED_INT, offset * 4)
 }

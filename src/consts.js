@@ -20,11 +20,11 @@ export const SchemaTypes = {
 }
 
 export const GLTypes = {
-  triangles: 'triangles',
-  lines: 'lines',
-  rgb: 'rgb',
-  rgba: 'rgba',
-  srgb: 'srgb'
+  Triangles: 'Triangles',
+  Lines: 'Lines',
+  RGB: 'RGB',
+  RGBA: 'RGBA',
+  SRGB: 'SRGB'
 }
 
 export const RendererConfig = {

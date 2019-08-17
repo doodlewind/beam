@@ -9,7 +9,7 @@ export class ShadePlugin {
       buffers = {},
       uniforms = {},
       textures = {},
-      mode = GLTypes.triangles
+      mode = GLTypes.Triangles
     } = pluginTemplate
     this.schema = { buffers, uniforms, textures, mode }
 

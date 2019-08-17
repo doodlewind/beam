@@ -96,7 +96,7 @@ export const RedWireframe = {
     viewMat: { type: mat4 },
     projectionMat: { type: mat4 }
   },
-  mode: GLTypes.lines
+  mode: GLTypes.Lines
 }
 
 const imageVS = `

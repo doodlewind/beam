@@ -29,3 +29,12 @@ $scale.addEventListener('input', () => {
   uniforms.set('scale', scale)
   render()
 })
+
+const $magFilter = document.getElementById('mag-filtering-select')
+$magFilter.addEventListener('input', () => {
+  console.log($magFilter.value)
+})
+const $minFilter = document.getElementById('min-filtering-select')
+$minFilter.addEventListener('input', () => {
+  console.log($minFilter.value)
+})
