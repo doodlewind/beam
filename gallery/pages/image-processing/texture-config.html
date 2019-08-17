@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Demo</title>
+    <style>
+      * { margin: auto 0; padding: 0; }
+      body {
+        display: flex; justify-content: center; align-items: center;
+        height: 100vh;
+      }
+      #control {
+        position: fixed; top: 0; right: 0; width: 300px;
+        padding: 10px; box-sizing: border-box;
+        background: white; opacity: 0.3; color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="control">
+      <input type="range" min="0" max="2" value="1" step="0.01" id="scale">
+      <label for="scale">Scale</label>
+    </div>
+    <canvas width="400" height="400"></canvas>
+    <script type="module" src="./texture-config.js"></script>
+  </body>
+</html>
