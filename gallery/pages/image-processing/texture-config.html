@@ -17,6 +17,29 @@
   </head>
   <body>
     <div id="control">
+      <select id="wrap-select">
+        <option value="repeat">Repeat</option>
+        <option value="mirrored-repeat">Mirrored Repeat</option>
+        <option value="clamp-to-edge">Clamp to Edge</option>
+        <option value="clamp-to-border">Clamp to Border</option>
+      </select>
+      <label for="wrap-select">Wrap</label>
+      <br/>
+
+      <select id="mag-filtering-select">
+        <option value="nearest">Nearest</option>
+        <option value="linear">Linear</option>
+      </select>
+      <label for="mag-filtering-select">Mag Filtering</label>
+      <br/>
+
+      <select id="min-filtering-select">
+        <option value="nearest">Nearest</option>
+        <option value="linear">Linear</option>
+      </select>
+      <label for="min-filtering-select">Min Filtering</label>
+      <br/>
+
       <input type="range" min="0" max="2" value="1" step="0.01" id="scale">
       <label for="scale">Scale</label>
     </div>
