@@ -1,12 +1,10 @@
-import { Beam, ResourceTypes } from '../../../src/index.js'
+import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
 import { InspectDepth, ShadowLighting, VoidDepth } from './shadow-plugins.js'
 import { createBall, createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate, multiply } from '../../utils/mat4.js'
 import { subtract } from '../../utils/vec3.js'
-import {
-  initOffscreen, Offscreen2DCommand, createShadowCamera
-} from './utils.js'
+import { createShadowCamera } from './utils.js'
 const {
   DataBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
 } = ResourceTypes
@@ -14,11 +12,7 @@ const {
 const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
-const beam = new Beam(canvas, {
-  extensions: [
-    'OES_element_index_uint', 'WEBGL_depth_texture'
-  ]
-})
+const beam = new Beam(canvas)
 
 beam.define(Offscreen2DCommand)
 const voidDepthPlugin = beam.plugin(VoidDepth)
@@ -35,9 +29,7 @@ const ballBuffers = [
   beam.resource(IndexBuffer, ball.index)
 ]
 
-const offscreenTarget = beam.resource(
-  OffscreenTarget, { depth: true, init: initOffscreen }
-)
+const offscreenTarget = beam.resource(OffscreenTarget, { depth: true })
 const textures = beam.resource(Textures)
 textures
   .set('img', offscreenTarget)

@@ -38,5 +38,5 @@ export const GLTypes = {
 
 export const RendererConfig = {
   contextAttributes: {},
-  extensions: ['OES_element_index_uint']
+  extensions: ['OES_element_index_uint', 'WEBGL_depth_texture']
 }

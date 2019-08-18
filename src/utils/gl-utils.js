@@ -269,11 +269,11 @@ export const destroyTexture = (gl, texture) => {
   gl.deleteTexture(texture)
 }
 
-export const initOffscreen = (gl, state) => {
+const initColorOffscreen = (gl, state) => {
   const fbo = gl.createFramebuffer()
   const rbo = gl.createRenderbuffer()
   const colorTexture = gl.createTexture()
-  const depthTexture = null // TODO
+  const depthTexture = null
 
   const { size } = state
   gl.bindTexture(gl.TEXTURE_2D, colorTexture)
@@ -304,6 +304,58 @@ export const initOffscreen = (gl, state) => {
   gl.bindRenderbuffer(gl.RENDERBUFFER, null)
 
   return { fbo, rbo, colorTexture, depthTexture }
+}
+
+const initDepthOffscreen = (gl, state) => {
+  const { size } = state
+
+  const fbo = gl.createFramebuffer()
+  const rbo = null
+  const colorTexture = gl.createTexture()
+  const depthTexture = gl.createTexture()
+
+  gl.bindTexture(gl.TEXTURE_2D, colorTexture)
+  gl.texImage2D(
+    gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
+  )
+
+  gl.bindTexture(gl.TEXTURE_2D, depthTexture)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.DEPTH_COMPONENT,
+    size,
+    size,
+    0,
+    gl.DEPTH_COMPONENT,
+    gl.UNSIGNED_SHORT,
+    null
+  )
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+  gl.framebufferTexture2D(
+    gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colorTexture, 0
+  )
+  gl.framebufferTexture2D(
+    gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0
+  )
+
+  const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
+  if (e !== gl.FRAMEBUFFER_COMPLETE) {
+    console.error('framebuffer not complete', e.toString())
+  }
+
+  gl.bindTexture(gl.TEXTURE_2D, null)
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+  return { fbo, rbo, colorTexture, depthTexture }
+}
+
+export const initOffscreen = (gl, state) => {
+  if (state.depth) return initDepthOffscreen(gl, state)
+  else return initColorOffscreen(gl, state)
 }
 
 const padDefault = (schema, key, val) => {

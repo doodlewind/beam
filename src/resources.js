@@ -98,13 +98,9 @@ export const createResource = (gl, type, state) => {
       super()
       const { size = 2048 } = this.state
       this.state.size = size
-      const init = state.init || glUtils.initOffscreen
       const {
-        fbo,
-        rbo,
-        colorTexture,
-        depthTexture
-      } = init(gl, state)
+        fbo, rbo, colorTexture, depthTexture
+      } = glUtils.initOffscreen(gl, state)
       this.fbo = fbo
       this.rbo = rbo
       this.colorTexture = colorTexture
