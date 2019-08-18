@@ -1,4 +1,4 @@
-import { SchemaTypes, GLTypes } from '../consts.js'
+import { SchemaTypes, GLTypes as GL } from '../consts.js'
 import * as miscUtils from './misc-utils.js'
 
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
@@ -115,6 +115,40 @@ export const destroyIndexBuffer = (gl, buffer) => {
   gl.deleteBuffer(buffer)
 }
 
+const compatSRGB = gl => {
+  const { extensions } = gl
+  return !isSafari && extensions.EXT_SRGB
+    ? extensions.EXT_SRGB.SRGB_EXT
+    : gl.RGBA
+}
+
+const compatSRGBA = gl => {
+  const { extensions } = gl
+  return !isSafari && extensions.EXT_SRGB
+    ? extensions.EXT_SRGB.SRGB_ALPHA_EXT
+    : gl.RGBA
+}
+
+// Hard coded for faster lookup
+const nativeTypeHOF = gl => type => {
+  const map = {
+    [GL.Repeat]: gl.REPEAT,
+    [GL.MirroredRepeat]: gl.MIRRORED_REPEAT,
+    [GL.ClampToEdge]: gl.CLAMP_TO_EDGE,
+    [GL.Linear]: gl.LINEAR,
+    [GL.Nearest]: gl.NEAREST,
+    [GL.NearestMipmapNearest]: gl.NEAREST_MIPMAP_NEAREST,
+    [GL.LinearMipmapNearest]: gl.LINEAR_MIPMAP_NEAREST,
+    [GL.NearestMipmapLinear]: gl.NEAREST_MIPMAP_LINEAR,
+    [GL.LinearMipmapLinear]: gl.LINEAR_MIPMAP_LINEAR,
+    [GL.RGB]: gl.RGB,
+    [GL.RGBA]: gl.RGBA,
+    [GL.SRGB]: compatSRGB(gl),
+    [GL.SRGBA]: compatSRGBA(gl)
+  }
+  return map[type]
+}
+
 export const init2DTexture = (gl, val) => {
   const texture = gl.createTexture()
   update2DTexture(gl, texture, val)
@@ -139,74 +173,93 @@ export const initTextures = (gl, state) => {
   return textures
 }
 
+const supportMipmap = image => (
+  image &&
+  miscUtils.isPowerOf2(image.width) &&
+  miscUtils.isPowerOf2(image.height) &&
+  image.nodeName !== 'VIDEO'
+)
+
 export const update2DTexture = (gl, texture, val) => {
-  const { flip, image, repeat } = val
+  const native = nativeTypeHOF(gl)
+  const { image, flip, space } = val
+  let { wrapS, wrapT, minFilter, magFilter } = val
 
   gl.activeTexture(gl.TEXTURE0)
   gl.bindTexture(gl.TEXTURE_2D, texture)
 
-  const space = gl.RGBA
-  if (flip) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
-  gl.texImage2D(gl.TEXTURE_2D, 0, space, space, gl.UNSIGNED_BYTE, image)
+  // Image may not be provided when updating texture params
+  if (image) {
+    if (flip) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
+    const s = native(space || GL.RGBA)
+    gl.texImage2D(gl.TEXTURE_2D, 0, s, s, gl.UNSIGNED_BYTE, image)
+    if (supportMipmap(image)) gl.generateMipmap(gl.TEXTURE_2D)
 
-  const { isPowerOf2 } = miscUtils
-  if (
-    image && isPowerOf2(image.width) && isPowerOf2(image.height) &&
-    image.nodeName !== 'VIDEO'
-  ) {
-    gl.generateMipmap(gl.TEXTURE_2D)
-    if (!repeat) {
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-    } else {
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
+    // Default workaround for non-mipmap 2D image
+    if (!supportMipmap(image)) {
+      if (!wrapS) wrapS = GL.ClampToEdge
+      if (!wrapT) wrapT = GL.ClampToEdge
+      if (!minFilter) minFilter = GL.Linear
     }
-  } else {
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+  }
+
+  // Lazily set texture params
+  if (wrapS) gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, native(wrapS))
+  if (wrapT) gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, native(wrapT))
+  if (minFilter) {
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, native(minFilter))
+  }
+  if (magFilter) {
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, native(magFilter))
   }
   return texture
 }
 
 export const updateCubeTexture = (gl, texture, val) => {
-  const { level, images, flip } = val
+  const native = nativeTypeHOF(gl)
+  const {
+    images, level, flip, wrapS, wrapT, minFilter, magFilter, space
+  } = val
 
   gl.activeTexture(gl.TEXTURE0)
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
-  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-  if (level < 2) {
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-  } else {
-    gl.texParameteri(
-      gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR
-    )
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+
+  if (wrapS) {
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, native(wrapS))
   }
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, !!flip)
+  if (wrapT) {
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, native(wrapT))
+  }
+  if (minFilter) {
+    gl.texParameteri(
+      gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, native(minFilter)
+    )
+  }
+  if (magFilter) {
+    gl.texParameteri(
+      gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, native(magFilter)
+    )
+  }
 
-  const faces = [
-    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
-  ]
-
-  let count = 0
-  for (let i = 0; i < faces.length; i++) {
-    for (let j = 0; j <= level; j++) {
-      const face = faces[i]
-      const { extensions } = gl
-      const space = !isSafari && extensions.EXT_SRGB
-        ? extensions.EXT_SRGB.SRGB_EXT
-        : gl.RGBA
-      gl.texImage2D(face, j, space, space, gl.UNSIGNED_BYTE, images[count])
-      count++
+  // Image may not be provided when updating texture params
+  if (images) {
+    if (flip) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
+    const faces = [
+      gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+      gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+    ]
+    let count = 0
+    const s = native(space || GL.RGBA)
+    for (let i = 0; i < faces.length; i++) {
+      for (let j = 0; j <= level; j++) {
+        const face = faces[i]
+        gl.texImage2D(face, j, s, s, gl.UNSIGNED_BYTE, images[count])
+        count++
+      }
     }
   }
   return texture
@@ -325,6 +378,6 @@ export const draw = (
     if (val !== undefined || isTexure) uniformSetterMapping[type]()
   })
 
-  const drawMode = schema.mode === GLTypes.Triangles ? gl.TRIANGLES : gl.LINES
+  const drawMode = schema.mode === GL.Triangles ? gl.TRIANGLES : gl.LINES
   gl.drawElements(drawMode, count, gl.UNSIGNED_INT, offset * 4)
 }

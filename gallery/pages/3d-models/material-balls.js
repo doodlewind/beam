@@ -1,4 +1,4 @@
-import { Beam, ResourceTypes } from '../../../src/index.js'
+import { Beam, ResourceTypes, GLTypes as GL } from '../../../src/index.js'
 import { PBRLighting } from '../../plugins/pbr-lighting-plugin.js'
 import { createBall } from '../../utils/graphics-utils.js'
 import { loadImages, loadEnvMaps } from '../../utils/image-loader.js'
@@ -80,11 +80,17 @@ const render = () => {
 const base = '../../assets/'
 Promise.all([
   loadEnvMaps(base + 'ibl/helipad'), loadImages(base + 'ibl/brdfLUT.png')
-]).then(([[diffuseMaps, specularMaps], [brdf]]) => {
+]).then(([[diffuseState, specularState], [brdf]]) => {
+  diffuseState.minFilter = GL.Linear
+  diffuseState.space = GL.SRGB
+
+  specularState.minFilter = GL.LinearMipmapLinear
+  specularState.space = GL.SRGB
+
   brdfMap = beam.resource(Textures, { u_brdfLUT: { image: brdf } })
   envMaps = beam.resource(Textures, {
-    u_DiffuseEnvSampler: diffuseMaps,
-    u_SpecularEnvSampler: specularMaps
+    u_DiffuseEnvSampler: diffuseState,
+    u_SpecularEnvSampler: specularState
   })
   render()
 })

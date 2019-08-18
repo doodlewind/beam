@@ -30,11 +30,20 @@ $scale.addEventListener('input', () => {
   render()
 })
 
-const $magFilter = document.getElementById('mag-filtering-select')
-$magFilter.addEventListener('input', () => {
-  console.log($magFilter.value)
+const $wrap = document.getElementById('wrap-select')
+$wrap.addEventListener('input', () => {
+  const wrap = $wrap.value
+  textures.set('img', { wrapS: wrap, wrapT: wrap })
+  render()
 })
-const $minFilter = document.getElementById('min-filtering-select')
+
+const $magFilter = document.getElementById('mag-filter-select')
+$magFilter.addEventListener('input', () => {
+  textures.set('img', { magFilter: $magFilter.value })
+  render()
+})
+const $minFilter = document.getElementById('min-filter-select')
 $minFilter.addEventListener('input', () => {
-  console.log($minFilter.value)
+  textures.set('img', { minFilter: $minFilter.value })
+  render()
 })

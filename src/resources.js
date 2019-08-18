@@ -59,23 +59,31 @@ export const createResource = (gl, type, state) => {
 
     set (key, val) {
       const { textures, state } = this
+
+      const oldVal = state[key]
       let texture
+      // workaround OffscreenTarget
       if (val.constructor.name !== 'Object') {
         const offscreenTarget = val
         texture = offscreenTarget.state.depth
           ? offscreenTarget.depthTexture
           : offscreenTarget.colorTexture
-      } else if (state[key]) {
-        texture = state[key].image // TODO ensure same target
-          ? glUtils.update2DTexture(gl, textures[key], val)
-          : glUtils.updateCubeTexture(gl, textures[key], val)
+      } else if (oldVal) {
+        const newVal = { ...val, flip: oldVal.flip, space: oldVal.space }
+        // TODO ensure same target
+        if (oldVal.image) {
+          texture = glUtils.update2DTexture(gl, textures[key], newVal)
+        } else {
+          texture = glUtils.updateCubeTexture(gl, textures[key], newVal)
+        }
       } else {
+        // init texture if state[key] does not exist
         texture = val.image
           ? glUtils.init2DTexture(gl, val)
           : glUtils.initCubeTexture(gl, val)
       }
       textures[key] = texture
-      state[key] = val
+      state[key] = { ...state[key], ...val }
       return this
     }
 

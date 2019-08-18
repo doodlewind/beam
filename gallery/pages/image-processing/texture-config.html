@@ -18,29 +18,32 @@
   <body>
     <div id="control">
       <select id="wrap-select">
-        <option value="repeat">Repeat</option>
-        <option value="mirrored-repeat">Mirrored Repeat</option>
-        <option value="clamp-to-edge">Clamp to Edge</option>
-        <option value="clamp-to-border">Clamp to Border</option>
+        <option value="Repeat">Repeat</option>
+        <option value="MirroredRepeat">Mirrored Repeat</option>
+        <option value="ClampToEdge">Clamp to Edge</option>
       </select>
       <label for="wrap-select">Wrap</label>
       <br/>
 
-      <select id="mag-filtering-select">
-        <option value="nearest">Nearest</option>
-        <option value="linear">Linear</option>
+      <select id="mag-filter-select">
+        <option value="Linear">Linear</option>
+        <option value="Nearest">Nearest</option>
       </select>
-      <label for="mag-filtering-select">Mag Filtering</label>
+      <label for="mag-filter-select">Mag Filter</label>
       <br/>
 
-      <select id="min-filtering-select">
-        <option value="nearest">Nearest</option>
-        <option value="linear">Linear</option>
+      <select id="min-filter-select">
+        <option value="Linear">Linear</option>
+        <option value="Nearest">Nearest</option>
+        <option value="NearestMipmapNearest">Nearest Mipmap Nearest</options>
+        <option value="LinearMipmapNearest">Linear Mipmap Nearest</options>
+        <option value="NearestMipmapLinear" selected>Nearest Mipmap Linear</options>
+        <option value="LinearMipmapLinear">Linear Mipmap Linear</options>
       </select>
-      <label for="min-filtering-select">Min Filtering</label>
+      <label for="min-filter-select">Min Filter</label>
       <br/>
 
-      <input type="range" min="0" max="2" value="1" step="0.01" id="scale">
+      <input type="range" min="0.05" max="6" value="1" step="0.01" id="scale">
       <label for="scale">Scale</label>
     </div>
     <canvas width="400" height="400"></canvas>

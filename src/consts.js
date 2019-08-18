@@ -22,6 +22,15 @@ export const SchemaTypes = {
 export const GLTypes = {
   Triangles: 'Triangles',
   Lines: 'Lines',
+  Repeat: 'Repeat',
+  MirroredRepeat: 'MirroredRepeat',
+  ClampToEdge: 'ClampToEdge',
+  Nearest: 'Nearest',
+  Linear: 'Linear',
+  NearestMipmapNearest: 'NearestMipmapNearest',
+  LinearMipmapNearest: 'LinearMipmapNearest',
+  NearestMipmapLinear: 'NearestMipmapLinear',
+  LinearMipmapLinear: 'LinearMipmapLinear',
   RGB: 'RGB',
   RGBA: 'RGBA',
   SRGB: 'SRGB'
