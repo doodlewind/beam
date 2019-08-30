@@ -1,14 +1,7 @@
 export const vs = `
 attribute vec4 position;
-#ifdef HAS_NORMALS
 attribute vec4 normal;
-#endif
-#ifdef HAS_TANGENTS
-attribute vec4 tangent;
-#endif
-#ifdef HAS_UV
 attribute vec2 texCoord;
-#endif
 
 uniform mat4 uMVPMatrix;
 uniform mat4 uModelMatrix;
@@ -16,55 +9,19 @@ uniform mat4 uNormalMatrix;
 
 varying vec3 vPosition;
 varying vec2 vUV;
-
-#ifdef HAS_NORMALS
-#ifdef HAS_TANGENTS
-varying mat3 vTBN;
-#else
 varying vec3 vNormal;
-#endif
-#endif
 
 void main()
 {
   vec4 pos = uModelMatrix * position;
   vPosition = vec3(pos.xyz) / pos.w;
-
-  #ifdef HAS_NORMALS
-  #ifdef HAS_TANGENTS
-  vec3 normalW = normalize(vec3(uNormalMatrix * vec4(normal.xyz, 0.0)));
-  vec3 tangentW = normalize(vec3(uModelMatrix * vec4(tangent.xyz, 0.0)));
-  vec3 bitangentW = cross(normalW, tangentW) * tangent.w;
-  vTBN = mat3(tangentW, bitangentW, normalW);
-  #else // HAS_TANGENTS != 1
   vNormal = normalize(vec3(uModelMatrix * vec4(normal.xyz, 0.0)));
-  #endif
-  #endif
-
-  #ifdef HAS_UV
   vUV = texCoord;
-  #else
-  vUV = vec2(0.,0.);
-  #endif
-
-  gl_Position = uMVPMatrix * position; // needs w for proper perspective correction
+  gl_Position = uMVPMatrix * position;
 }
 `
 
 export const fs = `
-//
-// This fragment shader defines a reference implementation for Physically Based Shading of
-// a microfacet surface material defined by a glTF model.
-//
-// References:
-// [1] Real Shading in Unreal Engine 4
-//     http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
-// [2] Physically Based Shading at Disney
-//     http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
-// [3] README.md - Environment Maps
-//     https://github.com/KhronosGroup/glTF-WebGL-PBR/#environment-maps
-// [4] "An Inexpensive BRDF Model for Physically based Rendering" by Christophe Schlick
-//     https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
 #extension GL_EXT_shader_texture_lod: enable
 #extension GL_OES_standard_derivatives : enable
 
@@ -83,28 +40,15 @@ uniform samplerCube uSpecularEnvSampler;
 uniform sampler2D ubrdfLUT;
 #endif
 
-#ifdef HAS_BASECOLORMAP
 uniform sampler2D uBaseColorSampler;
-#endif
-#ifdef HAS_NORMALMAP
-uniform sampler2D uNormalSampler;
-uniform float uNormalScale;
-#endif
-#ifdef HAS_EMISSIVEMAP
-uniform sampler2D uEmissiveSampler;
-uniform vec3 uEmissiveFactor;
-#endif
-#ifdef HAS_METALROUGHNESSMAP
-uniform sampler2D uMetallicRoughnessSampler;
-#endif
-#ifdef HAS_OCCLUSIONMAP
-uniform sampler2D uOcclusionSampler;
-uniform float uOcclusionStrength;
-#endif
-
-uniform vec2 uMetallicRoughnessValues;
 uniform vec4 uBaseColorFactor;
 uniform float uBaseColorScale;
+
+uniform sampler2D uNormalSampler;
+uniform float uNormalScale;
+
+uniform sampler2D uMetallicRoughnessSampler;
+uniform vec2 uMetallicRoughnessValues;
 
 uniform vec3 uCamera;
 
@@ -114,16 +58,8 @@ uniform vec4 uScaleFGDSpec;
 uniform vec4 uScaleIBLAmbient;
 
 varying vec3 vPosition;
-
 varying vec2 vUV;
-
-#ifdef HAS_NORMALS
-#ifdef HAS_TANGENTS
-varying mat3 vTBN;
-#else
 varying vec3 vNormal;
-#endif
-#endif
 
 // Encapsulate the various inputs used by the various functions in the shading equation
 // We store values in this struct to simplify the integration of alternative implementations
@@ -149,17 +85,8 @@ const float c_MinRoughness = 0.04;
 
 vec4 SRGBtoLINEAR(vec4 srgbIn)
 {
-  #ifdef MANUAL_SRGB
-  #ifdef SRGB_FAST_APPROXIMATION
-  vec3 linOut = pow(srgbIn.xyz,vec3(2.2));
-  #else //SRGB_FAST_APPROXIMATION
-  vec3 bLess = step(vec3(0.04045),srgbIn.xyz);
-  vec3 linOut = mix( srgbIn.xyz/vec3(12.92), pow((srgbIn.xyz+vec3(0.055))/vec3(1.055),vec3(2.4)), bLess );
-  #endif //SRGB_FAST_APPROXIMATION
-  return vec4(linOut,srgbIn.w);;
-  #else //MANUAL_SRGB
+  // No manual SRGB by default
   return srgbIn;
-  #endif //MANUAL_SRGB
 }
 
 // Find the normal for this fragment, pulling either from a predefined normal map
@@ -167,34 +94,19 @@ vec4 SRGBtoLINEAR(vec4 srgbIn)
 vec3 getNormal()
 {
   // Retrieve the tangent space matrix
-  #ifndef HAS_TANGENTS
   vec3 pos_dx = dFdx(vPosition);
   vec3 pos_dy = dFdy(vPosition);
   vec3 tex_dx = dFdx(vec3(vUV, 0.0));
   vec3 tex_dy = dFdy(vec3(vUV, 0.0));
   vec3 t = (tex_dy.t * pos_dx - tex_dx.t * pos_dy) / (tex_dx.s * tex_dy.t - tex_dy.s * tex_dx.t);
 
-  #ifdef HAS_NORMALS
   vec3 ng = normalize(vNormal);
-  #else
-  vec3 ng = cross(pos_dx, pos_dy);
-  #endif
-
   t = normalize(t - ng * dot(ng, t));
   vec3 b = normalize(cross(ng, t));
   mat3 tbn = mat3(t, b, ng);
-  #else // HAS_TANGENTS
-  mat3 tbn = vTBN;
-  #endif
 
-  #ifdef HAS_NORMALMAP
   vec3 n = texture2D(uNormalSampler, vUV).rgb;
   n = normalize(tbn * ((2.0 * n - 1.0) * vec3(uNormalScale, uNormalScale, 1.0)));
-  #else
-  // The tbn matrix is linearly interpolated, so we need to re-normalize
-  vec3 n = normalize(tbn[2].xyz);
-  #endif
-
   return n;
 }
 
@@ -274,25 +186,18 @@ void main()
   // or from a metallic-roughness map
   float perceptualRoughness = uMetallicRoughnessValues.y;
   float metallic = uMetallicRoughnessValues.x;
-  #ifdef HAS_METALROUGHNESSMAP
   // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
   // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
   vec4 mrSample = texture2D(uMetallicRoughnessSampler, vUV);
   perceptualRoughness = mrSample.g * perceptualRoughness;
   metallic = mrSample.b * metallic;
-  #endif
   perceptualRoughness = clamp(perceptualRoughness, c_MinRoughness, 1.0);
   metallic = clamp(metallic, 0.0, 1.0);
   // Roughness is authored as perceptual roughness; as is convention,
   // convert to material roughness by squaring the perceptual roughness [2].
   float alphaRoughness = perceptualRoughness * perceptualRoughness;
 
-  // The albedo may be defined from a base texture or a flat color
-  #ifdef HAS_BASECOLORMAP
   vec4 baseColor = SRGBtoLINEAR(texture2D(uBaseColorSampler, vUV / uBaseColorScale)) * uBaseColorFactor;
-  #else
-  vec4 baseColor = uBaseColorFactor;
-  #endif
 
   vec3 f0 = vec3(0.04);
   vec3 diffuseColor = baseColor.rgb * (vec3(1.0) - f0);
@@ -359,17 +264,6 @@ void main()
   // Calculate lighting contribution from image based lighting source (IBL)
   #ifdef USE_IBL
   color += getIBLContribution(pbrInputs, n, reflection);
-  #endif
-
-  // Apply optional PBR terms for additional (optional) shading
-  #ifdef HAS_OCCLUSIONMAP
-  float ao = texture2D(uOcclusionSampler, vUV).r;
-  color = mix(color, color * ao, uOcclusionStrength);
-  #endif
-
-  #ifdef HAS_EMISSIVEMAP
-  vec3 emissive = SRGBtoLINEAR(texture2D(uEmissiveSampler, vUV)).rgb * uEmissiveFactor;
-  color += emissive;
   #endif
 
   // This section uses mix to override final color for reference app visualization

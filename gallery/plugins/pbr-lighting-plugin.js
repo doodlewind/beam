@@ -9,14 +9,6 @@ export const PBRLighting = {
   fs,
   defines: {
     USE_IBL: 1,
-    HAS_NORMALS: 1,
-    HAS_UV: 1,
-    HAS_BASECOLORMAP: 1,
-    HAS_METALROUGHNESSMAP: 1,
-    HAS_NORMALMAP: 1,
-    // HAS_EMISSIVEMAP: 1,
-    // HAS_OCCLUSIONMAP: 1,
-    // HAS_TANGENTS: 1,
     // USE_TEX_LOD: 1,
     NR_POINT_LIGHTS: 3
   },
@@ -55,8 +47,6 @@ export const PBRLighting = {
     ubrdfLUT: { type: tex2D },
     uBaseColorSampler: { type: tex2D, repeat: true },
     uNormalSampler: { type: tex2D, repeat: true },
-    uMetallicRoughnessSampler: { type: tex2D, repeat: true },
-    uEmissiveSampler: { type: tex2D },
-    uOcclusionSampler: { type: tex2D }
+    uMetallicRoughnessSampler: { type: tex2D, repeat: true }
   }
 }

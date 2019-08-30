@@ -22,7 +22,6 @@ const createSolidCanvas = (color, width = 16, height = 16) => {
 }
 
 export const createMaterialImages = () => {
-  const blackCanvas = createSolidCanvas('black')
   const whiteCanvas = createSolidCanvas('white')
   const mrCanvas = createSolidCanvas('#00ffff') // OORRMM
   const normalCanvas = createSolidCanvas('#807fff')
@@ -30,9 +29,7 @@ export const createMaterialImages = () => {
   return {
     uBaseColorSampler: { image: whiteCanvas, repeat: true },
     uNormalSampler: { image: normalCanvas, repeat: true },
-    uMetallicRoughnessSampler: { image: mrCanvas, repeat: true },
-    uEmissiveSampler: { image: blackCanvas },
-    uOcclusionSampler: { image: blackCanvas }
+    uMetallicRoughnessSampler: { image: mrCanvas, repeat: true }
   }
 }
 
