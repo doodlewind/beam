@@ -14,37 +14,37 @@ uniform mat4 uMVPMatrix;
 uniform mat4 uModelMatrix;
 uniform mat4 uNormalMatrix;
 
-varying vec3 v_Position;
-varying vec2 v_UV;
+varying vec3 vPosition;
+varying vec2 vUV;
 
 #ifdef HAS_NORMALS
 #ifdef HAS_TANGENTS
-varying mat3 v_TBN;
+varying mat3 vTBN;
 #else
-varying vec3 v_Normal;
+varying vec3 vNormal;
 #endif
 #endif
 
 void main()
 {
   vec4 pos = uModelMatrix * position;
-  v_Position = vec3(pos.xyz) / pos.w;
+  vPosition = vec3(pos.xyz) / pos.w;
 
   #ifdef HAS_NORMALS
   #ifdef HAS_TANGENTS
   vec3 normalW = normalize(vec3(uNormalMatrix * vec4(normal.xyz, 0.0)));
   vec3 tangentW = normalize(vec3(uModelMatrix * vec4(tangent.xyz, 0.0)));
   vec3 bitangentW = cross(normalW, tangentW) * tangent.w;
-  v_TBN = mat3(tangentW, bitangentW, normalW);
+  vTBN = mat3(tangentW, bitangentW, normalW);
   #else // HAS_TANGENTS != 1
-  v_Normal = normalize(vec3(uModelMatrix * vec4(normal.xyz, 0.0)));
+  vNormal = normalize(vec3(uModelMatrix * vec4(normal.xyz, 0.0)));
   #endif
   #endif
 
   #ifdef HAS_UV
-  v_UV = texCoord;
+  vUV = texCoord;
   #else
-  v_UV = vec2(0.,0.);
+  vUV = vec2(0.,0.);
   #endif
 
   gl_Position = uMVPMatrix * position; // needs w for proper perspective correction
@@ -113,15 +113,15 @@ uniform vec4 uScaleDiffBaseMR;
 uniform vec4 uScaleFGDSpec;
 uniform vec4 uScaleIBLAmbient;
 
-varying vec3 v_Position;
+varying vec3 vPosition;
 
-varying vec2 v_UV;
+varying vec2 vUV;
 
 #ifdef HAS_NORMALS
 #ifdef HAS_TANGENTS
-varying mat3 v_TBN;
+varying mat3 vTBN;
 #else
-varying vec3 v_Normal;
+varying vec3 vNormal;
 #endif
 #endif
 
@@ -168,14 +168,14 @@ vec3 getNormal()
 {
   // Retrieve the tangent space matrix
   #ifndef HAS_TANGENTS
-  vec3 pos_dx = dFdx(v_Position);
-  vec3 pos_dy = dFdy(v_Position);
-  vec3 tex_dx = dFdx(vec3(v_UV, 0.0));
-  vec3 tex_dy = dFdy(vec3(v_UV, 0.0));
+  vec3 pos_dx = dFdx(vPosition);
+  vec3 pos_dy = dFdy(vPosition);
+  vec3 tex_dx = dFdx(vec3(vUV, 0.0));
+  vec3 tex_dy = dFdy(vec3(vUV, 0.0));
   vec3 t = (tex_dy.t * pos_dx - tex_dx.t * pos_dy) / (tex_dx.s * tex_dy.t - tex_dy.s * tex_dx.t);
 
   #ifdef HAS_NORMALS
-  vec3 ng = normalize(v_Normal);
+  vec3 ng = normalize(vNormal);
   #else
   vec3 ng = cross(pos_dx, pos_dy);
   #endif
@@ -184,11 +184,11 @@ vec3 getNormal()
   vec3 b = normalize(cross(ng, t));
   mat3 tbn = mat3(t, b, ng);
   #else // HAS_TANGENTS
-  mat3 tbn = v_TBN;
+  mat3 tbn = vTBN;
   #endif
 
   #ifdef HAS_NORMALMAP
-  vec3 n = texture2D(uNormalSampler, v_UV).rgb;
+  vec3 n = texture2D(uNormalSampler, vUV).rgb;
   n = normalize(tbn * ((2.0 * n - 1.0) * vec3(uNormalScale, uNormalScale, 1.0)));
   #else
   // The tbn matrix is linearly interpolated, so we need to re-normalize
@@ -277,7 +277,7 @@ void main()
   #ifdef HAS_METALROUGHNESSMAP
   // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
   // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-  vec4 mrSample = texture2D(uMetallicRoughnessSampler, v_UV);
+  vec4 mrSample = texture2D(uMetallicRoughnessSampler, vUV);
   perceptualRoughness = mrSample.g * perceptualRoughness;
   metallic = mrSample.b * metallic;
   #endif
@@ -289,7 +289,7 @@ void main()
 
   // The albedo may be defined from a base texture or a flat color
   #ifdef HAS_BASECOLORMAP
-  vec4 baseColor = SRGBtoLINEAR(texture2D(uBaseColorSampler, v_UV / uBaseColorScale)) * uBaseColorFactor;
+  vec4 baseColor = SRGBtoLINEAR(texture2D(uBaseColorSampler, vUV / uBaseColorScale)) * uBaseColorFactor;
   #else
   vec4 baseColor = uBaseColorFactor;
   #endif
@@ -309,7 +309,7 @@ void main()
   vec3 specularEnvironmentR90 = vec3(1.0, 1.0, 1.0) * reflectance90;
 
   vec3 n = getNormal();                             // normal at surface point
-  vec3 v = normalize(uCamera - v_Position);        // Vector from surface point to camera
+  vec3 v = normalize(uCamera - vPosition);        // Vector from surface point to camera
   vec3 reflection = -normalize(reflect(v, n));
 
   vec3 color = vec3(0, 0, 0);
@@ -363,12 +363,12 @@ void main()
 
   // Apply optional PBR terms for additional (optional) shading
   #ifdef HAS_OCCLUSIONMAP
-  float ao = texture2D(uOcclusionSampler, v_UV).r;
+  float ao = texture2D(uOcclusionSampler, vUV).r;
   color = mix(color, color * ao, uOcclusionStrength);
   #endif
 
   #ifdef HAS_EMISSIVEMAP
-  vec3 emissive = SRGBtoLINEAR(texture2D(uEmissiveSampler, v_UV)).rgb * uEmissiveFactor;
+  vec3 emissive = SRGBtoLINEAR(texture2D(uEmissiveSampler, vUV)).rgb * uEmissiveFactor;
   color += emissive;
   #endif
 
