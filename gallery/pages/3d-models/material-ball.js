@@ -34,16 +34,16 @@ const baseEye = [0, 0, 10]
 const center = [0, 0, 0]
 const modelMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 const matrices = beam.resource(Uniforms, {
-  u_Camera: baseEye,
-  u_ModelMatrix: modelMat,
-  u_MVPMatrix: computeMVPMat(modelMat, baseEye, center, canvas)
+  uCamera: baseEye,
+  uModelMatrix: modelMat,
+  uMVPMatrix: computeMVPMat(modelMat, baseEye, center, canvas)
 })
 
 // Resources: point light states
 const pointLights = beam.resource(Uniforms, createPointLights())
 pointLights
-  .set(`u_Lights[0].direction`, [1, 1, 1])
-  .set(`u_Lights[0].strength`, 1)
+  .set(`uLights[0].direction`, [1, 1, 1])
+  .set(`uLights[0].strength`, 1)
 
 // Resources: material images
 const materialMaps = beam.resource(Textures, createMaterialImages())
@@ -54,7 +54,7 @@ let envMaps
 
 // Resourecs: other options
 const pbrOptions = beam.resource(Uniforms, {
-  u_MetallicRoughnessValues: [0, 0]
+  uMetallicRoughnessValues: [0, 0]
 })
 
 const render = () => {
@@ -81,11 +81,11 @@ Promise.all([
   specularState.space = GL.SRGB
 
   brdfMap = beam.resource(Textures, {
-    u_brdfLUT: { image: brdf, wrapS: GL.ClampToEdge, wrapT: GL.ClampToEdge }
+    ubrdfLUT: { image: brdf, wrapS: GL.ClampToEdge, wrapT: GL.ClampToEdge }
   })
   envMaps = beam.resource(Textures, {
-    u_DiffuseEnvSampler: diffuseState,
-    u_SpecularEnvSampler: specularState
+    uDiffuseEnvSampler: diffuseState,
+    uSpecularEnvSampler: specularState
   })
   render()
 })
@@ -101,9 +101,9 @@ const updateMats = () => {
   const modelMat = computeModelMat(rx, ry, rz)
   const eye = computeEye(baseEye, cameraRotate)
   matrices
-    .set('u_ModelMatrix', modelMat)
-    .set('u_Camera', eye)
-    .set('u_MVPMatrix', computeMVPMat(modelMat, eye, center, canvas))
+    .set('uModelMatrix', modelMat)
+    .set('uCamera', eye)
+    .set('uMVPMatrix', computeMVPMat(modelMat, eye, center, canvas))
   render()
 }
 ;[$xRotate, $yRotate, $zRotate, $cameraRotate].forEach($input => {
@@ -115,7 +115,7 @@ const $metallic = document.getElementById('metallic')
 const $roughness = document.getElementById('roughness')
 const updateMetalRoughness = () => {
   const mr = [$metallic.value, $roughness.value]
-  pbrOptions.set('u_MetallicRoughnessValues', mr)
+  pbrOptions.set('uMetallicRoughnessValues', mr)
   render()
 }
 $metallic.addEventListener('input', updateMetalRoughness)
@@ -137,9 +137,9 @@ for (let i = 0; i < 1; i++) {
       parseInt(hex.slice(5, 7), 16) / 256
     ]
     pointLights
-      .set(`u_Lights[${i}].direction`, direction)
-      .set(`u_Lights[${i}].strength`, $lightStrength.value)
-      .set(`u_Lights[${i}].color`, rgb)
+      .set(`uLights[${i}].direction`, direction)
+      .set(`uLights[${i}].strength`, $lightStrength.value)
+      .set(`uLights[${i}].color`, rgb)
     render()
   }
   ;[$lightX, $lightY, $lightZ, $lightStrength, $lightColor].forEach($input => {

@@ -30,16 +30,16 @@ const eye = [0, 50, 50]
 const center = [10, 10, 0]
 const baseModelMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 const matrices = beam.resource(Uniforms, {
-  u_Camera: eye,
-  u_ModelMatrix: baseModelMat,
-  u_MVPMatrix: computeMVPMat(baseModelMat, eye, canvas)
+  uCamera: eye,
+  uModelMatrix: baseModelMat,
+  uMVPMatrix: computeMVPMat(baseModelMat, eye, canvas)
 })
 
 // Resources: point light states
 const pointLights = beam.resource(Uniforms, createPointLights())
 pointLights
-  .set(`u_Lights[0].direction`, [1, 1, 1])
-  .set(`u_Lights[0].strength`, 1)
+  .set(`uLights[0].direction`, [1, 1, 1])
+  .set(`uLights[0].strength`, 1)
 
 // Resources: material images
 const materialMaps = beam.resource(Textures, createMaterialImages())
@@ -50,7 +50,7 @@ let envMaps
 
 // Resourecs: other options
 const pbrOptions = beam.resource(Uniforms, {
-  u_MetallicRoughnessValues: [0, 0]
+  uMetallicRoughnessValues: [0, 0]
 })
 
 const render = () => {
@@ -58,10 +58,10 @@ const render = () => {
   for (let i = 1; i < 10; i++) {
     for (let j = 1; j < 10; j++) {
       const modelMat = translate([], baseModelMat, [i * 2, j * 2, 0])
-      pbrOptions.set('u_MetallicRoughnessValues', [i / 10, j / 10])
+      pbrOptions.set('uMetallicRoughnessValues', [i / 10, j / 10])
       matrices
-        .set('u_ModelMatrix', modelMat)
-        .set('u_MVPMatrix', computeMVPMat(modelMat, eye, center, canvas))
+        .set('uModelMatrix', modelMat)
+        .set('uMVPMatrix', computeMVPMat(modelMat, eye, center, canvas))
 
       const resources = [
         ...ballBuffers,
@@ -87,10 +87,10 @@ Promise.all([
   specularState.minFilter = GL.LinearMipmapLinear
   specularState.space = GL.SRGB
 
-  brdfMap = beam.resource(Textures, { u_brdfLUT: { image: brdf } })
+  brdfMap = beam.resource(Textures, { ubrdfLUT: { image: brdf } })
   envMaps = beam.resource(Textures, {
-    u_DiffuseEnvSampler: diffuseState,
-    u_SpecularEnvSampler: specularState
+    uDiffuseEnvSampler: diffuseState,
+    uSpecularEnvSampler: specularState
   })
   render()
 })
@@ -112,9 +112,9 @@ for (let i = 0; i < 1; i++) {
     ]
 
     pointLights
-      .set(`u_Lights[${i}].direction`, direction)
-      .set(`u_Lights[${i}].strength`, $lightStrength.value)
-      .set(`u_Lights[${i}].color`, rgb)
+      .set(`uLights[${i}].direction`, direction)
+      .set(`uLights[${i}].strength`, $lightStrength.value)
+      .set(`uLights[${i}].color`, rgb)
     render()
   }
   ;[$lightX, $lightY, $lightZ, $lightStrength, $lightColor].forEach($input => {

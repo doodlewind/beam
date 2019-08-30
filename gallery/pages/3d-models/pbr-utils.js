@@ -28,11 +28,11 @@ export const createMaterialImages = () => {
   const normalCanvas = createSolidCanvas('#807fff')
 
   return {
-    u_BaseColorSampler: { image: whiteCanvas, repeat: true },
-    u_NormalSampler: { image: normalCanvas, repeat: true },
-    u_MetallicRoughnessSampler: { image: mrCanvas, repeat: true },
-    u_EmissiveSampler: { image: blackCanvas },
-    u_OcclusionSampler: { image: blackCanvas }
+    uBaseColorSampler: { image: whiteCanvas, repeat: true },
+    uNormalSampler: { image: normalCanvas, repeat: true },
+    uMetallicRoughnessSampler: { image: mrCanvas, repeat: true },
+    uEmissiveSampler: { image: blackCanvas },
+    uOcclusionSampler: { image: blackCanvas }
   }
 }
 
@@ -55,13 +55,13 @@ export const computeMVPMat = (modelMat, eye, center, canvas) => {
 }
 
 export const createPointLights = () => ({
-  'u_Lights[0].direction': [0, 0, 0],
-  'u_Lights[0].color': [1, 1, 1],
-  'u_Lights[0].strength': 0,
-  'u_Lights[1].direction': [0, 0, 0],
-  'u_Lights[1].color': [1, 1, 1],
-  'u_Lights[1].strength': 0,
-  'u_Lights[2].direction': [0, 0, 0],
-  'u_Lights[2].color': [1, 1, 1],
-  'u_Lights[2].strength': 0
+  'uLights[0].direction': [0, 0, 0],
+  'uLights[0].color': [1, 1, 1],
+  'uLights[0].strength': 0,
+  'uLights[1].direction': [0, 0, 0],
+  'uLights[1].color': [1, 1, 1],
+  'uLights[1].strength': 0,
+  'uLights[2].direction': [0, 0, 0],
+  'uLights[2].color': [1, 1, 1],
+  'uLights[2].strength': 0
 })
