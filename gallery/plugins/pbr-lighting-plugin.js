@@ -7,11 +7,6 @@ const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 export const PBRLighting = {
   vs,
   fs,
-  defines: {
-    USE_IBL: 1,
-    // USE_TEX_LOD: 1,
-    NR_POINT_LIGHTS: 3
-  },
   buffers: {
     position: { type: vec4, n: 3 },
     texCoord: { type: vec2 },
@@ -43,8 +38,8 @@ export const PBRLighting = {
     uDiffuseEnvSampler: { type: texCube },
     uSpecularEnvSampler: { type: texCube },
     uBrdfLUT: { type: tex2D },
-    uBaseColorSampler: { type: tex2D, repeat: true },
-    uNormalSampler: { type: tex2D, repeat: true },
-    uMetallicRoughnessSampler: { type: tex2D, repeat: true }
+    uBaseColorSampler: { type: tex2D },
+    uNormalSampler: { type: tex2D },
+    uMetallicRoughnessSampler: { type: tex2D }
   }
 }
