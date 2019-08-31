@@ -81,7 +81,7 @@ Promise.all([
   specularState.space = GL.SRGB
 
   brdfMap = beam.resource(Textures, {
-    ubrdfLUT: { image: brdf, wrapS: GL.ClampToEdge, wrapT: GL.ClampToEdge }
+    uBrdfLUT: { image: brdf, wrapS: GL.ClampToEdge, wrapT: GL.ClampToEdge }
   })
   envMaps = beam.resource(Textures, {
     uDiffuseEnvSampler: diffuseState,

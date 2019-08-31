@@ -36,7 +36,7 @@ uniform PointLight uLights[NR_POINT_LIGHTS];
 #ifdef USE_IBL
 uniform samplerCube uDiffuseEnvSampler;
 uniform samplerCube uSpecularEnvSampler;
-uniform sampler2D ubrdfLUT;
+uniform sampler2D uBrdfLUT;
 #endif
 
 uniform sampler2D uBaseColorSampler;
@@ -114,7 +114,7 @@ vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection) {
   float mipCount = 9.0; // resolution of 512x512
   float lod = (pbrInputs.perceptualRoughness * mipCount);
   // retrieve a scale and bias to F0. See [1], Figure 3
-  vec3 brdf = SRGBtoLINEAR(texture2D(ubrdfLUT, vec2(pbrInputs.NdotV, 1.0 - pbrInputs.perceptualRoughness))).rgb;
+  vec3 brdf = SRGBtoLINEAR(texture2D(uBrdfLUT, vec2(pbrInputs.NdotV, 1.0 - pbrInputs.perceptualRoughness))).rgb;
   vec3 diffuseLight = SRGBtoLINEAR(textureCube(uDiffuseEnvSampler, n)).rgb;
 
   #ifdef USE_TEX_LOD

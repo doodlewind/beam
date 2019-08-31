@@ -34,8 +34,6 @@ export const PBRLighting = {
     uBaseColorFactor: { type: vec4, default: [1, 1, 1, 1] },
     uBaseColorScale: { type: float, default: 1 },
     uNormalScale: { type: float, default: 1 },
-    uEmissiveFactor: { type: vec3, default: [1, 1, 1] },
-    uOcclusionStrength: { type: float, default: 1 },
     uMetallicRoughnessValues: { type: vec2 },
     uScaleDiffBaseMR: { type: vec4, default: [0, 0, 0, 0] },
     uScaleFGDSpec: { type: vec4, default: [0, 0, 0, 0] },
@@ -44,7 +42,7 @@ export const PBRLighting = {
   textures: {
     uDiffuseEnvSampler: { type: texCube },
     uSpecularEnvSampler: { type: texCube },
-    ubrdfLUT: { type: tex2D },
+    uBrdfLUT: { type: tex2D },
     uBaseColorSampler: { type: tex2D, repeat: true },
     uNormalSampler: { type: tex2D, repeat: true },
     uMetallicRoughnessSampler: { type: tex2D, repeat: true }
