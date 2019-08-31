@@ -8,14 +8,14 @@ uniform mat4 uModelMatrix;
 uniform mat4 uNormalMatrix;
 
 varying vec3 vPosition;
-varying vec2 vUV;
+varying vec2 vTexCoord;
 varying vec3 vNormal;
 
 void main() {
   vec4 pos = uModelMatrix * position;
   vPosition = vec3(pos.xyz) / pos.w;
   vNormal = normalize(vec3(uModelMatrix * vec4(normal.xyz, 0.0)));
-  vUV = texCoord;
+  vTexCoord = texCoord;
   gl_Position = uMVPMatrix * position;
 }
 `
@@ -57,7 +57,7 @@ uniform vec4 uScaleFGDSpec;
 uniform vec4 uScaleIBLAmbient;
 
 varying vec3 vPosition;
-varying vec2 vUV;
+varying vec2 vTexCoord;
 varying vec3 vNormal;
 
 // Encapsulate the various inputs used by the various functions in the shading equation
@@ -92,8 +92,8 @@ vec3 getNormal() {
   // Retrieve the tangent space matrix
   vec3 pos_dx = dFdx(vPosition);
   vec3 pos_dy = dFdy(vPosition);
-  vec3 tex_dx = dFdx(vec3(vUV, 0.0));
-  vec3 tex_dy = dFdy(vec3(vUV, 0.0));
+  vec3 tex_dx = dFdx(vec3(vTexCoord, 0.0));
+  vec3 tex_dy = dFdy(vec3(vTexCoord, 0.0));
   vec3 t = (tex_dy.t * pos_dx - tex_dx.t * pos_dy) / (tex_dx.s * tex_dy.t - tex_dy.s * tex_dx.t);
 
   vec3 ng = normalize(vNormal);
@@ -101,7 +101,7 @@ vec3 getNormal() {
   vec3 b = normalize(cross(ng, t));
   mat3 tbn = mat3(t, b, ng);
 
-  vec3 n = texture2D(uNormalSampler, vUV).rgb;
+  vec3 n = texture2D(uNormalSampler, vTexCoord).rgb;
   n = normalize(tbn * ((2.0 * n - 1.0) * vec3(uNormalScale, uNormalScale, 1.0)));
   return n;
 }
@@ -178,7 +178,7 @@ void main() {
   float metallic = uMetallicRoughnessValues.x;
   // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
   // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-  vec4 mrSample = texture2D(uMetallicRoughnessSampler, vUV);
+  vec4 mrSample = texture2D(uMetallicRoughnessSampler, vTexCoord);
   perceptualRoughness = mrSample.g * perceptualRoughness;
   metallic = mrSample.b * metallic;
   perceptualRoughness = clamp(perceptualRoughness, c_MinRoughness, 1.0);
@@ -187,7 +187,7 @@ void main() {
   // convert to material roughness by squaring the perceptual roughness [2].
   float alphaRoughness = perceptualRoughness * perceptualRoughness;
 
-  vec4 baseColor = SRGBtoLINEAR(texture2D(uBaseColorSampler, vUV / uBaseColorScale)) * uBaseColorFactor;
+  vec4 baseColor = SRGBtoLINEAR(texture2D(uBaseColorSampler, vTexCoord / uBaseColorScale)) * uBaseColorFactor;
 
   vec3 f0 = vec3(0.04);
   vec3 diffuseColor = baseColor.rgb * (vec3(1.0) - f0);
