@@ -11,8 +11,7 @@ varying vec3 vPosition;
 varying vec2 vUV;
 varying vec3 vNormal;
 
-void main()
-{
+void main() {
   vec4 pos = uModelMatrix * position;
   vPosition = vec3(pos.xyz) / pos.w;
   vNormal = normalize(vec3(uModelMatrix * vec4(normal.xyz, 0.0)));
@@ -64,8 +63,7 @@ varying vec3 vNormal;
 // Encapsulate the various inputs used by the various functions in the shading equation
 // We store values in this struct to simplify the integration of alternative implementations
 // of the shading terms, outlined in the Readme.MD Appendix.
-struct PBRInfo
-{
+struct PBRInfo {
   float NdotL;                  // cos angle between normal and light direction
   float NdotV;                  // cos angle between normal and view direction
   float NdotH;                  // cos angle between normal and half vector
@@ -83,16 +81,14 @@ struct PBRInfo
 const float M_PI = 3.141592653589793;
 const float c_MinRoughness = 0.04;
 
-vec4 SRGBtoLINEAR(vec4 srgbIn)
-{
+vec4 SRGBtoLINEAR(vec4 srgbIn) {
   // No manual SRGB by default
   return srgbIn;
 }
 
 // Find the normal for this fragment, pulling either from a predefined normal map
 // or from the interpolated mesh normal and tangent attributes.
-vec3 getNormal()
-{
+vec3 getNormal() {
   // Retrieve the tangent space matrix
   vec3 pos_dx = dFdx(vPosition);
   vec3 pos_dy = dFdy(vPosition);
@@ -114,8 +110,7 @@ vec3 getNormal()
 // Precomputed Environment Maps are required uniform inputs and are computed as outlined in [1].
 // See our README.md on Environment Maps [3] for additional discussion.
 #ifdef USE_IBL
-vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection)
-{
+vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection) {
   float mipCount = 9.0; // resolution of 512x512
   float lod = (pbrInputs.perceptualRoughness * mipCount);
   // retrieve a scale and bias to F0. See [1], Figure 3
@@ -142,15 +137,13 @@ vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection)
 // Basic Lambertian diffuse
 // Implementation from Lambert's Photometria https://archive.org/details/lambertsphotome00lambgoog
 // See also [1], Equation 1
-vec3 diffuse(PBRInfo pbrInputs)
-{
+vec3 diffuse(PBRInfo pbrInputs) {
   return pbrInputs.diffuseColor / M_PI;
 }
 
 // The following equation models the Fresnel reflectance term of the spec equation (aka F())
 // Implementation of fresnel from [4], Equation 15
-vec3 specularReflection(PBRInfo pbrInputs)
-{
+vec3 specularReflection(PBRInfo pbrInputs) {
   return pbrInputs.reflectance0 + (pbrInputs.reflectance90 - pbrInputs.reflectance0) * pow(clamp(1.0 - pbrInputs.VdotH, 0.0, 1.0), 5.0);
 }
 
@@ -158,8 +151,7 @@ vec3 specularReflection(PBRInfo pbrInputs)
 // where rougher material will reflect less light back to the viewer.
 // This implementation is based on [1] Equation 4, and we adopt their modifications to
 // alphaRoughness as input as originally proposed in [2].
-float geometricOcclusion(PBRInfo pbrInputs)
-{
+float geometricOcclusion(PBRInfo pbrInputs) {
   float NdotL = pbrInputs.NdotL;
   float NdotV = pbrInputs.NdotV;
   float r = pbrInputs.alphaRoughness;
@@ -172,15 +164,13 @@ float geometricOcclusion(PBRInfo pbrInputs)
 // The following equation(s) model the distribution of microfacet normals across the area being drawn (aka D())
 // Implementation from "Average Irregularity Representation of a Roughened Surface for Ray Reflection" by T. S. Trowbridge, and K. P. Reitz
 // Follows the distribution function recommended in the SIGGRAPH 2013 course notes from EPIC Games [1], Equation 3.
-float microfacetDistribution(PBRInfo pbrInputs)
-{
+float microfacetDistribution(PBRInfo pbrInputs) {
   float roughnessSq = pbrInputs.alphaRoughness * pbrInputs.alphaRoughness;
   float f = (pbrInputs.NdotH * roughnessSq - pbrInputs.NdotH) * pbrInputs.NdotH + 1.0;
   return roughnessSq / (M_PI * f * f);
 }
 
-void main()
-{
+void main() {
   // Metallic and Roughness material properties are packed together
   // In glTF, these factors can be specified by fixed scalar values
   // or from a metallic-roughness map
@@ -213,8 +203,8 @@ void main()
   vec3 specularEnvironmentR0 = specularColor.rgb;
   vec3 specularEnvironmentR90 = vec3(1.0, 1.0, 1.0) * reflectance90;
 
-  vec3 n = getNormal();                             // normal at surface point
-  vec3 v = normalize(uCamera - vPosition);        // Vector from surface point to camera
+  vec3 n = getNormal(); // normal at surface point
+  vec3 v = normalize(uCamera - vPosition); // Vector from surface point to camera
   vec3 reflection = -normalize(reflect(v, n));
 
   vec3 color = vec3(0, 0, 0);
@@ -225,8 +215,8 @@ void main()
   vec3 diffuseContrib, specContrib;
 
   for(int i = 0; i < NR_POINT_LIGHTS; ++i) {
-    vec3 l = normalize(uLights[i].direction);      // Vector from surface point to light
-    vec3 h = normalize(l + v);                      // Half vector between both l and v
+    vec3 l = normalize(uLights[i].direction);  // Vector from surface point to light
+    vec3 h = normalize(l + v); // Half vector between both l and v
 
     NdotL = clamp(dot(n, l), 0.001, 1.0);
     NdotV = clamp(abs(dot(n, v)), 0.001, 1.0);
