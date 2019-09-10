@@ -3,8 +3,8 @@ import * as miscUtils from './misc-utils.js'
 
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
-export const getWebGLInstance = canvas => {
-  return canvas.getContext('webgl')
+export const getWebGLInstance = (canvas, contextAttributes) => {
+  return canvas.getContext('webgl', contextAttributes)
 }
 
 export const getExtensions = (gl, config) => {

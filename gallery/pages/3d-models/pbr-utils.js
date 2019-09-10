@@ -8,7 +8,10 @@ export const rendererConfig = {
     'EXT_SRGB',
     'OES_standard_derivatives',
     'OES_element_index_uint'
-  ]
+  ],
+  contextAttributes: {
+    preserveDrawingBuffer: true
+  }
 }
 
 const createSolidCanvas = (color, width = 16, height = 16) => {

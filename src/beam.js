@@ -6,7 +6,7 @@ import * as miscUtils from './utils/misc-utils.js'
 
 export class Beam {
   constructor (canvas, config = {}) {
-    this.gl = glUtils.getWebGLInstance(canvas)
+    this.gl = glUtils.getWebGLInstance(canvas, config.contextAttributes)
     this.config = { ...RendererConfig, ...config }
     this.gl.extensions = glUtils.getExtensions(this.gl, this.config)
   }

@@ -7,6 +7,9 @@ const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 export const PBRLighting = {
   vs,
   fs,
+  defines: {
+    // USE_TEX_LOD
+  },
   buffers: {
     position: { type: vec4, n: 3 },
     texCoord: { type: vec2 },

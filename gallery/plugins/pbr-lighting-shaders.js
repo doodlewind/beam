@@ -107,8 +107,11 @@ vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection) {
   vec3 brdf = SRGBtoLINEAR(texture2D(uBrdfLUT, vec2(pbrInputs.NdotV, 1.0 - pbrInputs.perceptualRoughness))).rgb;
   vec3 diffuseLight = SRGBtoLINEAR(textureCube(uDiffuseEnvSampler, n)).rgb;
 
+  #ifdef USE_TEX_LOD
   vec3 specularLight = SRGBtoLINEAR(textureCubeLodEXT(uSpecularEnvSampler, reflection, lod)).rgb;
-  // vec3 specularLight = SRGBtoLINEAR(textureCube(uSpecularEnvSampler, reflection)).rgb;
+  #else
+  vec3 specularLight = SRGBtoLINEAR(textureCube(uSpecularEnvSampler, reflection)).rgb;
+  #endif
 
   vec3 diffuse = diffuseLight * pbrInputs.diffuseColor;
   vec3 specular = specularLight * (pbrInputs.specularColor * brdf.x + brdf.y);
