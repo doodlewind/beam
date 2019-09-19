@@ -362,14 +362,19 @@ const padDefault = (schema, key, val) => {
   return val !== undefined ? val : schema.uniforms[key].default
 }
 
+let lastProgram = null
 export const draw = (
   gl, plugin, dataBuffers, indexResource, uniforms, textures
 ) => {
   const { schema, shaderRefs } = plugin
-  gl.useProgram(shaderRefs.program)
+  const { program } = shaderRefs
+  if(!lastProgram || lastProgram !== program) {
+    gl.useProgram(program)
+    lastProgram = program
+  }
   Object.keys(shaderRefs.attributes).forEach(key => {
     if (
-      !schema.buffers[key] || schema.buffers[key].type === SchemaTypes.index
+      !schema.buffers[key] || schema.buffers[key].type === SchemaTypes.index || !dataBuffers[key]
     ) return
     const { location } = shaderRefs.attributes[key]
     const { n, type } = schema.buffers[key]
@@ -381,7 +386,9 @@ export const draw = (
   })
   const { buffer, state } = indexResource
   const { offset, count } = state
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
+  if(buffer) {
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
+  }
 
   let unit = -1
   Object.keys(shaderRefs.uniforms).forEach(key => {
@@ -391,6 +398,7 @@ export const draw = (
     if (!isTexure) {
       val = padDefault(schema, key, uniforms[key])
     }
+    if(!val) return
 
     const uniformSetterMapping = {
       [SchemaTypes.vec4]: () => gl.uniform4fv(location, val),
@@ -412,7 +420,10 @@ export const draw = (
       [SchemaTypes.tex2D]: () => {
         unit++
         const texture = textures[key]
-        if (!texture) console.warn(`Missing texture ${key} at unit ${unit}`)
+        if (!texture) {
+          console.warn(`Missing texture ${key} at unit ${unit}`)
+          return
+        }
         gl.uniform1i(location, unit)
         gl.activeTexture(gl.TEXTURE0 + unit)
         gl.bindTexture(gl.TEXTURE_2D, texture)
@@ -420,7 +431,10 @@ export const draw = (
       [SchemaTypes.texCube]: () => {
         unit++
         const texture = textures[key]
-        if (!texture) console.warn(`Missing texture ${key} at unit ${unit}`)
+        if (!texture) {
+          console.warn(`Missing texture ${key} at unit ${unit}`)
+          return
+        }
         gl.uniform1i(location, unit)
         gl.activeTexture(gl.TEXTURE0 + unit)
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
