@@ -368,7 +368,7 @@ export const draw = (
 ) => {
   const { schema, shaderRefs } = plugin
   const { program } = shaderRefs
-  if(!lastProgram || lastProgram !== program) {
+  if (!lastProgram || lastProgram !== program) {
     gl.useProgram(program)
     lastProgram = program
   }
@@ -386,7 +386,7 @@ export const draw = (
   })
   const { buffer, state } = indexResource
   const { offset, count } = state
-  if(buffer) {
+  if (buffer) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
   }
 
@@ -398,7 +398,7 @@ export const draw = (
     if (!isTexure) {
       val = padDefault(schema, key, uniforms[key])
     }
-    if(!val && !isTexure) return
+    if (!val && !isTexure) return
 
     const uniformSetterMapping = {
       [SchemaTypes.vec4]: () => gl.uniform4fv(location, val),
