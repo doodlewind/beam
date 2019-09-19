@@ -398,7 +398,7 @@ export const draw = (
     if (!isTexure) {
       val = padDefault(schema, key, uniforms[key])
     }
-    if(!val) return
+    if(!val && !isTexure) return
 
     const uniformSetterMapping = {
       [SchemaTypes.vec4]: () => gl.uniform4fv(location, val),
