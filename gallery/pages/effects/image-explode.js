@@ -11,7 +11,7 @@ canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)
 
-const plugin = beam.plugin(ImageExplode)
+const shader = beam.shader(ImageExplode)
 
 const particles = createParticles(100)
 const buffers = [
@@ -28,7 +28,7 @@ let time = 0
 let currentImage = null
 let animationStateGetter = () => {}
 
-const render = () => beam.clear().draw(plugin, ...buffers, uniforms, textures)
+const render = () => beam.clear().draw(shader, ...buffers, uniforms, textures)
 
 const tick = () => {
   // Query animation state for each frame, based on time

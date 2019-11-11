@@ -12,9 +12,9 @@ const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 beam.define(Offscreen2DCommand)
 
-const brightnessContrast = beam.plugin(BrightnessContrast)
-const hueSaturation = beam.plugin(HueSaturation)
-const vignette = beam.plugin(Vignette)
+const brightnessContrast = beam.shader(BrightnessContrast)
+const hueSaturation = beam.shader(HueSaturation)
+const vignette = beam.shader(Vignette)
 
 // Fill screen with unit quad
 const quad = createRect()
@@ -48,7 +48,7 @@ outputTextures[0].set('img', offscreenTargets[0])
 outputTextures[1].set('img', offscreenTargets[1])
 
 const baseResources = [...quadBuffers, filterOptions]
-const draw = (plugin, input) => beam.draw(plugin, ...[...baseResources, input])
+const draw = (shader, input) => beam.draw(shader, ...[...baseResources, input])
 const render = () => {
   beam.clear()
   inputTextures.set('img', { image, flip: true })

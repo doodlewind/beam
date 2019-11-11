@@ -8,7 +8,7 @@ const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const plugin = beam.plugin(NormalColor)
+const shader = beam.shader(NormalColor)
 const ball = createBall()
 const buffers = [
   beam.resource(DataBuffers, ball.data),
@@ -28,7 +28,7 @@ const tick = () => {
   // cameraMats.viewMat = viewMat
   // camera = beam.resource(Uniforms, cameraMats)
 
-  beam.clear().draw(plugin, ...buffers, camera)
+  beam.clear().draw(shader, ...buffers, camera)
   requestAnimationFrame(tick)
 }
 tick()

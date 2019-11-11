@@ -8,14 +8,14 @@ const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const plugin = beam.plugin(ImageColor)
+const shader = beam.shader(ImageColor)
 const cameraMats = createCamera({ eye: [10, 10, 10] }, { canvas })
 const box = createBox()
 
 loadImages('../../assets/images/prague.jpg').then(([image]) => {
   const imageState = { image, flip: true }
   beam.clear().draw(
-    plugin,
+    shader,
     beam.resource(DataBuffers, box.data),
     beam.resource(IndexBuffer, box.index),
     beam.resource(Uniforms, cameraMats),

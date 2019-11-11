@@ -28,7 +28,7 @@ const compileShader = (gl, type, source) => {
   return shader
 }
 
-const initShader = (gl, defines, vs, fs) => {
+const initShaderProgram = (gl, defines, vs, fs) => {
   const defineStr = Object.keys(defines).reduce((str, key) => (
     defines[key] ? str + `#define ${key} ${defines[key]}\n` : ''
   ), '')
@@ -50,7 +50,7 @@ const initShader = (gl, defines, vs, fs) => {
 }
 
 export const initShaderRefs = (gl, defines, schema, vs, fs) => {
-  const program = initShader(gl, defines, vs, fs)
+  const program = initShaderProgram(gl, defines, vs, fs)
   // map to { pos: { type, location } }
   const attributes = miscUtils.mapValue(schema.buffers, (attributes, key) => ({
     type: attributes[key].type,
@@ -364,9 +364,9 @@ const padDefault = (schema, key, val) => {
 
 let lastProgram = null
 export const draw = (
-  gl, plugin, dataBuffers, indexResource, uniforms, textures
+  gl, shader, dataBuffers, indexResource, uniforms, textures
 ) => {
-  const { schema, shaderRefs } = plugin
+  const { schema, shaderRefs } = shader
   const { program } = shaderRefs
   if (!lastProgram || lastProgram !== program) {
     gl.useProgram(program)

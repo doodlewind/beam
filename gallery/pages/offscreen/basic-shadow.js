@@ -15,8 +15,8 @@ canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)
 
 beam.define(Offscreen2DCommand)
-const voidDepthPlugin = beam.plugin(VoidDepth)
-const lightingPlugin = beam.plugin(ShadowLighting)
+const voidDepthShader = beam.shader(VoidDepth)
+const lightingShader = beam.shader(ShadowLighting)
 
 const ball = createBall()
 const plane = createRect([10, 5, -5], 1, 15)
@@ -56,24 +56,24 @@ uniforms.set('dirLight.direction', lightDir)
 
 const drawDepth = () => {
   uniforms.set('modelMat', create())
-  beam.draw(voidDepthPlugin, ...planeBuffers, uniforms)
+  beam.draw(voidDepthShader, ...planeBuffers, uniforms)
   for (let i = 1; i < 10; i++) {
     for (let j = 1; j < 10; j++) {
       const modelMat = translate([], baseModelMat, [i * 2, j * 2, 0])
       uniforms.set('modelMat', modelMat)
-      beam.draw(voidDepthPlugin, ...ballBuffers, uniforms)
+      beam.draw(voidDepthShader, ...ballBuffers, uniforms)
     }
   }
 }
 
 const drawLighting = () => {
   uniforms.set('modelMat', create())
-  beam.draw(lightingPlugin, ...planeBuffers, textures, uniforms)
+  beam.draw(lightingShader, ...planeBuffers, textures, uniforms)
   for (let i = 1; i < 10; i++) {
     for (let j = 1; j < 10; j++) {
       const modelMat = translate([], baseModelMat, [i * 2, j * 2, 0])
       uniforms.set('modelMat', modelMat)
-      beam.draw(lightingPlugin, ...ballBuffers, textures, uniforms)
+      beam.draw(lightingShader, ...ballBuffers, textures, uniforms)
     }
   }
 }
@@ -102,9 +102,9 @@ render()
 const SHOW_DEPTH = false // for debug
 if (SHOW_DEPTH) {
   InspectDepth.defines.USE_ORTHO = true
-  const inspectDepthPlugin = beam.plugin(InspectDepth)
+  const inspectDepthShader = beam.shader(InspectDepth)
   // for perspective, tweak nearPlane and farPlane uniforms
-  beam.draw(inspectDepthPlugin, quadDataRes, quadIndexRes, uniforms, textures)
+  beam.draw(inspectDepthShader, quadDataRes, quadIndexRes, uniforms, textures)
 }
 
 const $dirX = document.getElementById('dir-x')

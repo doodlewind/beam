@@ -9,8 +9,8 @@ const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const normal = beam.plugin(NormalColor)
-const wireframe = beam.plugin(RedWireframe)
+const normal = beam.shader(NormalColor)
+const wireframe = beam.shader(RedWireframe)
 const cameraMats = createCamera({ eye: [0, 10, 10] }, { canvas })
 const camera = beam.resource(Uniforms, cameraMats)
 

@@ -6,8 +6,8 @@ const { DataBuffers, IndexBuffer } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-// Init shade plugin
-const plugin = beam.plugin(PolygonColor)
+// Init shader
+const shader = beam.shader(PolygonColor)
 
 // Init data buffer resource with triangle positions and colors
 const dataBuffers = beam.resource(DataBuffers, {
@@ -25,5 +25,5 @@ const dataBuffers = beam.resource(DataBuffers, {
 // Init index buffer resource with 3 indices
 const indexBuffer = beam.resource(IndexBuffer, { array: [0, 1, 2] })
 
-// Clear the screen, then draw a frame with plugin and buffer resources
-beam.clear().draw(plugin, dataBuffers, indexBuffer)
+// Clear the screen, then draw a frame with shader and resources
+beam.clear().draw(shader, dataBuffers, indexBuffer)

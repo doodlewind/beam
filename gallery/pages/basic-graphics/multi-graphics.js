@@ -8,7 +8,7 @@ const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const plugin = beam.plugin(NormalColor)
+const shader = beam.shader(NormalColor)
 const ball = createBall()
 const box = createBox()
 const ballBuffers = [
@@ -34,7 +34,7 @@ const render = () => {
       const modelMat = translate([], baseMat, [i * 2, j * 2, 0])
       matrices.set('modelMat', modelMat)
       const resources = (i + j) % 2 ? ballBuffers : boxBuffers
-      beam.draw(plugin, ...resources, matrices)
+      beam.draw(shader, ...resources, matrices)
     }
   }
 }

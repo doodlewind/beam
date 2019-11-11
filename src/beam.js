@@ -1,5 +1,5 @@
 import { RendererConfig } from './consts.js'
-import { ShadePlugin } from './plugin.js'
+import { Shader } from './shader.js'
 import { createResource } from './resources.js'
 import * as glUtils from './utils/gl-utils.js'
 import * as miscUtils from './utils/misc-utils.js'
@@ -16,15 +16,15 @@ export class Beam {
     return this
   }
 
-  draw (plugin, ...resources) {
+  draw (shader, ...resources) {
     const groupedResources = miscUtils.groupResources(resources)
-    glUtils.draw(this.gl, plugin, ...groupedResources)
+    glUtils.draw(this.gl, shader, ...groupedResources)
     return this
   }
 
-  plugin (pluginTemplate) {
-    const plugin = new ShadePlugin(this, pluginTemplate)
-    return plugin
+  shader (shaderTemplate) {
+    const shader = new Shader(this, shaderTemplate)
+    return shader
   }
 
   resource (type, state = {}) {

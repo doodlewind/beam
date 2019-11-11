@@ -23,7 +23,7 @@ beam.define(AlphaCommand)
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 
-const plugin = beam.plugin(ImageColor)
+const shader = beam.shader(ImageColor)
 const eye = [0, 0, 10]
 const baseViewMat = createCamera({ eye }).viewMat
 const cameraMats = createCamera({ eye }, { canvas })
@@ -47,7 +47,7 @@ loadImages('../../assets/images/world-map.svg').then(([image]) => {
     beam
       .clear([1, 1, 1, 1])
       .alpha() // Try commenting this out!
-      .draw(plugin, ...resources)
+      .draw(shader, ...resources)
 
     requestAnimationFrame(tick)
   }

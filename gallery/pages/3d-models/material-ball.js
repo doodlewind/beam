@@ -17,7 +17,7 @@ canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas, rendererConfig)
 
-const plugin = beam.plugin(PBRLighting)
+const shader = beam.shader(PBRLighting)
 
 // Resources: data buffers and index buffer
 const ball = createBall()
@@ -64,7 +64,7 @@ const render = () => {
     pointLights,
     pbrOptions
   ]
-  beam.clear().draw(plugin, ...resources)
+  beam.clear().draw(shader, ...resources)
 }
 
 const base = '../../assets/'

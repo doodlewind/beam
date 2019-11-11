@@ -8,7 +8,7 @@ const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const plugin = beam.plugin(MixImage)
+const shader = beam.shader(MixImage)
 const cameraMats = createCamera({ eye: [0, 0, 5] }, { canvas })
 // Fill screen unit quad
 const quad = createRect()
@@ -21,7 +21,7 @@ const render = ([imageA, imageB]) => {
   }
 
   beam.clear().draw(
-    plugin,
+    shader,
     beam.resource(DataBuffers, quad.data),
     beam.resource(IndexBuffer, quad.index),
     beam.resource(Uniforms, cameraMats),

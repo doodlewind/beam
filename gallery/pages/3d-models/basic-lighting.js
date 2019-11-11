@@ -11,13 +11,13 @@ const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)
-const plugin = beam.plugin(LambertLighting)
+const shader = beam.shader(LambertLighting)
 const cameraMats = createCamera({ eye: [0, 6, 6] }, { canvas })
 const matrices = beam.resource(Uniforms, cameraMats)
 const light = beam.resource(Uniforms)
 const modelBuffers = []
 
-const render = () => beam.clear().draw(plugin, ...modelBuffers, matrices, light)
+const render = () => beam.clear().draw(shader, ...modelBuffers, matrices, light)
 
 fetch('../../assets/models/bunny.obj').then(resp => resp.text()).then(str => {
   const [model] = parseOBJ(str)

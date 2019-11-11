@@ -51,8 +51,8 @@ class BallMesh extends Mesh {
 export class MeshRenderer extends BeamRenderer {
   constructor (canvas) {
     super(canvas)
-    this.defaultPlugin = this.beam.plugin(NormalColor)
-    this.wireframePlugin = this.beam.plugin(RedWireframe)
+    this.defaultShader = this.beam.shader(NormalColor)
+    this.wireframeShader = this.beam.shader(RedWireframe)
     this.wireframe = true
     this.meshes = []
     this.camera = this.beam.resource(Uniforms, createCamera({}, { canvas }))
@@ -70,15 +70,15 @@ export class MeshRenderer extends BeamRenderer {
   }
 
   render () {
-    const { beam, defaultPlugin, wireframePlugin, meshes, camera } = this
+    const { beam, defaultShader, wireframeShader, meshes, camera } = this
     beam.clear()
     meshes.forEach(mesh => {
       const transform = beam.resource(Uniforms, { 'modelMat': mesh.modelMat })
       const resources = [mesh.data, camera, transform]
       if (this.wireframe) {
-        beam.draw(wireframePlugin, mesh.wireframeIndex, ...resources)
+        beam.draw(wireframeShader, mesh.wireframeIndex, ...resources)
       }
-      beam.draw(defaultPlugin, mesh.defaultIndex, ...resources)
+      beam.draw(defaultShader, mesh.defaultIndex, ...resources)
     })
   }
 }

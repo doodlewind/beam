@@ -8,7 +8,7 @@ const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const plugin = beam.plugin(ImageColor)
+const shader = beam.shader(ImageColor)
 const cameraMats = createCamera({ eye: [0, 0, 5] }, { canvas })
 
 const render = ([image]) => {
@@ -16,7 +16,7 @@ const render = ([image]) => {
   const rect = createRect([0, 0, 0], image.height / image.width)
 
   beam.clear().draw(
-    plugin,
+    shader,
     beam.resource(DataBuffers, rect.data),
     beam.resource(IndexBuffer, rect.index),
     beam.resource(Uniforms, cameraMats),

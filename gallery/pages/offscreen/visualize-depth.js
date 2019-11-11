@@ -13,8 +13,8 @@ canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)
 beam.define(Offscreen2DCommand)
-const lightingPlugin = beam.plugin(LambertLighting)
-const inspectDepthPlugin = beam.plugin(InspectDepth)
+const lightingShader = beam.shader(LambertLighting)
+const inspectDepthShader = beam.shader(InspectDepth)
 
 const eye = [0, 50, 50]
 const center = [10, 10, 0]
@@ -50,7 +50,7 @@ const drawBalls = () => {
     for (let j = 1; j < 10; j++) {
       const modelMat = translate([], baseModelMat, [i * 2, j * 2, 0])
       matrices.set('modelMat', modelMat)
-      beam.draw(lightingPlugin, ...ballBuffers, matrices, light)
+      beam.draw(lightingShader, ...ballBuffers, matrices, light)
     }
   }
 }
@@ -60,7 +60,7 @@ const render = () => {
   beam.offscreen2D(offscreenTarget, drawBalls)
 
   const options = beam.resource(Uniforms, { nearPlane: 0.1, farPlane: 100 })
-  beam.draw(inspectDepthPlugin, ...quadBuffers, textures, options)
+  beam.draw(inspectDepthShader, ...quadBuffers, textures, options)
 
   // default draw to screen
   // beam.clear(); drawBalls()

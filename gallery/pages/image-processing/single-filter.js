@@ -9,10 +9,10 @@ const { DataBuffers, IndexBuffer, Textures, Uniforms } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const brightnessContrast = beam.plugin(BrightnessContrast)
-const hueSaturation = beam.plugin(HueSaturation)
-const vignette = beam.plugin(Vignette)
-let plugin = brightnessContrast
+const brightnessContrast = beam.shader(BrightnessContrast)
+const hueSaturation = beam.shader(HueSaturation)
+const vignette = beam.shader(Vignette)
+let shader = brightnessContrast
 
 // Fill screen with unit quad
 const quad = createRect()
@@ -34,7 +34,7 @@ const updateImage = name => loadImages(base + name).then(([image]) => {
 
 const render = () => {
   const resources = [...quadBuffers, filterOptions, textures]
-  beam.clear().draw(plugin, ...resources)
+  beam.clear().draw(shader, ...resources)
 }
 
 updateImage('ivan.jpg').then(render)
@@ -65,7 +65,7 @@ const $filterSelect = document.getElementById('filter-select')
 $filterSelect.addEventListener('change', () => {
   const name = $filterSelect.value
   showControlGroup(name)
-  plugin = {
+  shader = {
     'brightness-contrast': brightnessContrast,
     'hue-saturation': hueSaturation,
     'vignette': vignette

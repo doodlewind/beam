@@ -1,8 +1,8 @@
 import { GLTypes } from './consts.js'
 import * as glUtils from './utils/gl-utils.js'
 
-export class ShadePlugin {
-  constructor (beam, pluginTemplate) {
+export class Shader {
+  constructor (beam, shaderTemplate) {
     this.beam = beam
 
     const {
@@ -10,10 +10,10 @@ export class ShadePlugin {
       uniforms = {},
       textures = {},
       mode = GLTypes.Triangles
-    } = pluginTemplate
+    } = shaderTemplate
     this.schema = { buffers, uniforms, textures, mode }
 
-    const { vs, fs, defines = {} } = pluginTemplate
+    const { vs, fs, defines = {} } = shaderTemplate
     this.shaderRefs = glUtils.initShaderRefs(
       beam.gl, defines, this.schema, vs, fs
     )

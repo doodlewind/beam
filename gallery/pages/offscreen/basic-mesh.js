@@ -16,8 +16,8 @@ canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)
 beam.define(Offscreen2DCommand)
 window.beam = beam
-const lightingPlugin = beam.plugin(LambertLighting)
-const imagePlugin = beam.plugin(BasicImage)
+const lightingShader = beam.shader(LambertLighting)
+const imageShader = beam.shader(BasicImage)
 
 const cameraMats = createCamera({ eye: [0, 0, 50] }, { canvas })
 const matrices = beam.resource(Uniforms, cameraMats)
@@ -47,12 +47,12 @@ const render = () => {
   beam.clear()
   beam.offscreen2D(offscreenTarget, () => {
     // beam.clear() here will set wrong gl.viewport
-    beam.draw(lightingPlugin, ...graphicsBuffers, matrices, light)
+    beam.draw(lightingShader, ...graphicsBuffers, matrices, light)
   })
-  beam.draw(imagePlugin, ...quadBuffers, textures)
+  beam.draw(imageShader, ...quadBuffers, textures)
 
   // default draw to screen
-  // beam.clear().draw(lightingPlugin, ...graphicsBuffers, matrices, light)
+  // beam.clear().draw(lightingShader, ...graphicsBuffers, matrices, light)
 }
 
 render()

@@ -7,7 +7,7 @@ const { DataBuffers, IndexBuffer, Textures } = ResourceTypes
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
-const plugin = beam.plugin(BasicImage)
+const shader = beam.shader(BasicImage)
 
 // Fill screen with unit quad
 const quad = createRect()
@@ -24,7 +24,7 @@ const updateImage = name => {
     canvas.height = 400
     canvas.width = 400 * aspectRatio
     textures.set('img', imageState)
-    beam.clear().draw(plugin, ...quadBuffers, textures)
+    beam.clear().draw(shader, ...quadBuffers, textures)
   })
 }
 
