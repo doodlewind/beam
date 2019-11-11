@@ -8,7 +8,7 @@ export const PBRLighting = {
   vs,
   fs,
   defines: {
-    // USE_TEX_LOD
+    USE_TEX_LOD: true
   },
   buffers: {
     position: { type: vec4, n: 3 },
