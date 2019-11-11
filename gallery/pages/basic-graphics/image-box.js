@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { ImageColor } from '../../plugins/basic-graphics-plugins.js'
+import { ImageColor } from '../../shaders/basic-graphics-shaders.js'
 import { createBox } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'
@@ -19,7 +19,7 @@ loadImages('../../assets/images/prague.jpg').then(([image]) => {
     beam.resource(DataBuffers, box.data),
     beam.resource(IndexBuffer, box.index),
     beam.resource(Uniforms, cameraMats),
-    // The 'img' key is defined for the ImageColor plugin
+    // The 'img' key is defined for the ImageColor shader
     beam.resource(Textures, { img: imageState })
   )
 })

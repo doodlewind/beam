@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { ImageExplode } from './explode-plugin.js'
+import { ImageExplode } from './explode-shader.js'
 import { createParticles, createAnimationStateGetter } from './explode-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'

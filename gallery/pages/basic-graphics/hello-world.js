@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { PolygonColor } from '../../plugins/basic-graphics-plugins.js'
+import { PolygonColor } from '../../shaders/basic-graphics-shaders.js'
 const { DataBuffers, IndexBuffer } = ResourceTypes
 
 // Init Beam instance

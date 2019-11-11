@@ -1,6 +1,6 @@
 import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
-import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
-import { BasicImage } from '../../plugins/image-filter-plugins.js'
+import { LambertLighting } from '../../shaders/basic-lighting-shader.js'
+import { BasicImage } from '../../shaders/image-filter-shaders.js'
 import {
   createBall, createRect, mergeGraphics
 } from '../../utils/graphics-utils.js'

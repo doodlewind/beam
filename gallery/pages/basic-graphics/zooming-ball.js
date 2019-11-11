@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { NormalColor } from '../../plugins/basic-graphics-plugins.js'
+import { NormalColor } from '../../shaders/basic-graphics-shaders.js'
 import { createBall } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes

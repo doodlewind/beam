@@ -1,7 +1,7 @@
 /* eslint-env browser */
 
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
+import { LambertLighting } from '../../shaders/basic-lighting-shader.js'
 import { parseOBJ } from '../../utils/obj-loader.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, rotate } from '../../utils/mat4.js'

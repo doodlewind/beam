@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { NormalColor } from '../../plugins/basic-graphics-plugins.js'
+import { NormalColor } from '../../shaders/basic-graphics-shaders.js'
 import { createBall, createBox } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate } from '../../utils/mat4.js'

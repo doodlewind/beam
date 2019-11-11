@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { ImageColor } from '../../plugins/basic-graphics-plugins.js'
+import { ImageColor } from '../../shaders/basic-graphics-shaders.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'

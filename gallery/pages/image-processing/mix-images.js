@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { MixImage } from './mix-image-plugin.js'
+import { MixImage } from './mix-image-shader.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'

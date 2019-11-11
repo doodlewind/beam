@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes, GLTypes as GL } from '../../../src/index.js'
-import { PBRLighting } from '../../plugins/pbr-lighting-plugin.js'
+import { PBRLighting } from '../../shaders/pbr-lighting-shader.js'
 import { createBall } from '../../utils/graphics-utils.js'
 import { loadImages, loadEnvMaps } from '../../utils/image-loader.js'
 import {

@@ -1,7 +1,7 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import {
   NormalColor, RedWireframe
-} from '../../plugins/basic-graphics-plugins.js'
+} from '../../shaders/basic-graphics-shaders.js'
 import { createBall, toWireframe } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes

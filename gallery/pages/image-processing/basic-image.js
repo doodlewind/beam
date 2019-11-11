@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { BasicImage } from '../../plugins/image-filter-plugins.js'
+import { BasicImage } from '../../shaders/image-filter-shaders.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
 const { DataBuffers, IndexBuffer, Textures } = ResourceTypes

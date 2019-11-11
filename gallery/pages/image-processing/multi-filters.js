@@ -1,7 +1,7 @@
 import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
 import {
   BrightnessContrast, HueSaturation, Vignette
-} from '../../plugins/image-filter-plugins.js'
+} from '../../shaders/image-filter-shaders.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
 const {

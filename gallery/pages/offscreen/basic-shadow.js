@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
-import { InspectDepth, ShadowLighting, VoidDepth } from './shadow-plugins.js'
+import { InspectDepth, ShadowLighting, VoidDepth } from './shadow-shaders.js'
 import { createBall, createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate, multiply } from '../../utils/mat4.js'

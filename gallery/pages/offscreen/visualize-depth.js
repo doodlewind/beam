@@ -1,6 +1,6 @@
 import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
-import { LambertLighting } from '../../plugins/basic-lighting-plugin.js'
-import { InspectDepth } from './shadow-plugins.js'
+import { LambertLighting } from '../../shaders/basic-lighting-shader.js'
+import { InspectDepth } from './shadow-shaders.js'
 import { createBall, createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate } from '../../utils/mat4.js'

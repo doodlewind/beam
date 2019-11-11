@@ -1,5 +1,5 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { PolygonTexture } from './texture-config-plugin.js'
+import { PolygonTexture } from './texture-config-shader.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
 const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes

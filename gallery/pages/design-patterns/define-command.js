@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { ImageColor } from '../../plugins/basic-graphics-plugins.js'
+import { ImageColor } from '../../shaders/basic-graphics-shaders.js'
 import { createBall } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { rotate } from '../../utils/mat4.js'
