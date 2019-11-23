@@ -3,7 +3,7 @@ import { MixImage } from './mix-image-shader.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -22,7 +22,7 @@ const render = ([imageA, imageB]) => {
 
   beam.clear().draw(
     shader,
-    beam.resource(DataBuffers, quad.data),
+    beam.resource(VertexBuffers, quad.data),
     beam.resource(IndexBuffer, quad.index),
     beam.resource(Uniforms, cameraMats),
     beam.resource(Textures, imageStates)

@@ -5,7 +5,7 @@ import { createBall } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { rotate } from '../../utils/mat4.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -28,7 +28,7 @@ const eye = [0, 0, 10]
 const baseViewMat = createCamera({ eye }).viewMat
 const cameraMats = createCamera({ eye }, { canvas })
 const ball = createBall()
-const dataBuffer = beam.resource(DataBuffers, ball.data)
+const vertexBuffer = beam.resource(VertexBuffers, ball.data)
 const indexBuffer = beam.resource(IndexBuffer, ball.index)
 const cameraResource = beam.resource(Uniforms, cameraMats)
 
@@ -41,7 +41,7 @@ loadImages('../../assets/images/world-map.svg').then(([image]) => {
     i += 0.02
     const viewMat = rotate([], baseViewMat, i, [0, 1, 0])
     cameraResource.set('viewMat', viewMat)
-    const resources = [dataBuffer, indexBuffer, cameraResource, imageResource]
+    const resources = [vertexBuffer, indexBuffer, cameraResource, imageResource]
 
     // Using the defined 'alpha' command
     beam

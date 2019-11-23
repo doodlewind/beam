@@ -4,7 +4,7 @@ import {
 } from '../../shaders/image-filter-shaders.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { DataBuffers, IndexBuffer, Textures, Uniforms } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Textures, Uniforms } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -17,7 +17,7 @@ let shader = brightnessContrast
 // Fill screen with unit quad
 const quad = createRect()
 const quadBuffers = [
-  beam.resource(DataBuffers, quad.data),
+  beam.resource(VertexBuffers, quad.data),
   beam.resource(IndexBuffer, quad.index)
 ]
 const filterOptions = beam.resource(Uniforms)
@@ -37,7 +37,7 @@ const render = () => {
   beam.clear().draw(shader, ...resources)
 }
 
-updateImage('ivan.jpg').then(render)
+updateImage('prague.jpg').then(render)
 
 const $imageSelect = document.getElementById('image-select')
 $imageSelect.addEventListener('change', () => {

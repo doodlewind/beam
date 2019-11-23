@@ -3,7 +3,7 @@ import { NormalColor } from '../../shaders/basic-graphics-shaders.js'
 import { createBall, createBox } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate } from '../../utils/mat4.js'
-const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -12,11 +12,11 @@ const shader = beam.shader(NormalColor)
 const ball = createBall()
 const box = createBox()
 const ballBuffers = [
-  beam.resource(DataBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.data),
   beam.resource(IndexBuffer, ball.index)
 ]
 const boxBuffers = [
-  beam.resource(DataBuffers, box.data),
+  beam.resource(VertexBuffers, box.data),
   beam.resource(IndexBuffer, box.index)
 ]
 

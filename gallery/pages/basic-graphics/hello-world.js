@@ -1,6 +1,6 @@
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { PolygonColor } from '../../shaders/basic-graphics-shaders.js'
-const { DataBuffers, IndexBuffer } = ResourceTypes
+const { VertexBuffers, IndexBuffer } = ResourceTypes
 
 // Init Beam instance
 const canvas = document.querySelector('canvas')
@@ -9,8 +9,8 @@ const beam = new Beam(canvas)
 // Init shader
 const shader = beam.shader(PolygonColor)
 
-// Init data buffer resource with triangle positions and colors
-const dataBuffers = beam.resource(DataBuffers, {
+// Init vertex buffer resource with triangle positions and colors
+const vertexBuffers = beam.resource(VertexBuffers, {
   position: [
     -1, -1, 0, // vertex 0
     0, 1, 0, // vertex 1
@@ -26,4 +26,4 @@ const dataBuffers = beam.resource(DataBuffers, {
 const indexBuffer = beam.resource(IndexBuffer, { array: [0, 1, 2] })
 
 // Clear the screen, then draw a frame with shader and resources
-beam.clear().draw(shader, dataBuffers, indexBuffer)
+beam.clear().draw(shader, vertexBuffers, indexBuffer)

@@ -3,7 +3,7 @@ import { ImageColor } from '../../shaders/basic-graphics-shaders.js'
 import { createBox } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -16,7 +16,7 @@ loadImages('../../assets/images/prague.jpg').then(([image]) => {
   const imageState = { image, flip: true }
   beam.clear().draw(
     shader,
-    beam.resource(DataBuffers, box.data),
+    beam.resource(VertexBuffers, box.data),
     beam.resource(IndexBuffer, box.index),
     beam.resource(Uniforms, cameraMats),
     // The 'img' key is defined for the ImageColor shader

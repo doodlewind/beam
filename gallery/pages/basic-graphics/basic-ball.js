@@ -2,7 +2,7 @@ import { Beam, ResourceTypes } from '../../../src/index.js'
 import { NormalColor } from '../../shaders/basic-graphics-shaders.js'
 import { createBall } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
-const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -13,7 +13,7 @@ const ball = createBall()
 
 beam.clear().draw(
   shader,
-  beam.resource(DataBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.data),
   beam.resource(IndexBuffer, ball.index),
   beam.resource(Uniforms, cameraMats)
 )

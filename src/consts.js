@@ -1,5 +1,5 @@
 export const ResourceTypes = {
-  DataBuffers: 'DataBuffers',
+  VertexBuffers: 'VertexBuffers',
   IndexBuffer: 'IndexBuffer',
   Uniforms: 'Uniforms',
   Textures: 'Textures',

@@ -14,14 +14,14 @@ export const getNumComponents = bufferType => {
 
 export const groupResources = resources => {
   const Types = ResourceTypes
-  let [dataBuffers, indexResource, uniforms, textures] = [{}, null, {}, {}]
+  let [vertexBuffers, indexResource, uniforms, textures] = [{}, null, {}, {}]
 
   for (let i = 0; i < resources.length; i++) {
     const resource = resources[i]
     const { type } = resource
 
-    if (type === Types.DataBuffers) {
-      dataBuffers = { ...dataBuffers, ...resource.buffers }
+    if (type === Types.VertexBuffers) {
+      vertexBuffers = { ...vertexBuffers, ...resource.buffers }
     } else if (type === Types.IndexBuffer) {
       indexResource = resource
     } else if (type === Types.Uniforms) {
@@ -31,5 +31,5 @@ export const groupResources = resources => {
     }
   }
 
-  return [dataBuffers, indexResource, uniforms, textures]
+  return [vertexBuffers, indexResource, uniforms, textures]
 }

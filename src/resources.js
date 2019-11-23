@@ -8,10 +8,10 @@ export const createResource = (gl, type, state) => {
     set (key, val) { this.state[key] = val; return this }
   }
 
-  class DataBuffersResource extends Resource {
+  class VertexBuffersResource extends Resource {
     constructor () {
       super()
-      this.buffers = glUtils.initDataBuffers(gl, state)
+      this.buffers = glUtils.initVertexBuffers(gl, state)
     }
 
     set (key, val) {
@@ -109,7 +109,7 @@ export const createResource = (gl, type, state) => {
   }
 
   const resourceCreatorMap = {
-    [Types.DataBuffers]: () => new DataBuffersResource(),
+    [Types.VertexBuffers]: () => new VertexBuffersResource(),
     [Types.IndexBuffer]: () => new IndexBufferResource(),
     [Types.Uniforms]: () => new UniformsResource(),
     [Types.Textures]: () => new TexturesResource(),

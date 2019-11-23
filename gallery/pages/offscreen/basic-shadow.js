@@ -6,7 +6,7 @@ import { create, translate, multiply } from '../../utils/mat4.js'
 import { subtract } from '../../utils/vec3.js'
 import { createShadowCamera } from './utils.js'
 const {
-  DataBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
+  VertexBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
 } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
@@ -21,11 +21,11 @@ const lightingShader = beam.shader(ShadowLighting)
 const ball = createBall()
 const plane = createRect([10, 5, -5], 1, 15)
 const planeBuffers = [
-  beam.resource(DataBuffers, plane.data),
+  beam.resource(VertexBuffers, plane.data),
   beam.resource(IndexBuffer, plane.index)
 ]
 const ballBuffers = [
-  beam.resource(DataBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.data),
   beam.resource(IndexBuffer, ball.index)
 ]
 
@@ -37,7 +37,7 @@ textures
 
 // screen quad
 const quadRect = createRect()
-const quadDataRes = beam.resource(DataBuffers, quadRect.data)
+const quadDataRes = beam.resource(VertexBuffers, quadRect.data)
 const quadIndexRes = beam.resource(IndexBuffer, quadRect.index)
 
 const baseModelMat = create()

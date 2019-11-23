@@ -5,7 +5,7 @@ import { LambertLighting } from '../../shaders/basic-lighting-shader.js'
 import { parseOBJ } from '../../utils/obj-loader.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, rotate } from '../../utils/mat4.js'
-const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
@@ -21,7 +21,7 @@ const render = () => beam.clear().draw(shader, ...modelBuffers, matrices, light)
 
 fetch('../../assets/models/bunny.obj').then(resp => resp.text()).then(str => {
   const [model] = parseOBJ(str)
-  modelBuffers[0] = beam.resource(DataBuffers, model.data)
+  modelBuffers[0] = beam.resource(VertexBuffers, model.data)
   modelBuffers[1] = beam.resource(IndexBuffer, model.index)
   render()
 })

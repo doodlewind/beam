@@ -4,7 +4,7 @@ import { ImageExplode } from './explode-shader.js'
 import { createParticles, createAnimationStateGetter } from './explode-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
@@ -15,7 +15,7 @@ const shader = beam.shader(ImageExplode)
 
 const particles = createParticles(100)
 const buffers = [
-  beam.resource(DataBuffers, particles.data),
+  beam.resource(VertexBuffers, particles.data),
   beam.resource(IndexBuffer, particles.index)
 ]
 const cameraMats = createCamera({ eye: [0, 0, 8] }, { canvas })

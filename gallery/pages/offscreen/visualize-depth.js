@@ -5,7 +5,7 @@ import { createBall, createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate } from '../../utils/mat4.js'
 const {
-  DataBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
+  VertexBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
 } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
@@ -28,7 +28,7 @@ light.set('dirLight.direction', [1, 1, 1])
 
 const ball = createBall()
 const ballBuffers = [
-  beam.resource(DataBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.data),
   beam.resource(IndexBuffer, ball.index)
 ]
 
@@ -39,7 +39,7 @@ textures.set('img', offscreenTarget)
 // screen quad
 const quad = createRect()
 const quadBuffers = [
-  beam.resource(DataBuffers, quad.data),
+  beam.resource(VertexBuffers, quad.data),
   beam.resource(IndexBuffer, quad.index)
 ]
 

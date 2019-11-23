@@ -75,7 +75,7 @@ export const clear = (gl, color) => {
   gl.enable(gl.DEPTH_TEST)
 }
 
-export const initDataBuffers = (gl, state) => {
+export const initVertexBuffers = (gl, state) => {
   const buffers = {}
   const bufferKeys = Object.keys(state)
   bufferKeys.forEach(key => {
@@ -364,7 +364,7 @@ const padDefault = (schema, key, val) => {
 
 let lastProgram = null
 export const draw = (
-  gl, shader, dataBuffers, indexResource, uniforms, textures
+  gl, shader, vertexBuffers, indexResource, uniforms, textures
 ) => {
   const { schema, shaderRefs } = shader
   const { program } = shaderRefs
@@ -374,13 +374,13 @@ export const draw = (
   }
   Object.keys(shaderRefs.attributes).forEach(key => {
     if (
-      !schema.buffers[key] || schema.buffers[key].type === SchemaTypes.index || !dataBuffers[key]
+      !schema.buffers[key] || schema.buffers[key].type === SchemaTypes.index || !vertexBuffers[key]
     ) return
     const { location } = shaderRefs.attributes[key]
     const { n, type } = schema.buffers[key]
     const numComponents = n || miscUtils.getNumComponents(type)
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, dataBuffers[key])
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffers[key])
     gl.vertexAttribPointer(location, numComponents, gl.FLOAT, false, 0, 0)
     gl.enableVertexAttribArray(location)
   })

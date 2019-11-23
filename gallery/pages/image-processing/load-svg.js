@@ -3,7 +3,7 @@ import { ImageColor } from '../../shaders/basic-graphics-shaders.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -17,7 +17,7 @@ const render = ([image]) => {
 
   beam.clear().draw(
     shader,
-    beam.resource(DataBuffers, rect.data),
+    beam.resource(VertexBuffers, rect.data),
     beam.resource(IndexBuffer, rect.index),
     beam.resource(Uniforms, cameraMats),
     beam.resource(Textures, { img: imageState })

@@ -5,7 +5,7 @@ import {
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
 const {
-  DataBuffers, IndexBuffer, Textures, Uniforms, OffscreenTarget
+  VertexBuffers, IndexBuffer, Textures, Uniforms, OffscreenTarget
 } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
@@ -19,7 +19,7 @@ const vignette = beam.shader(Vignette)
 // Fill screen with unit quad
 const quad = createRect()
 const quadBuffers = [
-  beam.resource(DataBuffers, quad.data),
+  beam.resource(VertexBuffers, quad.data),
   beam.resource(IndexBuffer, quad.index)
 ]
 const filterOptions = beam.resource(Uniforms)
@@ -65,7 +65,7 @@ const render = () => {
   draw(vignette, outputTextures[1])
 }
 
-updateImage('ivan.jpg').then(render)
+updateImage('prague.jpg').then(render)
 
 const $imageSelect = document.getElementById('image-select')
 $imageSelect.addEventListener('change', () => {

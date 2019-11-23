@@ -6,7 +6,7 @@ import { translate } from '../../utils/mat4.js'
 import {
   rendererConfig, createMaterialImages, computeMVPMat, createPointLights
 } from './pbr-utils.js'
-const { DataBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
@@ -15,10 +15,10 @@ const beam = new Beam(canvas, rendererConfig)
 
 const shader = beam.shader(PBRLighting)
 
-// Resources: data buffers and index buffer
+// Resources: vertex buffers and index buffer
 const ball = createBall()
 const ballBuffers = [
-  beam.resource(DataBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.data),
   beam.resource(IndexBuffer, ball.index)
 ]
 

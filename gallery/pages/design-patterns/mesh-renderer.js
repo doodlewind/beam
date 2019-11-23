@@ -7,12 +7,12 @@ import {
 } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate } from '../../utils/mat4.js'
-const { DataBuffers, IndexBuffer, Uniforms } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
 class Mesh {
   constructor (beam, { data, index }, modelMat) {
     this.beam = beam
-    this.data = beam.resource(DataBuffers, data)
+    this.data = beam.resource(VertexBuffers, data)
     this.defaultIndex = beam.resource(IndexBuffer, index)
     this.wireframeIndex = beam.resource(IndexBuffer, toWireframe(index))
     this.modelMat = modelMat || create()

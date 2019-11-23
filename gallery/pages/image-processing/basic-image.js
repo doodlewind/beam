@@ -2,7 +2,7 @@ import { Beam, ResourceTypes } from '../../../src/index.js'
 import { BasicImage } from '../../shaders/image-filter-shaders.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { DataBuffers, IndexBuffer, Textures } = ResourceTypes
+const { VertexBuffers, IndexBuffer, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -12,7 +12,7 @@ const shader = beam.shader(BasicImage)
 // Fill screen with unit quad
 const quad = createRect()
 const quadBuffers = [
-  beam.resource(DataBuffers, quad.data),
+  beam.resource(VertexBuffers, quad.data),
   beam.resource(IndexBuffer, quad.index)
 ]
 const textures = beam.resource(Textures)
@@ -33,4 +33,4 @@ $imageSelect.addEventListener('change', () => {
   updateImage($imageSelect.value)
 })
 
-updateImage('ivan.jpg')
+updateImage('prague.jpg')
