@@ -15,7 +15,7 @@ How is this possible? Instead of just reorganizing boilerplate code, Beam define
 * **Draw** - Requests for running shaders with resources. To render a scene, different shaders and resources may be used. You are free to combine them, so as to fire multi draw calls that eventually compose a frame. In fact, each draw call will start the graphics render pipeline for once.
 * **Commands** - Setups before firing a draw call. WebGL is *very* stateful. Before every draw call, WebGL states must be carefully configured. These changes are indicated via commands. Beam makes use of conventions that greatly reduces manual command maintenance. Certainly you can also define and run custom commands easily.
 
-Since commands can be mostly automated, there are only 3 concepts for beginners to learn, represented by 3 core APIs in Beam. They are**beam.shader**, **beam.resource** and **beam.draw**. Conceptually only with these 3 methods, you can build a WebGL app.
+Since commands can be mostly automated, there are only 3 concepts for beginners to learn, represented by 3 core APIs in Beam: **beam.shader**, **beam.resource** and **beam.draw**. Conceptually only with these 3 methods, you can build a WebGL app.
 
 ## Installation
 ``` bash
@@ -33,7 +33,7 @@ Here is the code snippet:
 
 ``` js
 import { Beam, ResourceTypes } from 'beam-gl'
-import { MyShader } from './my-shader.js' // checkout later
+import { MyShader } from './my-shader.js'
 const { VertexBuffers, IndexBuffer } = ResourceTypes
 
 // Remember to create a `<canvas>` element in HTML
