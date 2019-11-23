@@ -81,7 +81,7 @@ void main() {
 
 const wireframeFS = `
 void main() {
-  gl_FragColor = vec4(1, 0, 0, 1);
+  gl_FragColor = vec4(34./256., 84./256., 244./256., 1);
 }
 `
 

@@ -1,8 +1,10 @@
 /* eslint-env browser */
 
 import { Beam, ResourceTypes } from '../../../src/index.js'
-import { LambertLighting } from '../../shaders/basic-lighting-shader.js'
+import { RedWireframe } from '../../shaders/basic-graphics-shaders.js'
+// import { LambertLighting } from '../../shaders/basic-lighting-shader.js'
 import { parseOBJ } from '../../utils/obj-loader.js'
+import { toWireframe } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, rotate } from '../../utils/mat4.js'
 const { VertexBuffers, IndexBuffer, Uniforms } = ResourceTypes
@@ -11,18 +13,20 @@ const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
 const beam = new Beam(canvas)
-const shader = beam.shader(LambertLighting)
-const cameraMats = createCamera({ eye: [0, 6, 6] }, { canvas })
+const shader = beam.shader(RedWireframe)
+const cameraMats = createCamera(
+  { eye: [0, 400, 700], center: [0, 150, 0] }, { canvas }
+)
 const matrices = beam.resource(Uniforms, cameraMats)
 const light = beam.resource(Uniforms)
 const modelBuffers = []
 
 const render = () => beam.clear().draw(shader, ...modelBuffers, matrices, light)
 
-fetch('../../assets/models/bunny.obj').then(resp => resp.text()).then(str => {
+fetch('../../assets/models/beam.obj').then(resp => resp.text()).then(str => {
   const [model] = parseOBJ(str)
   modelBuffers[0] = beam.resource(VertexBuffers, model.data)
-  modelBuffers[1] = beam.resource(IndexBuffer, model.index)
+  modelBuffers[1] = beam.resource(IndexBuffer, toWireframe(model.index))
   render()
 })
 
