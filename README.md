@@ -1,81 +1,167 @@
 # Beam
-Build your WebGL renderer with plugins.
+Expressive WebGL
 
+## Introduction
+Beam is a tiny WebGL library. It's **NOT** a renderer or 3D engine by itself. Instead, Beam provides some essential abstractions, allowing you to build WebGL infrastructures within a very small and easy-to-use API surface.
 
-## Intro
-Beam is a library that helps you building WebGL renderers. It's **NOT** a renderer or 3D render engine by itself. Instead, Beam provides some essential abstractions, allowing you to fully control WebGL with a very small and easy-to-use API surface.
+The WebGL API is known to be verbose, with a steep learning curve. Just like how jQuery simplifies DOM operations, Beam wraps WebGL in a succinct way, making it easier to build WebGL renderers with clean and terse code.
 
-What are we talking about? Briefly, there are two fundamental features shipped by Beam, within 10KB the size:
+How is this possible? Instead of just reorganizing boilerplate code, Beam defines some essential concepts on top of WebGL, which can be much easier to be understood and used. These highly simplified concepts include:
 
-* Beam classifies all the complex WebGL conpects into **Plugins** and **Resources**. You can reuse "shaders", the program running on GPU, as plugins, just like reusing Babel plugins or React components.
-* Beam provides a fully **composable, chainable, functional drawing** API. Writing render logic of your engine with Beam, is just as simple as writing jQuery-style chaining calls.
+* **Shaders** - Objects containing graphics algorithms. In contrast of JavaScript that only runs on CPU with a single thread, shaders are run in parallel on GPU, computing colors for millions of pixels every frame.
+* **Resources** - Objects containing graphics data. Just like how JSON works in your web app, resources are the data passed to shaders, which mainly includes triangle arrays (aka buffers), image textures, and global options.
+* **Draw** - Requests for running shaders with resources. To render a scene, different shaders and resources may be used. You are free to combine them, so as to fire multi draw calls that eventually compose a frame. In fact, each draw call will start the graphics render pipeline for once.
+* **Commands** - Setups before firing a draw call. WebGL is *very* stateful. Before every draw call, WebGL states must be carefully configured. These changes are indicated via commands. Beam makes use of conventions that greatly reduces manual command maintenance. Certainly you can also define and run custom commands easily.
 
+Since commands can be mostly automated, there are only 3 concepts for beginners to learn, represented by 3 core APIs in Beam. They are**beam.shader**, **beam.resource** and **beam.draw**. Conceptually only with these 3 methods, you can build a WebGL app.
+
+## Installation
+``` bash
+npm install beam-gl
+```
+
+Or you can clone this repository and start a static HTTP server to try it out. Beam runs directly in modern browser, without any need to build or compile.
 
 ## Hello World with Beam
-Let's start with an example using Beam to render a colorful triangle, which is what many WebGL tutorials struggle to elaborate:
+Now we are going to write a simplest WebGL app with Beam, which renders a colorful triangle:
 
 ![beam-hello-world](./gallery/assets/images/beam-hello-world.png)
 
-Before we begin, keep in mind that Beam only has 3 core API: **plugin** / **resource** / **draw**. How to render stuffs only based on these 3 API? See below:
+Here is the code snippet:
 
 ``` js
 import { Beam, ResourceTypes } from 'beam-gl'
-import { PolygonColor } from 'beam-gl/gallery/plugins/basic-graphics-plugins'
-const { DataBuffers, IndexBuffer } = ResourceTypes
+import { MyShader } from './my-shader.js' // checkout later
+const { VertexBuffers, IndexBuffer } = ResourceTypes
 
-// Init Beam instance
+// Remember to create a `<canvas>` element in HTML
 const canvas = document.querySelector('canvas')
+// Init Beam instance
 const beam = new Beam(canvas)
 
-// Init a shade plugin, which can render colorful polygons
-const plugin = beam.plugin(PolygonColor)
+// Init shader for triangle rendering
+const shader = beam.shader(MyShader)
 
-// Init data buffer resource with triangle positions and colors
-const dataBuffers = beam.resource(DataBuffers, {
+// Init vertex buffer resource
+const vertexBuffers = beam.resource(VertexBuffers, {
   position: [
-    -1, -1, 0, // vertex 0
-    0, 1, 0, // vertex 1
-    1, -1, 0 // vertex 2
+    -1, -1, 0, // vertex 0, bottom left
+    0, 1, 0, // vertex 1, top middle
+    1, -1, 0 // vertex 2, bottom right
   ],
   color: [
-    1, 0, 0, // vertex 0
-    0, 1, 0, // vertex 1
-    0, 0, 1 // vertex 2
+    1, 0, 0, // vertex 0, red
+    0, 1, 0, // vertex 1, green
+    0, 0, 1 // vertex 2, blue
   ]
 })
 // Init index buffer resource with 3 indices
-const indexBuffer = beam.resource(IndexBuffer, { array: [0, 1, 2] })
+const indexBuffer = beam.resource(IndexBuffer, {
+  array: [0, 1, 2]
+})
 
-// Clear the screen, then draw a frame with plugin and buffer resources
-beam.clear().draw(plugin, dataBuffers, indexBuffer)
+// Clear the screen, then draw with shader and resources
+beam
+  .clear()
+  .draw(shader, vertexBuffers, indexBuffer)
 ```
 
-And that's all.
+Now let's take a look at some pieces of code in this example. Firstly we need to init Beam instance with a canvas:
 
+``` js
+const canvas = document.querySelector('canvas')
+const beam = new Beam(canvas)
+```
 
-## Why Beam?
-If you're fluent with WebGL, you'll find out that this example fully complies with what a typical WebGL app should do: *creating shaders, creating buffers, uploading buffer data, making draw calls*...But when using Beam, you can use a **highly expressive** API to describe the logic, with **high flexibility of control**.
+Then we can init a shader with `beam.shader`. The content in `MyShader` will be explained later:
 
-What does *expressiveness* and *flexibiliy* means? In short there're two points:
+``` js
+const shader = beam.shader(MyShader)
+```
 
-* For expressiveness, the **draw** API supports chaining calls. Not only can you gracefully drawing different contents, but also nesting drawing logics. And on nesting, the GL context state can be even automatically kept in sync with function scopes!
-* For flexibiliy, the chaining methods you're calling, are all free for you to define. For example, you can defines custom methods like `beam.alpha().cull().draw()` for your case, and the `alpha` / `cull` methods can be declared by yourself. In a word, you have full control over the WebGL state.
+For the triangle, use the `beam.resource` API to create its data, which is contained in different buffers. Beam use the `VertexBuffers` type to represent them. There are 3 vertices in the triangle, each vertex has two attributes, which is **position** and **color**. Every vertex attribute has its vertex buffer, which can be declared as a flat and plain JavaScript array (or TypedArray). Beam will upload these data to GPU behind the scene:
 
-Besides, Beam is able to support an "optimizer" based on command sorting, which can reduce performance overhead on state changing between draw calls. This feature is opt-in, you can provide your fine-grained optimization for your use case.
+``` js
+const vertexBuffers = beam.resource(VertexBuffers, {
+  position: [
+    -1, -1, 0, // vertex 0, bottom left
+    0, 1, 0, // vertex 1, top middle
+    1, -1, 0 // vertex 2, bottom right
+  ],
+  color: [
+    1, 0, 0, // vertex 0, red
+    0, 1, 0, // vertex 1, green
+    0, 0, 1 // vertex 2, blue
+  ]
+})
+```
 
-> The command sorting feature is not implemented yet.
+Vertex buffers usually contain a compact dataset. We can define a subset or superset of which to render, so that we can reduce redundancy and reuse more vertices. To do that we need to introduce another type of buffer called `IndexBuffer`, which contains indices of the vertices in `vertexBuffers`:
 
-On top of Beam, you can easily design your own WebGL render engines aiming at different graphics apps. **Remember, Beam is designed for building render engines, Beam itselt is NOT a render engine**.
+``` js
+const indexBuffer = beam.resource(IndexBuffer, {
+  array: [0, 1, 2]
+})
+```
 
+> In this example, each index refers to 3 spaces in the vertex array.
 
-## Resources
+Finally we can render with WebGL. `beam.clear` can clear the frame, then the chainable `beam.draw` can draw with **one shader object and multi resource objects**:
 
-### Examples
-What can Beam do for now? Checkout [**Beam Examples**](./examples.html) and rock!
+``` js
+beam
+  .clear()
+  .draw(shader, vertexBuffers, indexBuffer)
+```
 
-### Documentation
-> WIP
+The `beam.draw` API is flexible, if you have multi shaders and resources, just combine them to make draw calls at your wish, composing a complex scene:
 
-* Beam API
-* Resource Design in Beam
-* Command Design in Beam
+``` js
+beam
+  .draw(shaderX, ...resourcesA)
+  .draw(shaderY, ...resourcesB)
+  .draw(shaderZ, ...resourcesC)
+```
+
+There's one missing point: How to decide the render algorithm of the triangle? This is done in the `MyShader` variable, which is a schema of the shader object, and it looks like this:
+
+``` js
+import { SchemaTypes } from 'beam-gl'
+
+const vertexShader = `
+attribute vec4 position;
+attribute vec4 color;
+varying highp vec4 vColor;
+void main() {
+  vColor = color;
+  gl_Position = position;
+}
+`
+const fragmentShader = `
+varying highp vec4 vColor;
+void main() {
+  gl_FragColor = vColor;
+}
+`
+
+const { vec4 } = SchemaTypes
+export const MyShader = {
+  vs: vertexShader,
+  fs: fragmentShader,
+  buffers: {
+    position: { type: vec4, n: 3 },
+    color: { type: vec4, n: 3 }
+  }
+}
+```
+
+This shows a simple shader schema in Beam, which is made of a string for vertex shader, a string for fragment shader, and other schema fields. From a very brief view, vertex shader is executed once per vertex, and fragment shader is executed once per pixel. They are written in the GLSL shader language. In WebGL, the vertex shader always writes to `gl_Position` as its output, and the fragment shader writes to  `gl_FragColor` for final pixel color. The `vColor` varying variable is interpolated and passed from vertex shader to fragment shader, and the `position` and `color` vertex attribute variables, are corresponding to the buffer keys in `vertexBuffers`. That's a convention to simplify boilerplates.
+
+## Examples
+See [Beam Examples](./examples.html) for versatile WebGL snippets based on Beam, including 3D PBR rendering, image processing, custom renderers and more.
+
+## API
+See API Documentation (TODO).
+
+## License
+MIT
