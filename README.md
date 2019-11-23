@@ -160,7 +160,7 @@ export const MyShader = {
 This shows a simple shader schema in Beam, which is made of a string for vertex shader, a string for fragment shader, and other schema fields. From a very brief view, vertex shader is executed once per vertex, and fragment shader is executed once per pixel. They are written in the GLSL shader language. In WebGL, the vertex shader always writes to `gl_Position` as its output, and the fragment shader writes to  `gl_FragColor` for final pixel color. The `vColor` varying variable is interpolated and passed from vertex shader to fragment shader, and the `position` and `color` vertex attribute variables, are corresponding to the buffer keys in `vertexBuffers`. That's a convention to simplify boilerplates.
 
 ## Examples
-See [Beam Examples](./examples.html) for versatile WebGL snippets based on Beam, including:
+See [Beam Examples](https://doodlewind.github.io/beam/examples.html) for versatile WebGL snippets based on Beam, including:
 
 * Render multi 3D objects
 * Mesh loading
