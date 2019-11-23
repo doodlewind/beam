@@ -1,6 +1,8 @@
 # Beam
 Expressive WebGL
 
+![beam-logo](./gallery/assets/images/beam-logo.png)
+
 ## Introduction
 Beam is a tiny WebGL library. It's **NOT** a renderer or 3D engine by itself. Instead, Beam provides some essential abstractions, allowing you to build WebGL infrastructures within a very small and easy-to-use API surface.
 
