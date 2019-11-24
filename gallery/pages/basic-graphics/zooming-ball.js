@@ -14,14 +14,14 @@ const buffers = [
   beam.resource(VertexBuffers, ball.data),
   beam.resource(IndexBuffer, ball.index)
 ]
-const cameraMats = createCamera({ eye: [0, 10, 10] }, { canvas })
+let i = 0; let d = 10
+const cameraMats = createCamera({ eye: [0, d, d] })
 let camera = beam.resource(Uniforms, cameraMats)
 
-let i = 0; let d = 10
 const tick = () => {
   i += 0.02; d = 10 + Math.sin(i) * 5
   const { viewMat } = createCamera({ eye: [0, d, d] })
-  // Perform update:
+  // Update uniform resource
   camera.set('viewMat', viewMat)
 
   // Or perform update with new resourse:
@@ -31,4 +31,4 @@ const tick = () => {
   beam.clear().draw(shader, ...buffers, camera)
   requestAnimationFrame(tick)
 }
-tick()
+tick() // Begin render loop

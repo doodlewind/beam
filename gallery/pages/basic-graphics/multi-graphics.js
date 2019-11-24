@@ -22,9 +22,9 @@ const boxBuffers = [
 
 const cameraMats = createCamera(
   // For center, use { eye: [10.5, 10.5, 50], center: [10.5, 10.5, 0] }
-  { eye: [0, 50, 50], center: [10, 10, 0] }, { canvas }
+  { eye: [0, 50, 50], center: [10, 10, 0] }
 )
-const matrices = beam.resource(Uniforms, cameraMats)
+const camera = beam.resource(Uniforms, cameraMats)
 const baseMat = create()
 
 const render = () => {
@@ -32,9 +32,12 @@ const render = () => {
   for (let i = 1; i < 10; i++) {
     for (let j = 1; j < 10; j++) {
       const modelMat = translate([], baseMat, [i * 2, j * 2, 0])
-      matrices.set('modelMat', modelMat)
-      const resources = (i + j) % 2 ? ballBuffers : boxBuffers
-      beam.draw(shader, ...resources, matrices)
+      camera.set('modelMat', modelMat)
+      const resources = (i + j) % 2
+        ? ballBuffers
+        : boxBuffers
+
+      beam.draw(shader, ...resources, camera)
     }
   }
 }

@@ -11,7 +11,7 @@ const beam = new Beam(canvas)
 
 const normal = beam.shader(NormalColor)
 const wireframe = beam.shader(RedWireframe)
-const cameraMats = createCamera({ eye: [0, 10, 10] }, { canvas })
+const cameraMats = createCamera({ eye: [0, 10, 10] })
 const camera = beam.resource(Uniforms, cameraMats)
 
 const ball = createBall([0, 0, 0], 1, 10, 10)

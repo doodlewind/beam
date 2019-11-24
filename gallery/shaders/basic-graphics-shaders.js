@@ -42,8 +42,8 @@ uniform mat4 projectionMat;
 varying highp vec4 vColor;
 
 void main() {
-  gl_Position = projectionMat * viewMat * modelMat * position;
   vColor = normal;
+  gl_Position = projectionMat * viewMat * modelMat * position;
 }
 `
 
@@ -100,28 +100,27 @@ export const RedWireframe = {
 }
 
 const imageVS = `
-precision highp float;
 attribute vec4 position;
+attribute vec4 normal;
 attribute vec2 texCoord;
 
 uniform mat4 modelMat;
 uniform mat4 viewMat;
 uniform mat4 projectionMat;
 
-varying vec2 vTexCoord;
+varying highp vec2 vTexCoord;
 
 void main() {
-  gl_Position = projectionMat * viewMat * modelMat * position;
   vTexCoord = texCoord;
+  gl_Position = projectionMat * viewMat * modelMat * position;
 }
 `
 
 const imageFS = `
-precision highp float;
 uniform sampler2D img;
-uniform float strength;
+uniform highp float strength;
 
-varying vec2 vTexCoord;
+varying highp vec2 vTexCoord;
 
 void main() {
   gl_FragColor = texture2D(img, vTexCoord);

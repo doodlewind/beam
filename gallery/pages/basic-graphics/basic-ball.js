@@ -8,7 +8,7 @@ const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
 const shader = beam.shader(NormalColor)
-const cameraMats = createCamera({ eye: [0, 10, 10] }, { canvas })
+const cameraMats = createCamera({ eye: [0, 10, 10] })
 const ball = createBall()
 
 beam.clear().draw(

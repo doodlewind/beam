@@ -16,7 +16,7 @@ const buffers = [
 ]
 const cameraMats = createCamera(
   // For center, use { eye: [10.5, 10.5, 50], center: [10.5, 10.5, 0] }
-  { eye: [0, 50, 50], center: [10, 10, 0] }, { canvas }
+  { eye: [0, 50, 50], center: [10, 10, 0] }
 )
 const matrices = beam.resource(Uniforms, cameraMats)
 const baseMat = create()

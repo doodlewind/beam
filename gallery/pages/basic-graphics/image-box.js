@@ -9,7 +9,7 @@ const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
 
 const shader = beam.shader(ImageColor)
-const cameraMats = createCamera({ eye: [10, 10, 10] }, { canvas })
+const cameraMats = createCamera({ eye: [10, 10, 10] })
 const box = createBox()
 
 loadImages('../../assets/images/prague.jpg').then(([image]) => {
