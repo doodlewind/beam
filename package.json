@@ -3,6 +3,7 @@
   "version": "0.1911.0",
   "description": "Expressive WebGL",
   "main": "src/index.js",
+  "types": "./index.d.ts",
   "dependencies": {},
   "devDependencies": {},
   "scripts": {},
