@@ -164,7 +164,7 @@ export const initCubeTexture = (gl, val) => {
 export const initTextures = (gl, state) => {
   const textures = {}
   Object.keys(state).forEach(key => {
-    const texture = state[key].image
+    const texture = state[key].type === SchemaTypes.tex2D
       ? init2DTexture(gl, state[key])
       : initCubeTexture(gl, state[key])
     textures[key] = texture
