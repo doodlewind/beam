@@ -81,19 +81,19 @@ export const initVertexBuffers = (gl, state) => {
   bufferKeys.forEach(key => {
     const buffer = gl.createBuffer()
     buffers[key] = buffer
-    updateDataBuffer(gl, buffers[key], state[key])
+    updateVertexBuffer(gl, buffers[key], state[key])
   })
   return buffers
 }
 
-export const updateDataBuffer = (gl, buffer, array) => {
+export const updateVertexBuffer = (gl, buffer, array) => {
   const data = array instanceof Float32Array
     ? array : new Float32Array(array)
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
 }
 
-export const destroyDataBuffer = (gl, buffer) => {
+export const destroyVertexBuffer = (gl, buffer) => {
   gl.deleteBuffer(buffer)
 }
 
