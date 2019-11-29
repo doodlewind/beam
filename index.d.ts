@@ -15,7 +15,7 @@ declare namespace Beam {
     }
 
     export enum ResourceTypes {
-        DataBuffers = 'DataBuffers',
+        VertexBuffers = 'VertexBuffers',
         IndexBuffer = 'IndexBuffer',
         Uniforms = 'Uniforms',
         Textures = 'Textures',
@@ -81,7 +81,7 @@ declare namespace Beam {
         draw(shader: Shader, ...resources: Resource[]): this
 
         resource<T extends ResourceTypes, S extends object = {}>(type: T, state?: S): (
-            T extends ResourceTypes.DataBuffers ? DataBuffersResource<S> :
+            T extends ResourceTypes.VertexBuffers ? VertexBuffersResource<S> :
             T extends ResourceTypes.IndexBuffer ? IndexBufferResource<S> :
             T extends ResourceTypes.OffscreenTarget ? OffscreenTargetResource<S> :
             T extends ResourceTypes.Textures ? TexturesResource<S> :
@@ -130,7 +130,7 @@ declare namespace Beam {
         set(state: Partial<S> | any): this
     }
 
-    interface DataBuffersResource<S = {}> extends Resource<ResourceTypes.DataBuffers, S> {}
+    interface VertexBuffersResource<S = {}> extends Resource<ResourceTypes.VertexBuffers, S> {}
 
     interface IndexBufferResource<S = {}> extends Resource<ResourceTypes.IndexBuffer, S> {
         destroy(): void
