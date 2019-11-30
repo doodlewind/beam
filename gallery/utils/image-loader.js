@@ -30,14 +30,14 @@ export const loadEnvMaps = (
   dirs = ['right', 'left', 'top', 'bottom', 'front', 'back']
 ) => new Promise(resolve => {
   const cubeMaps = [
-    { type: 'diffuse', level: 0, urls: [], images: [] },
-    { type: 'specular', level, urls: [], images: [] }
+    { type: 'texCube', path: 'diffuse', level: 0, urls: [], images: [] },
+    { type: 'texCube', path: 'specular', level, urls: [], images: [] }
   ]
 
-  cubeMaps.forEach(({ type, level }, i) => {
+  cubeMaps.forEach(({ path, level }, i) => {
     dirs.forEach(dir => {
       for (let j = 0; j <= level; j++) {
-        cubeMaps[i].urls.push(`${basePath}/${type}/${type}_${dir}_${j}.jpg`)
+        cubeMaps[i].urls.push(`${basePath}/${path}/${path}_${dir}_${j}.jpg`)
       }
     })
   })
@@ -47,8 +47,6 @@ export const loadEnvMaps = (
 
   Promise.all(loadPromises).then(imageGroups => {
     imageGroups.forEach((images, i) => { cubeMaps[i].images = images })
-    delete cubeMaps[0].type
-    delete cubeMaps[1].type
     resolve(cubeMaps)
   })
 })
