@@ -22,7 +22,7 @@ const shader = beam.shader(PBRLighting)
 // Resources: vertex buffers and index buffer
 const ball = createBall()
 const ballBuffers = [
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index)
 ]
 

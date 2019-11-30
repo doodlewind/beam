@@ -28,7 +28,7 @@ const ball = createBall()
 const rect = createRect([0, 0, -3], 1, 5)
 const graphics = mergeGraphics(ball, rect)
 const graphicsBuffers = [
-  beam.resource(VertexBuffers, graphics.data),
+  beam.resource(VertexBuffers, graphics.vertex),
   beam.resource(IndexBuffer, graphics.index)
 ]
 
@@ -39,7 +39,7 @@ textures.set('img', offscreenTarget)
 // screen quad
 const quad = createRect()
 const quadBuffers = [
-  beam.resource(VertexBuffers, quad.data),
+  beam.resource(VertexBuffers, quad.vertex),
   beam.resource(IndexBuffer, quad.index)
 ]
 

@@ -223,7 +223,7 @@ const ball = createBall()
 
 beam.clear().draw(
   shader,
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index),
   beam.resource(Uniforms, cameraMats)
 )
@@ -244,7 +244,7 @@ const beam = new Beam(canvas)
 const shader = beam.shader(NormalColor)
 const ball = createBall()
 const buffers = [
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index)
 ]
 let i = 0; let d = 10
@@ -343,7 +343,7 @@ loadImage('prague.jpg').then(image => {
   const imageState = { image, flip: true }
   beam.clear().draw(
     shader,
-    beam.resource(VertexBuffers, box.data),
+    beam.resource(VertexBuffers, box.vertex),
     beam.resource(IndexBuffer, box.index),
     beam.resource(Uniforms, cameraMats),
     // The 'img' key is defined to match the shader
@@ -370,11 +370,11 @@ const shader = beam.shader(MyShader)
 const ball = createBall()
 const box = createBox()
 const ballBuffers = [
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index)
 ]
 const boxBuffers = [
-  beam.resource(VertexBuffers, box.data),
+  beam.resource(VertexBuffers, box.vertex),
   beam.resource(IndexBuffer, box.index)
 ]
 ```

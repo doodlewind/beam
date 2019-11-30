@@ -21,7 +21,7 @@ const render = () => beam.clear().draw(shader, ...modelBuffers, matrices, light)
 
 fetch('../../assets/models/bunny.obj').then(resp => resp.text()).then(str => {
   const [model] = parseOBJ(str)
-  modelBuffers[0] = beam.resource(VertexBuffers, model.data)
+  modelBuffers[0] = beam.resource(VertexBuffers, model.vertex)
   modelBuffers[1] = beam.resource(IndexBuffer, model.index)
   render()
 })

@@ -18,7 +18,7 @@ const light = beam.resource(Uniforms)
 const circle = createCircle()
 
 const buffers = [
-  beam.resource(VertexBuffers, circle.data),
+  beam.resource(VertexBuffers, circle.vertex),
   beam.resource(IndexBuffer, circle.index)
 ]
 

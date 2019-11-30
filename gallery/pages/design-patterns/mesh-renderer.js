@@ -10,9 +10,9 @@ import { create, translate } from '../../utils/mat4.js'
 const { VertexBuffers, IndexBuffer, Uniforms } = ResourceTypes
 
 class Mesh {
-  constructor (beam, { data, index }, modelMat) {
+  constructor (beam, { vertex, index }, modelMat) {
     this.beam = beam
-    this.data = beam.resource(VertexBuffers, data)
+    this.vertex = beam.resource(VertexBuffers, vertex)
     this.defaultIndex = beam.resource(IndexBuffer, index)
     this.wireframeIndex = beam.resource(IndexBuffer, toWireframe(index))
     this.modelMat = modelMat || create()
@@ -74,7 +74,7 @@ export class MeshRenderer extends BeamRenderer {
     beam.clear()
     meshes.forEach(mesh => {
       const transform = beam.resource(Uniforms, { 'modelMat': mesh.modelMat })
-      const resources = [mesh.data, camera, transform]
+      const resources = [mesh.vertex, camera, transform]
       if (this.wireframe) {
         beam.draw(wireframeShader, mesh.wireframeIndex, ...resources)
       }

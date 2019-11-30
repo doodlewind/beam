@@ -15,7 +15,7 @@ const shader = beam.shader(ImageExplode)
 
 const particles = createParticles(100)
 const buffers = [
-  beam.resource(VertexBuffers, particles.data),
+  beam.resource(VertexBuffers, particles.vertex),
   beam.resource(IndexBuffer, particles.index)
 ]
 const cameraMats = createCamera({ eye: [0, 0, 8] }, { canvas })

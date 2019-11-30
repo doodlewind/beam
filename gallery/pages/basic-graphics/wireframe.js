@@ -15,7 +15,7 @@ const cameraMats = createCamera({ eye: [0, 10, 10] })
 const camera = beam.resource(Uniforms, cameraMats)
 
 const ball = createBall([0, 0, 0], 1, 10, 10)
-const ballData = beam.resource(VertexBuffers, ball.data)
+const ballData = beam.resource(VertexBuffers, ball.vertex)
 const ballColorIndex = beam.resource(IndexBuffer, ball.index)
 const ballWireframeIndex = beam.resource(IndexBuffer, toWireframe(ball.index))
 

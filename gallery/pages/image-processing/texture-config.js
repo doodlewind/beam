@@ -9,7 +9,7 @@ const beam = new Beam(canvas)
 
 const shader = beam.shader(PolygonTexture)
 const quad = createRect()
-const vertexBuffers = beam.resource(VertexBuffers, quad.data)
+const vertexBuffers = beam.resource(VertexBuffers, quad.vertex)
 const indexBuffer = beam.resource(IndexBuffer, quad.index)
 const textures = beam.resource(Textures)
 const uniforms = beam.resource(Uniforms)

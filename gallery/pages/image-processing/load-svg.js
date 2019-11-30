@@ -17,7 +17,7 @@ const render = ([image]) => {
 
   beam.clear().draw(
     shader,
-    beam.resource(VertexBuffers, rect.data),
+    beam.resource(VertexBuffers, rect.vertex),
     beam.resource(IndexBuffer, rect.index),
     beam.resource(Uniforms, cameraMats),
     beam.resource(Textures, { img: imageState })
