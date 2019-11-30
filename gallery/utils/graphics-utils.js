@@ -202,16 +202,13 @@ export const createBall = (
       const u = 1 - (longNumber / longBands)
       const v = 1 - (letNum / latBands)
 
-      push(position, radius * x + center[0])
-      push(position, radius * y + center[1])
-      push(position, radius * z + center[2])
+      const px = radius * x + center[0]
+      const py = radius * y + center[1]
+      const pz = radius * z + center[2]
 
-      push(normal, x)
-      push(normal, y)
-      push(normal, z)
-
-      push(texCoord, u)
-      push(texCoord, v)
+      push3D(position, px, py, pz)
+      push3D(normal, x, y, z)
+      push2D(texCoord, u, v)
     }
   }
 
@@ -220,13 +217,8 @@ export const createBall = (
       const first = (letNum * (longBands + 1)) + longNum
       const second = first + longBands + 1
 
-      push(index, first)
-      push(index, second)
-      push(index, first + 1)
-
-      push(index, second)
-      push(index, second + 1)
-      push(index, first + 1)
+      push3D(index, first, second, first + 1)
+      push3D(index, second, second + 1, first + 1)
     }
   }
 
