@@ -1,5 +1,16 @@
 const push = (arr, x) => { arr[arr.length] = x }
 
+const push2D = (arr, x, y) => {
+  arr[arr.length] = x
+  arr[arr.length] = y
+}
+
+const push3D = (arr, x, y, z) => {
+  arr[arr.length] = x
+  arr[arr.length] = y
+  arr[arr.length] = z
+}
+
 const concat = (baseArr, newArr) => {
   const baseLength = baseArr.length
   for (let i = 0; i < newArr.length; i++) {
@@ -134,6 +145,33 @@ export const createBox = (center = [0, 0, 0]) => {
     push(position, basePositions[i + 2] + p[2])
   }
 
+  return {
+    data: { position, normal, texCoord }, index: { array: index }
+  }
+}
+
+export const createCircle = (r = 1, center = [0, 0, 0]) => {
+  const c = center
+  const position = []
+  const normal = []
+  const texCoord = []
+  const index = []
+
+  push3D(position, c[0], c[1], c[2])
+  push3D(normal, 0, 0, 0)
+  push2D(texCoord, 0, 0)
+
+  for (let i = 0; i < 200; i++) {
+    const x = c[0] + r * Math.cos(i * 2 * Math.PI / 200)
+    const y = c[1] + r * Math.sin(i * 2 * Math.PI / 200)
+    push3D(position, x, y, c[2])
+    push3D(normal, 0, 0, 1)
+    push2D(texCoord, 0, 0)
+  }
+  for (let i = 0; i < 200; i++) {
+    push3D(index, 0, i, i + 1)
+  }
+  push3D(index, 200, 1)
   return {
     data: { position, normal, texCoord }, index: { array: index }
   }

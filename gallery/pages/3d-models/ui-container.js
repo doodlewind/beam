@@ -2,7 +2,7 @@
 
 import { Beam, ResourceTypes } from '../../../src/index.js'
 import { LambertLighting } from '../../shaders/basic-lighting-shader.js'
-import { createBall } from '../../utils/graphics-utils.js'
+import { createCircle } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, rotate } from '../../utils/mat4.js'
 const { VertexBuffers, IndexBuffer, Uniforms } = ResourceTypes
@@ -15,10 +15,11 @@ const shader = beam.shader(LambertLighting)
 const cameraMats = createCamera({ eye: [0, 6, 6] }, { canvas })
 const matrices = beam.resource(Uniforms, cameraMats)
 const light = beam.resource(Uniforms)
-const ball = createBall()
+const circle = createCircle()
+
 const buffers = [
-  beam.resource(VertexBuffers, ball.data),
-  beam.resource(IndexBuffer, ball.index)
+  beam.resource(VertexBuffers, circle.data),
+  beam.resource(IndexBuffer, circle.index)
 ]
 
 const render = () => beam.clear().draw(shader, ...buffers, matrices, light)
