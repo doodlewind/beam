@@ -21,7 +21,6 @@ const fs = `
 precision highp float;
 uniform sampler2D img0;
 uniform sampler2D img1;
-uniform float strength;
 
 varying vec2 vTexCoord;
 
