@@ -17,7 +17,7 @@ let shader = brightnessContrast
 // Fill screen with unit quad
 const quad = createRect()
 const quadBuffers = [
-  beam.resource(VertexBuffers, quad.data),
+  beam.resource(VertexBuffers, quad.vertex),
   beam.resource(IndexBuffer, quad.index)
 ]
 const filterOptions = beam.resource(Uniforms)

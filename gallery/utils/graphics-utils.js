@@ -135,7 +135,7 @@ export const createBox = (center = [0, 0, 0]) => {
   }
 
   return {
-    data: { position, normal, texCoord }, index: { array: index }
+    vertex: { position, normal, texCoord }, index: { array: index }
   }
 }
 
@@ -193,7 +193,7 @@ export const createBall = (
   }
 
   return {
-    data: { position, normal, texCoord }, index: { array: index }
+    vertex: { position, normal, texCoord }, index: { array: index }
   }
 }
 
@@ -212,7 +212,7 @@ export const createRect = (center = [0, 0, 0], aspectRatio = 1, scale = 1) => {
   }
 
   return {
-    data: {
+    vertex: {
       position,
       normal: [
         0.0, 0.0, 1.0,
@@ -251,7 +251,7 @@ export const toWireframe = index => {
 
 export const mergeGraphics = (...graphicsObjects) => {
   const base = {
-    data: { position: [], normal: [], texCoord: [] },
+    vertex: { position: [], normal: [], texCoord: [] },
     index: { array: [] }
   }
 
@@ -259,15 +259,15 @@ export const mergeGraphics = (...graphicsObjects) => {
     const graphics = graphicsObjects[i]
     const { array } = graphics.index
     const offsetArray = new Array(array.length)
-    const offset = base.data.position.length / 3
+    const offset = base.vertex.position.length / 3
     for (let j = 0; j < array.length; j++) {
       offsetArray[j] = array[j] + offset
     }
     concat(base.index.array, offsetArray)
 
-    concat(base.data.position, graphics.data.position)
-    concat(base.data.normal, graphics.data.normal)
-    concat(base.data.texCoord, graphics.data.texCoord)
+    concat(base.vertex.position, graphics.vertex.position)
+    concat(base.vertex.normal, graphics.vertex.normal)
+    concat(base.vertex.texCoord, graphics.vertex.texCoord)
   }
 
   return base

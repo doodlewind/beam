@@ -12,7 +12,7 @@ const shader = beam.shader(BasicImage)
 // Fill screen with unit quad
 const quad = createRect()
 const quadBuffers = [
-  beam.resource(VertexBuffers, quad.data),
+  beam.resource(VertexBuffers, quad.vertex),
   beam.resource(IndexBuffer, quad.index)
 ]
 const textures = beam.resource(Textures)

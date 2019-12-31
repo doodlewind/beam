@@ -13,7 +13,7 @@ const ball = createBall()
 
 beam.clear().draw(
   shader,
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index),
   beam.resource(Uniforms, cameraMats)
 )

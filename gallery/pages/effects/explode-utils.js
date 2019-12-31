@@ -36,7 +36,7 @@ export const createParticles = (n = 1, aspectRatio = 1) => {
   }
 
   return {
-    data: { position, center, texCoord }, index: { array: index }
+    vertex: { position, center, texCoord }, index: { array: index }
   }
 }
 

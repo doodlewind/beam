@@ -12,11 +12,11 @@ const shader = beam.shader(NormalColor)
 const ball = createBall()
 const box = createBox()
 const ballBuffers = [
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index)
 ]
 const boxBuffers = [
-  beam.resource(VertexBuffers, box.data),
+  beam.resource(VertexBuffers, box.vertex),
   beam.resource(IndexBuffer, box.index)
 ]
 

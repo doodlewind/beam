@@ -22,7 +22,7 @@ const render = ([imageA, imageB]) => {
 
   beam.clear().draw(
     shader,
-    beam.resource(VertexBuffers, quad.data),
+    beam.resource(VertexBuffers, quad.vertex),
     beam.resource(IndexBuffer, quad.index),
     beam.resource(Uniforms, cameraMats),
     beam.resource(Textures, imageStates)

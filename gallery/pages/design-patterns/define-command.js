@@ -28,7 +28,7 @@ const eye = [0, 0, 10]
 const baseViewMat = createCamera({ eye }).viewMat
 const cameraMats = createCamera({ eye }, { canvas })
 const ball = createBall()
-const vertexBuffer = beam.resource(VertexBuffers, ball.data)
+const vertexBuffer = beam.resource(VertexBuffers, ball.vertex)
 const indexBuffer = beam.resource(IndexBuffer, ball.index)
 const cameraResource = beam.resource(Uniforms, cameraMats)
 

@@ -16,7 +16,7 @@ loadImages('../../assets/images/prague.jpg').then(([image]) => {
   const imageState = { image, flip: true }
   beam.clear().draw(
     shader,
-    beam.resource(VertexBuffers, box.data),
+    beam.resource(VertexBuffers, box.vertex),
     beam.resource(IndexBuffer, box.index),
     beam.resource(Uniforms, cameraMats),
     // The 'img' key is defined for the ImageColor shader

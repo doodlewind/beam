@@ -28,7 +28,7 @@ light.set('dirLight.direction', [1, 1, 1])
 
 const ball = createBall()
 const ballBuffers = [
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index)
 ]
 
@@ -39,7 +39,7 @@ textures.set('img', offscreenTarget)
 // screen quad
 const quad = createRect()
 const quadBuffers = [
-  beam.resource(VertexBuffers, quad.data),
+  beam.resource(VertexBuffers, quad.vertex),
   beam.resource(IndexBuffer, quad.index)
 ]
 

@@ -21,11 +21,11 @@ const lightingShader = beam.shader(ShadowLighting)
 const ball = createBall()
 const plane = createRect([10, 5, -5], 1, 15)
 const planeBuffers = [
-  beam.resource(VertexBuffers, plane.data),
+  beam.resource(VertexBuffers, plane.vertex),
   beam.resource(IndexBuffer, plane.index)
 ]
 const ballBuffers = [
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index)
 ]
 
@@ -37,7 +37,7 @@ textures
 
 // screen quad
 const quadRect = createRect()
-const quadDataRes = beam.resource(VertexBuffers, quadRect.data)
+const quadDataRes = beam.resource(VertexBuffers, quadRect.vertex)
 const quadIndexRes = beam.resource(IndexBuffer, quadRect.index)
 
 const baseModelMat = create()

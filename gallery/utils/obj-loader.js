@@ -36,7 +36,7 @@ export const parseOBJ = str => {
   segments.forEach(segment => {
     const lines = segment.split('\n').filter(line => line && line[0] !== '#')
     const model = {
-      data: {
+      vertex: {
         position: [],
         texCoord: [],
         normal: []
@@ -47,15 +47,15 @@ export const parseOBJ = str => {
       const actionMapping = {
         'v ': line => {
           const arr = toFloatArr('v ', line)
-          join(model.data.position, arr)
+          join(model.vertex.position, arr)
         },
         'vt': line => {
           const arr = toFloatArr('vt', line)
-          join(model.data.texCoord, arr)
+          join(model.vertex.texCoord, arr)
         },
         'vn': line => {
           const arr = toFloatArr('vn', line)
-          join(model.data.normal, arr)
+          join(model.vertex.normal, arr)
         },
         'f ': line => {
           const group = line

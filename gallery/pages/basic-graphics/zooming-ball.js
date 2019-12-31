@@ -11,7 +11,7 @@ const beam = new Beam(canvas)
 const shader = beam.shader(NormalColor)
 const ball = createBall()
 const buffers = [
-  beam.resource(VertexBuffers, ball.data),
+  beam.resource(VertexBuffers, ball.vertex),
   beam.resource(IndexBuffer, ball.index)
 ]
 let i = 0; let d = 10
