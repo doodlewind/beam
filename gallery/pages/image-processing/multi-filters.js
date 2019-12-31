@@ -39,26 +39,27 @@ const inputTextures = beam.resource(Textures)
 // Output texture resources
 const outputTextures = [beam.resource(Textures), beam.resource(Textures)]
 // Offscreen FBO resources
-const offscreenTargets = [
+const targets = [
   beam.resource(OffscreenTarget), beam.resource(OffscreenTarget)
 ]
 
 // TODO better offscreen texture attach API
-outputTextures[0].set('img', offscreenTargets[0])
-outputTextures[1].set('img', offscreenTargets[1])
+outputTextures[0].set('img', targets[0])
+outputTextures[1].set('img', targets[1])
 
 const baseResources = [...quadBuffers, filterOptions]
 const draw = (shader, input) => beam.draw(shader, ...[...baseResources, input])
 const render = () => {
-  beam.clear()
   inputTextures.set('img', { image, flip: true })
+
+  beam.clear()
   beam
     // Draw brightness contrast shader with original input
-    .offscreen2D(offscreenTargets[0], () => {
+    .offscreen2D(targets[0], () => {
       draw(brightnessContrast, inputTextures)
     })
     // Draw hue saturation shader with output from previous step
-    .offscreen2D(offscreenTargets[1], () => {
+    .offscreen2D(targets[1], () => {
       draw(hueSaturation, outputTextures[0])
     })
   // Draw vignette shader to screen with outout from previous step
