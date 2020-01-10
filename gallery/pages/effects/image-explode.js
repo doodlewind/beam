@@ -79,13 +79,13 @@ document.getElementById('pause').addEventListener('click', () => {
 })
 
 const $particleCount = document.getElementById('particle-count')
-$particleCount.addEventListener('input', () => {
+$particleCount.addEventListener('change', () => {
   const n = parseInt($particleCount.value)
-  const { data, index } = createParticles(n)
+  const { vertex, index } = createParticles(n)
   buffers[0]
-    .set('position', data.position)
-    .set('center', data.center)
-    .set('texCoord', data.texCoord)
+    .set('position', vertex.position)
+    .set('center', vertex.center)
+    .set('texCoord', vertex.texCoord)
   buffers[1].set(index)
 
   restartAnimation()
