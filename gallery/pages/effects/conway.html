@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Demo</title>
+    <style>
+      html { background: black; padding: 0; }
+      body { display: flex; height: 100vh; justify-content: center; align-items: center; }
+      #control {
+        position: fixed; top: 0; right: 0; width: 300px;
+        padding: 10px; box-sizing: border-box;
+        background: white; opacity: 0.3; color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="control">
+      <select id="pattern-select">
+        <option value="oscillators.png">Oscillators</option>
+        <option value="constructor.png">Constructor</option>
+        <option value="loom.png">Loom</option>
+        <option value="breeder.png">Breeder</option>
+        <option value="emitter.png">Emitter</option>
+        <option value="random">Random</option>
+      </select>
+      <label for="pattern-select">Pattern</label>
+      <br/>
+    </div>
+    <canvas width="1024" height="1024"></canvas>
+    <script type="module" src="./conway.js"></script>
+  </body>
+</html>
