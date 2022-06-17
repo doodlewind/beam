@@ -1,6 +1,6 @@
 /**
- * @param {WebGLRenderingContext} gl 
- * @param {*} resource 
+ * @param {WebGLRenderingContext} gl
+ * @param {*} resource
  */
 const beforeWithColor = (gl, resource) => {
   const { state, colorTexture, fbo, rbo } = resource

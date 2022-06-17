@@ -73,7 +73,7 @@ export class MeshRenderer extends BeamRenderer {
     const { beam, defaultShader, wireframeShader, meshes, camera } = this
     beam.clear()
     meshes.forEach(mesh => {
-      const transform = beam.resource(Uniforms, { 'modelMat': mesh.modelMat })
+      const transform = beam.resource(Uniforms, { modelMat: mesh.modelMat })
       const resources = [mesh.vertex, camera, transform]
       if (this.wireframe) {
         beam.draw(wireframeShader, mesh.wireframeIndex, ...resources)

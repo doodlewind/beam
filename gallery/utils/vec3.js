@@ -1,5 +1,5 @@
 export const rotateX = (out, a, b, c) => {
-  let [p, r] = [[], []]
+  const [p, r] = [[], []]
   // Translate point to the origin
   p[0] = a[0] - b[0]
   p[1] = a[1] - b[1]
@@ -19,7 +19,7 @@ export const rotateX = (out, a, b, c) => {
 }
 
 export const rotateY = (out, a, b, c) => {
-  let [p, r] = [[], []]
+  const [p, r] = [[], []]
   // Translate point to the origin
   p[0] = a[0] - b[0]
   p[1] = a[1] - b[1]
@@ -39,7 +39,7 @@ export const rotateY = (out, a, b, c) => {
 }
 
 export const rotateZ = (out, a, b, c) => {
-  let [p, r] = [[], []]
+  const [p, r] = [[], []]
   // Translate point to the origin
   p[0] = a[0] - b[0]
   p[1] = a[1] - b[1]

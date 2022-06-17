@@ -4,6 +4,7 @@ Expressive WebGL
 <a href="./package.json">
   <img src="https://img.shields.io/npm/v/beam-gl.svg?maxAge=300&color=2254f4"/>
 </a>
+<img src="https://img.shields.io/bundlephobia/min/beam-gl"/>
 <a href="https://standardjs.com">
   <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg"/>
 </a>
@@ -11,7 +12,7 @@ Expressive WebGL
 ![beam-logo](./gallery/assets/images/beam-logo.png)
 
 ## Introduction
-Beam is a tiny (<10KB) WebGL library. It's **NOT** a renderer or 3D engine by itself. Instead, Beam provides some essential abstractions, allowing you to build WebGL infrastructures within a very small and easy-to-use API surface.
+Beam is a tiny (~10KB) WebGL library. It's **NOT** a renderer or 3D engine by itself. Instead, Beam provides some essential abstractions, allowing you to build WebGL infrastructures within a very small and easy-to-use API surface.
 
 The WebGL API is known to be verbose, with a steep learning curve. Just like how jQuery simplifies DOM operations, Beam wraps WebGL in a succinct way, making it easier to build WebGL renderers with clean and terse code.
 

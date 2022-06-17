@@ -49,11 +49,11 @@ export const parseOBJ = str => {
           const arr = toFloatArr('v ', line)
           join(model.vertex.position, arr)
         },
-        'vt': line => {
+        vt: line => {
           const arr = toFloatArr('vt', line)
           join(model.vertex.texCoord, arr)
         },
-        'vn': line => {
+        vn: line => {
           const arr = toFloatArr('vn', line)
           join(model.vertex.normal, arr)
         },

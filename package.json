@@ -6,7 +6,10 @@
   "types": "./index.d.ts",
   "dependencies": {},
   "devDependencies": {},
-  "scripts": {},
+  "scripts": {
+    "serve": "python3 -m http.server",
+    "lint": "standard"
+  },
   "repository": "https://github.com/doodlewind/beam.git",
   "keywords": [
     "webgl",

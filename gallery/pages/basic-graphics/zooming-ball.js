@@ -16,7 +16,7 @@ const buffers = [
 ]
 let i = 0; let d = 10
 const cameraMats = createCamera({ eye: [0, d, d] })
-let camera = beam.resource(Uniforms, cameraMats)
+const camera = beam.resource(Uniforms, cameraMats)
 
 const tick = () => {
   i += 0.02; d = 10 + Math.sin(i) * 5

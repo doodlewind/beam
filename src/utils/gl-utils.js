@@ -91,7 +91,8 @@ export const initVertexBuffers = (gl, state) => {
 
 export const updateVertexBuffer = (gl, buffer, array) => {
   const data = array instanceof Float32Array
-    ? array : new Float32Array(array)
+    ? array
+    : new Float32Array(array)
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
 }
@@ -109,7 +110,8 @@ export const initIndexBuffer = (gl, state) => {
 
 export const updateIndexBuffer = (gl, buffer, array) => {
   const data = array instanceof Uint32Array
-    ? array : new Uint32Array(array)
+    ? array
+    : new Uint32Array(array)
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW)
 }
@@ -278,7 +280,7 @@ export const destroyTexture = (gl, texture) => {
 }
 
 /**
- * @param {WebGLRenderingContext} gl 
+ * @param {WebGLRenderingContext} gl
  * @param {*} state
  */
 const initColorOffscreen = (gl, state) => {

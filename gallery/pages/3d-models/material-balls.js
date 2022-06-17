@@ -35,8 +35,8 @@ const matrices = beam.resource(Uniforms, {
 // Resources: point light states
 const pointLights = beam.resource(Uniforms, createPointLights())
 pointLights
-  .set(`uLights[0].direction`, [1, 1, 1])
-  .set(`uLights[0].strength`, 1)
+  .set('uLights[0].direction', [1, 1, 1])
+  .set('uLights[0].strength', 1)
 
 // Resources: material images
 const materialMaps = beam.resource(Textures, createMaterialImages())

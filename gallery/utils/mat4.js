@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // Inline from gl-matrix
 // https://github.com/toji/gl-matrix
 const ARRAY_TYPE = (typeof Float32Array !== 'undefined')

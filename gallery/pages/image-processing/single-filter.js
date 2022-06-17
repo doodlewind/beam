@@ -68,7 +68,7 @@ $filterSelect.addEventListener('change', () => {
   shader = {
     'brightness-contrast': brightnessContrast,
     'hue-saturation': hueSaturation,
-    'vignette': vignette
+    vignette
   }[name]
   render()
 })
