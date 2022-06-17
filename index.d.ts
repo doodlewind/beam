@@ -78,7 +78,7 @@ declare namespace Beam {
             mode?: GLTypes
         }): Shader<B, U, T>
 
-        draw(shader: Shader, ...resources: Resource[]): this
+        draw(shader: Shader, ...resources: DrawableResource[]): this
 
         resource<T extends ResourceTypes, S extends object = {}>(type: T, state?: S): (
             T extends ResourceTypes.VertexBuffers ? VertexBuffersResource<S> :
@@ -145,4 +145,11 @@ declare namespace Beam {
     interface OffscreenTargetResource<S = {}> extends Resource<ResourceTypes.OffscreenTarget, S> {
         destroy(): void
     }
+
+    type DrawableResource =
+        | VertexBuffersResource
+        | IndexBufferResource
+        | UniformsResource
+        | TexturesResource
+        | OffscreenTargetResource
 }
