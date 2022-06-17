@@ -1,17 +1,17 @@
 import { SchemaTypes } from '../../src/index.js'
 
-const vs = `
-attribute vec4 position;
-attribute vec4 normal;
-attribute vec2 texCoord;
+const vs = `#version 300 es
+in vec4 position;
+in vec4 normal;
+in vec2 texCoord;
 
 uniform mat4 uMVPMatrix;
 uniform mat4 uModelMatrix;
 uniform mat4 uNormalMatrix;
 
-varying vec3 vPosition;
-varying vec2 vTexCoord;
-varying vec3 vNormal;
+out vec3 vPosition;
+out vec2 vTexCoord;
+out vec3 vNormal;
 
 void main() {
   vec4 pos = uModelMatrix * position;
@@ -22,10 +22,8 @@ void main() {
 }
 `
 
-const fs = `
-#extension GL_EXT_shader_texture_lod: enable
-#extension GL_OES_standard_derivatives: enable
-
+const fs = `#version 300 es
+#define USE_TEX_LOD true
 precision highp float;
 
 const float M_PI = 3.141592653589793;
@@ -60,9 +58,11 @@ uniform vec4 uScaleDiffBaseMR;
 uniform vec4 uScaleFGDSpec;
 uniform vec4 uScaleIBLAmbient;
 
-varying vec3 vPosition;
-varying vec2 vTexCoord;
-varying vec3 vNormal;
+in vec3 vPosition;
+in vec2 vTexCoord;
+in vec3 vNormal;
+
+out vec4 fragColor;
 
 struct PBRInfo {
   float NdotL; // dot(normal, light direction)
@@ -97,7 +97,7 @@ vec3 getNormal() {
   vec3 b = normalize(cross(ng, t));
   mat3 tbn = mat3(t, b, ng);
 
-  vec3 n = texture2D(uNormalSampler, vTexCoord).rgb;
+  vec3 n = texture(uNormalSampler, vTexCoord).rgb;
   n = normalize(tbn * ((2.0 * n - 1.0) * vec3(uNormalScale, uNormalScale, 1.0)));
   return n;
 }
@@ -106,13 +106,13 @@ vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection) {
   float mipCount = 9.0; // resolution of 512x512
   float lod = (pbrInputs.perceptualRoughness * mipCount);
   // retrieve a scale and bias to F0. See [1], Figure 3
-  vec3 brdf = SRGBtoLINEAR(texture2D(uBrdfLUT, vec2(pbrInputs.NdotV, 1.0 - pbrInputs.perceptualRoughness))).rgb;
-  vec3 diffuseLight = SRGBtoLINEAR(textureCube(uDiffuseEnvSampler, n)).rgb;
+  vec3 brdf = SRGBtoLINEAR(texture(uBrdfLUT, vec2(pbrInputs.NdotV, 1.0 - pbrInputs.perceptualRoughness))).rgb;
+  vec3 diffuseLight = SRGBtoLINEAR(texture(uDiffuseEnvSampler, n)).rgb;
 
   #ifdef USE_TEX_LOD
-  vec3 specularLight = SRGBtoLINEAR(textureCubeLodEXT(uSpecularEnvSampler, reflection, lod)).rgb;
+  vec3 specularLight = SRGBtoLINEAR(textureLod(uSpecularEnvSampler, reflection, lod)).rgb;
   #else
-  vec3 specularLight = SRGBtoLINEAR(textureCube(uSpecularEnvSampler, reflection)).rgb;
+  vec3 specularLight = SRGBtoLINEAR(texture(uSpecularEnvSampler, reflection)).rgb;
   #endif
 
   vec3 diffuse = diffuseLight * pbrInputs.diffuseColor;
@@ -159,7 +159,7 @@ void main() {
   float metallic = uMetallicRoughnessValues.x;
   // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
   // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-  vec4 mrSample = texture2D(uMetallicRoughnessSampler, vTexCoord);
+  vec4 mrSample = texture(uMetallicRoughnessSampler, vTexCoord);
   perceptualRoughness = mrSample.g * perceptualRoughness;
   metallic = mrSample.b * metallic;
   perceptualRoughness = clamp(perceptualRoughness, MIN_ROUGHNESS, 1.0);
@@ -168,7 +168,7 @@ void main() {
   // convert to material roughness by squaring the perceptual roughness [2].
   float alphaRoughness = perceptualRoughness * perceptualRoughness;
 
-  vec4 baseColor = SRGBtoLINEAR(texture2D(uBaseColorSampler, vTexCoord / uBaseColorScale)) * uBaseColorFactor;
+  vec4 baseColor = SRGBtoLINEAR(texture(uBaseColorSampler, vTexCoord / uBaseColorScale)) * uBaseColorFactor;
 
   vec3 f0 = vec3(0.04);
   vec3 diffuseColor = baseColor.rgb * (vec3(1.0) - f0);
@@ -249,8 +249,8 @@ void main() {
   color = mix(color, vec3(metallic), uScaleDiffBaseMR.z);
   color = mix(color, vec3(perceptualRoughness), uScaleDiffBaseMR.w);
 
-  gl_FragColor = vec4(pow(color,vec3(1.0/2.2)), baseColor.a);
-  // gl_FragColor = vec4(1, 0, 0, 1);
+  fragColor = vec4(pow(color,vec3(1.0/2.2)), baseColor.a);
+  // fragColor = vec4(1, 0, 0, 1);
 }
 `
 
@@ -260,9 +260,6 @@ const identityMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 export const PBRLighting = {
   vs,
   fs,
-  defines: {
-    USE_TEX_LOD: true
-  },
   buffers: {
     position: { type: vec4, n: 3 },
     texCoord: { type: vec2 },

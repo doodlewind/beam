@@ -3,12 +3,6 @@ import { create, multiply, rotate } from '../../utils/mat4.js'
 import { rotateY } from '../../utils/vec3.js'
 
 export const rendererConfig = {
-  extensions: [
-    'EXT_shader_texture_lod',
-    'EXT_SRGB',
-    'OES_standard_derivatives',
-    'OES_element_index_uint'
-  ],
   contextAttributes: {
     preserveDrawingBuffer: true
   }

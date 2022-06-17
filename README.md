@@ -4,7 +4,9 @@ Expressive WebGL
 <a href="./package.json">
   <img src="https://img.shields.io/npm/v/beam-gl.svg?maxAge=300&color=2254f4"/>
 </a>
-<img src="https://img.shields.io/bundlephobia/min/beam-gl"/>
+<a href="./package.json">
+  <img src="https://img.shields.io/bundlephobia/min/beam-gl"/>
+</a>
 <a href="https://standardjs.com">
   <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg"/>
 </a>
