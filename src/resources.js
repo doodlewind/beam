@@ -96,8 +96,11 @@ export const createResource = (gl, type, state) => {
   class OffscreenTargetResource extends Resource {
     constructor () {
       super()
-      const { size = 2048 } = this.state
-      this.state.size = size
+
+      const { width = gl.canvas.width, height = gl.canvas.height } = this.state
+      this.state.width = width
+      this.state.height = height
+
       const {
         fbo, rbo, colorTexture, depthTexture
       } = glUtils.initOffscreen(gl, state)

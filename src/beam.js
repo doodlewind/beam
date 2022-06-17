@@ -3,12 +3,14 @@ import { Shader } from './shader.js'
 import { createResource } from './resources.js'
 import * as glUtils from './utils/gl-utils.js'
 import * as miscUtils from './utils/misc-utils.js'
+import { Offscreen2DCommand } from './commands.js'
 
 export class Beam {
   constructor (canvas, config = {}) {
     this.gl = glUtils.getWebGLInstance(canvas, config.contextAttributes)
     this.config = { ...RendererConfig, ...config }
     this.gl.extensions = glUtils.getExtensions(this.gl, this.config)
+    this.define(Offscreen2DCommand)
   }
 
   clear (color = [0, 0, 0, 0]) {

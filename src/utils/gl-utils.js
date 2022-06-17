@@ -4,6 +4,9 @@ import * as miscUtils from './misc-utils.js'
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
 export const getWebGLInstance = (canvas, contextAttributes) => {
+  const gl2 = canvas.getContext('webgl2', contextAttributes)
+  if (gl2) return gl2
+
   return canvas.getContext('webgl', contextAttributes)
 }
 
@@ -274,22 +277,26 @@ export const destroyTexture = (gl, texture) => {
   gl.deleteTexture(texture)
 }
 
+/**
+ * @param {WebGLRenderingContext} gl 
+ * @param {*} state
+ */
 const initColorOffscreen = (gl, state) => {
   const fbo = gl.createFramebuffer()
   const rbo = gl.createRenderbuffer()
   const colorTexture = gl.createTexture()
   const depthTexture = null
 
-  const { size } = state
+  const { width, height } = state
   gl.bindTexture(gl.TEXTURE_2D, colorTexture)
   gl.texImage2D(
-    gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
+    gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
   )
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 
   gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
-  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, size, size)
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height)
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
   gl.framebufferTexture2D(
