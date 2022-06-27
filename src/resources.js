@@ -69,7 +69,7 @@ export const createResource = (gl, type, state) => {
           ? offscreenTarget.depthTexture
           : offscreenTarget.colorTexture
       } else if (oldVal) {
-        const newVal = { ...val, flip: oldVal.flip, space: oldVal.space }
+        const newVal = { ...val, flip: oldVal.flip, space: val.space || oldVal.space }
         // TODO ensure same target
         if (oldVal.image) {
           texture = glUtils.update2DTexture(gl, textures[key], newVal)
