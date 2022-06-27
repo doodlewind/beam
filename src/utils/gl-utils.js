@@ -3,9 +3,13 @@ import * as miscUtils from './misc-utils.js'
 
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
-export const getWebGLInstance = (canvas, contextAttributes) => {
-  const gl2 = canvas.getContext('webgl2', contextAttributes)
-  if (gl2) return gl2
+/**
+ * @param {HTMLCanvasElement} canvas
+ */
+export const getWebGLInstance = (canvas, config) => {
+  const { contextAttributes, contextId = 'webgl2' } = config
+  const gl = canvas.getContext(contextId, contextAttributes)
+  if (gl) return gl
 
   return canvas.getContext('webgl', contextAttributes)
 }

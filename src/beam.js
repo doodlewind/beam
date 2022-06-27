@@ -7,7 +7,7 @@ import { Offscreen2DCommand } from './commands.js'
 
 export class Beam {
   constructor (canvas, config = {}) {
-    this.gl = glUtils.getWebGLInstance(canvas, config.contextAttributes)
+    this.gl = glUtils.getWebGLInstance(canvas, config)
     this.config = { ...RendererConfig, ...config }
     this.gl.extensions = glUtils.getExtensions(this.gl, this.config)
     this.define(Offscreen2DCommand)
