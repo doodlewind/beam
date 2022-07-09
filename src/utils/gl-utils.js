@@ -528,28 +528,6 @@ export const beforeDrawToColor = (gl, target) => {
     0
   )
 
-  gl.framebufferTexture2D(
-    gl.FRAMEBUFFER,
-    gl.DEPTH_STENCIL_ATTACHMENT,
-    gl.TEXTURE_2D,
-    null,
-    0
-  )
-  gl.framebufferTexture2D(
-    gl.FRAMEBUFFER,
-    gl.DEPTH_ATTACHMENT,
-    gl.TEXTURE_2D,
-    null,
-    0
-  )
-  gl.framebufferTexture2D(
-    gl.FRAMEBUFFER,
-    gl.STENCIL_ATTACHMENT,
-    gl.TEXTURE_2D,
-    null,
-    0
-  )
-
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 }
 

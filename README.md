@@ -448,7 +448,10 @@ target.use(() => {
     .draw(shaderY, ...resourcesB)
     .draw(shaderZ, ...resourcesC)
 })
+
 // The texture attached to the target can now be used in following drawing process
+myTextures.set('img', target.texture)
+// ...
 ```
 
 This redirects the render output to the offscreen texture resource.

@@ -225,6 +225,7 @@ declare namespace Beam {
 
   interface TexturesResource<S = {}> extends Resource<'Textures', S> {
     set(key: string, val: TextureState): this
+    set(key: string, val: WebGLTexture & { texture: never }): this
     destroy(key: string): void
   }
 
