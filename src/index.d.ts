@@ -17,8 +17,8 @@ declare namespace Beam {
   export enum ResourceTypes {
     VertexBuffers = 'VertexBuffers',
     IndexBuffer = 'IndexBuffer',
-    Uniforms = 'Uniforms',
     Textures = 'Textures',
+    Uniforms = 'Uniforms',
   }
 
   export enum GLTypes {
@@ -38,44 +38,97 @@ declare namespace Beam {
     SRGB = 'SRGB',
   }
 
-  type Buffers = {
+  type UniformValue =
+    | number
+    | number[]
+    | Float32Array
+    | Float64Array
+    | Uint8Array
+    | Uint16Array
+    | Uint32Array
+    | Int8Array
+    | Int16Array
+    | Int32Array
+
+  type VertexBufferValue = number[] | Float32Array
+
+  interface ShaderBuffersTemplate {
     [key: string]: {
       type: SchemaTypes
-      default?: number[] | Float32Array | Uint32Array
+      default?: VertexBufferValue
       n?: number
     }
   }
 
-  type Uniforms = {
+  interface ShaderUniformsTemplate {
     [key: string]: {
       type: SchemaTypes
-      default?: number | number[]
+      default?: UniformValue
     }
   }
 
-  type Textures = {
+  interface ShaderTexturesTemplate {
     [key: string]: {
       type: SchemaTypes
       default?: any
     }
   }
 
+  interface VertexBufferResourceState {
+    [key: string]: VertexBufferValue
+  }
+
+  interface IndexBufferResourceState {
+    array: number[] | Uint16Array | Uint32Array
+    offset?: number
+    count?: number
+  }
+
+  interface TextureState {
+    image?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
+    /** @default false */
+    flip?: boolean
+    /** @default GLTypes.Repeat */
+    wrapS?: GLTypes.Repeat | GLTypes.MirroredRepeat | GLTypes.ClampToEdge
+    /** @default GLTypes.Repeat */
+    wrapT?: GLTypes.Repeat | GLTypes.MirroredRepeat | GLTypes.ClampToEdge
+    /** @default GLTypes.Linear */
+    magFilter?: GLTypes.Linear | GLTypes.Nearest
+    /** @default GLTypes.Linear */
+    minFilter?:
+      | GLTypes.Linear
+      | GLTypes.Nearest
+      | GLTypes.LinearMipmapNearest
+      | GLTypes.NearestMipmapLinear
+      | GLTypes.LinearMipmapLinear
+    /** @default GLTypes.RGBA */
+    space?: GLTypes.RGB | GLTypes.RGBA | GLTypes.SRGB
+  }
+
+  interface TexturesResourceState {
+    [key: string]: TextureState
+  }
+
+  interface UniformsResourceState {
+    [key: string]: UniformValue
+  }
+
   export class Beam {
     constructor(
       canvas: HTMLCanvasElement,
       config?: {
-        contextAttributes: object
-        extensions: string[]
-        contextId: 'webgl' | 'webgl2'
+        contextAttributes?: object
+        extensions?: string[]
+        contextId?: 'webgl' | 'webgl2'
       }
     )
 
     clear(color?: [number, number, number, number]): this
 
     shader<
-      B extends Buffers,
-      U extends Uniforms,
-      T extends Textures
+      B extends ShaderBuffersTemplate,
+      U extends ShaderUniformsTemplate,
+      T extends ShaderTexturesTemplate
     >(shaderTemplate: {
       vs: string
       fs: string
@@ -85,35 +138,42 @@ declare namespace Beam {
       mode?: GLTypes
     }): Shader<B, U, T>
 
+    resource<S extends VertexBufferResourceState>(
+      type: 'VertexBuffers',
+      state: S
+    ): VertexBuffersResource<S>
+
+    resource<S extends IndexBufferResourceState>(
+      type: 'IndexBuffer',
+      state: S
+    ): IndexBufferResource<S>
+
+    resource<S extends TexturesResourceState>(
+      type: 'Textures',
+      state: TexturesResourceState
+    ): TexturesResource<S>
+
+    resource<S extends UniformsResourceState>(
+      type: 'Uniforms',
+      state: S
+    ): UniformsResource<S>
+
     target(width: number, height: number, depth?: boolean): OffscreenTarget
 
     draw(shader: Shader, ...resources: DrawableResource[]): this
-
-    resource<T extends ResourceTypes, S extends object = {}>(
-      type: T,
-      state?: S
-    ): T extends ResourceTypes.VertexBuffers
-      ? VertexBuffersResource<S>
-      : T extends ResourceTypes.IndexBuffer
-      ? IndexBufferResource<S>
-      : T extends ResourceTypes.Textures
-      ? TexturesResource<S>
-      : T extends ResourceTypes.Uniforms
-      ? UniformsResource<S>
-      : never
   }
 
   interface Shader<
-    B extends Buffers = {},
-    U extends Uniforms = {},
-    T extends Textures = {}
+    B extends ShaderBuffersTemplate = {},
+    U extends ShaderUniformsTemplate = {},
+    T extends ShaderTexturesTemplate = {}
   > {
     beam: Beam
     schema: {
       buffers: B
       uniforms: U
       textures: T
-      mode: GLTypes
+      mode: GLTypes.Triangles | GLTypes.Lines
     }
     shaderRefs: {
       program: WebGLProgram
@@ -135,8 +195,6 @@ declare namespace Beam {
   interface Resource<T = '', S = {}> {
     type: T
     state: S
-    set<K extends keyof S>(key: K | string, val: any): this
-    set(state: Partial<S> | any): this
   }
 
   interface OffscreenTarget {
@@ -149,22 +207,23 @@ declare namespace Beam {
     use(drawCallback: Function): void
   }
 
-  interface VertexBuffersResource<S = {}>
-    extends Resource<ResourceTypes.VertexBuffers, S> {
+  interface VertexBuffersResource<S = {}> extends Resource<'VertexBuffers', S> {
+    set(key: string, val: VertexBufferValue): this
+    destroy(key: string): void
+  }
+
+  interface IndexBufferResource<S = {}> extends Resource<'IndexBuffer', S> {
+    set(state: IndexBufferResourceState): this
     destroy(): void
   }
 
-  interface IndexBufferResource<S = {}>
-    extends Resource<ResourceTypes.IndexBuffer, S> {
-    destroy(): void
+  interface UniformsResource<S = {}> extends Resource<'Uniforms', S> {
+    set(key: string, val: UniformValue): this
   }
 
-  interface UniformsResource<S = {}>
-    extends Resource<ResourceTypes.Uniforms, S> {}
-
-  interface TexturesResource<S = {}>
-    extends Resource<ResourceTypes.Textures, S> {
-    destroy(): void
+  interface TexturesResource<S = {}> extends Resource<'Textures', S> {
+    set(key: string, val: TextureState): this
+    destroy(key: string): void
   }
 
   type DrawableResource =

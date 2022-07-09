@@ -204,8 +204,7 @@ export const update2DTexture = (gl, texture, val) => {
 
   // Image may not be provided when updating texture params
   if (image) {
-    if (flip) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
-    else gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, !!flip)
     const s = native(space || GL.RGBA)
     gl.texImage2D(gl.TEXTURE_2D, 0, s, s, gl.UNSIGNED_BYTE, image)
     if (supportMipmap(image)) gl.generateMipmap(gl.TEXTURE_2D)

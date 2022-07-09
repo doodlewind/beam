@@ -22,6 +22,4 @@ export class Shader {
       fs
     )
   }
-
-  set({ vs, fs, defines }) {}
 }
