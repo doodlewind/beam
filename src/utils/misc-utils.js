@@ -1,18 +1,20 @@
 import { SchemaTypes, ResourceTypes } from '../consts.js'
 
-export const isPowerOf2 = value => (value & (value - 1)) === 0
+export const isPowerOf2 = (value) => (value & (value - 1)) === 0
 
-export const mapValue = (obj, valueMapper) => Object
-  .keys(obj)
-  .reduce((newObj, key) => ({ ...newObj, [key]: valueMapper(obj, key) }), {})
+export const mapValue = (obj, valueMapper) =>
+  Object.keys(obj).reduce(
+    (newObj, key) => ({ ...newObj, [key]: valueMapper(obj, key) }),
+    {}
+  )
 
-export const getNumComponents = bufferType => {
+export const getNumComponents = (bufferType) => {
   const { vec2, vec3, vec4, float } = SchemaTypes
   const mapping = { [vec2]: 2, [vec3]: 3, [vec4]: 4, [float]: 1 }
   return mapping[bufferType]
 }
 
-export const groupResources = resources => {
+export const groupResources = (resources) => {
   const Types = ResourceTypes
   let [vertexBuffers, indexResource, uniforms, textures] = [{}, null, {}, {}]
 

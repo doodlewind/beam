@@ -5,10 +5,12 @@
   "main": "src/index.js",
   "types": "./index.d.ts",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "prettier": "^2.7.1"
+  },
   "scripts": {
     "serve": "python3 -m http.server",
-    "lint": "standard"
+    "lint": "prettier --check src/**/*.js"
   },
   "repository": "https://github.com/doodlewind/beam.git",
   "keywords": [

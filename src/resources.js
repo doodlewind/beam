@@ -4,30 +4,37 @@ import * as glUtils from './utils/gl-utils.js'
 export const createResource = (gl, type, state) => {
   const Types = ResourceTypes
   class Resource {
-    constructor () { this.state = state; this.type = type }
-    set (key, val) { this.state[key] = val; return this }
+    constructor() {
+      this.state = state
+      this.type = type
+    }
+
+    set(key, val) {
+      this.state[key] = val
+      return this
+    }
   }
 
   class VertexBuffersResource extends Resource {
-    constructor () {
+    constructor() {
       super()
       this.buffers = glUtils.initVertexBuffers(gl, state)
     }
 
-    set (key, val) {
+    set(key, val) {
       this.state[key] = val
       glUtils.updateVertexBuffer(gl, this.buffers[key], val)
       return this
     }
 
-    destroy (key) {
+    destroy(key) {
       glUtils.destroyVertexBuffer(gl, this.buffers[key])
       delete this.state[key]
     }
   }
 
   class IndexBufferResource extends Resource {
-    constructor () {
+    constructor() {
       super()
       const { offset = 0, count = state.array.length } = state
       this.state.offset = offset
@@ -35,7 +42,7 @@ export const createResource = (gl, type, state) => {
       this.buffer = glUtils.initIndexBuffer(gl, state)
     }
 
-    set (state) {
+    set(state) {
       const { offset = 0, count = state.array.length } = state
       this.state.offset = offset
       this.state.count = count
@@ -43,7 +50,7 @@ export const createResource = (gl, type, state) => {
       return this
     }
 
-    destroy () {
+    destroy() {
       glUtils.destroyIndexBuffer(gl, this.buffer)
       delete this.state
     }
@@ -52,12 +59,12 @@ export const createResource = (gl, type, state) => {
   class UniformsResource extends Resource {}
 
   class TexturesResource extends Resource {
-    constructor () {
+    constructor() {
       super()
       this.textures = glUtils.initTextures(gl, state)
     }
 
-    set (key, val) {
+    set(key, val) {
       const { textures, state } = this
 
       const oldVal = state[key]
@@ -69,7 +76,11 @@ export const createResource = (gl, type, state) => {
           ? offscreenTarget.depthTexture
           : offscreenTarget.colorTexture
       } else if (oldVal) {
-        const newVal = { ...val, flip: oldVal.flip, space: val.space || oldVal.space }
+        const newVal = {
+          ...val,
+          flip: oldVal.flip,
+          space: val.space || oldVal.space,
+        }
         // TODO ensure same target
         if (oldVal.image) {
           texture = glUtils.update2DTexture(gl, textures[key], newVal)
@@ -87,23 +98,24 @@ export const createResource = (gl, type, state) => {
       return this
     }
 
-    destroy (key) {
+    destroy(key) {
       glUtils.destroyTexture(gl, this.textures[key])
       delete this.state[key]
     }
   }
 
   class OffscreenTargetResource extends Resource {
-    constructor () {
+    constructor() {
       super()
 
       const { width = gl.canvas.width, height = gl.canvas.height } = this.state
       this.state.width = width
       this.state.height = height
 
-      const {
-        fbo, rbo, colorTexture, depthTexture
-      } = glUtils.initOffscreen(gl, state)
+      const { fbo, rbo, colorTexture, depthTexture } = glUtils.initOffscreen(
+        gl,
+        state
+      )
       this.fbo = fbo
       this.rbo = rbo
       this.colorTexture = colorTexture
@@ -116,7 +128,7 @@ export const createResource = (gl, type, state) => {
     [Types.IndexBuffer]: () => new IndexBufferResource(),
     [Types.Uniforms]: () => new UniformsResource(),
     [Types.Textures]: () => new TexturesResource(),
-    [Types.OffscreenTarget]: () => new OffscreenTargetResource()
+    [Types.OffscreenTarget]: () => new OffscreenTargetResource(),
   }
   return resourceCreatorMap[type]()
 }

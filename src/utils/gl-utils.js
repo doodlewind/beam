@@ -16,7 +16,7 @@ export const getWebGLInstance = (canvas, config) => {
 
 export const getExtensions = (gl, config) => {
   const extensions = {}
-  config.extensions.forEach(name => {
+  config.extensions.forEach((name) => {
     extensions[name] = gl.getExtension(name)
   })
   return extensions
@@ -36,9 +36,11 @@ const compileShader = (gl, type, source) => {
 }
 
 const initShaderProgram = (gl, defines, vs, fs) => {
-  const defineStr = Object.keys(defines).reduce((str, key) => (
-    defines[key] ? str + `#define ${key} ${defines[key]}\n` : ''
-  ), '')
+  const defineStr = Object.keys(defines).reduce(
+    (str, key) =>
+      defines[key] ? str + `#define ${key} ${defines[key]}\n` : '',
+    ''
+  )
 
   const vertexShader = compileShader(gl, gl.VERTEX_SHADER, defineStr + vs)
   const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, defineStr + fs)
@@ -61,14 +63,18 @@ export const initShaderRefs = (gl, defines, schema, vs, fs) => {
   // map to { pos: { type, location } }
   const attributes = miscUtils.mapValue(schema.buffers, (attributes, key) => ({
     type: attributes[key].type,
-    location: gl.getAttribLocation(program, key)
+    location: gl.getAttribLocation(program, key),
   }))
-  const uniforms = miscUtils.mapValue({
-    ...schema.uniforms, ...schema.textures
-  }, (uniforms, key) => ({
-    type: uniforms[key].type,
-    location: gl.getUniformLocation(program, key)
-  }))
+  const uniforms = miscUtils.mapValue(
+    {
+      ...schema.uniforms,
+      ...schema.textures,
+    },
+    (uniforms, key) => ({
+      type: uniforms[key].type,
+      location: gl.getUniformLocation(program, key),
+    })
+  )
 
   return { program, attributes, uniforms }
 }
@@ -85,7 +91,7 @@ export const clear = (gl, color) => {
 export const initVertexBuffers = (gl, state) => {
   const buffers = {}
   const bufferKeys = Object.keys(state)
-  bufferKeys.forEach(key => {
+  bufferKeys.forEach((key) => {
     const buffer = gl.createBuffer()
     buffers[key] = buffer
     updateVertexBuffer(gl, buffers[key], state[key])
@@ -94,9 +100,7 @@ export const initVertexBuffers = (gl, state) => {
 }
 
 export const updateVertexBuffer = (gl, buffer, array) => {
-  const data = array instanceof Float32Array
-    ? array
-    : new Float32Array(array)
+  const data = array instanceof Float32Array ? array : new Float32Array(array)
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
 }
@@ -113,9 +117,7 @@ export const initIndexBuffer = (gl, state) => {
 }
 
 export const updateIndexBuffer = (gl, buffer, array) => {
-  const data = array instanceof Uint32Array
-    ? array
-    : new Uint32Array(array)
+  const data = array instanceof Uint32Array ? array : new Uint32Array(array)
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer)
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW)
 }
@@ -124,14 +126,14 @@ export const destroyIndexBuffer = (gl, buffer) => {
   gl.deleteBuffer(buffer)
 }
 
-const compatSRGB = gl => {
+const compatSRGB = (gl) => {
   const { extensions } = gl
   return !isSafari && extensions.EXT_SRGB
     ? extensions.EXT_SRGB.SRGB_EXT
     : gl.RGBA
 }
 
-const compatSRGBA = gl => {
+const compatSRGBA = (gl) => {
   const { extensions } = gl
   return !isSafari && extensions.EXT_SRGB
     ? extensions.EXT_SRGB.SRGB_ALPHA_EXT
@@ -139,7 +141,7 @@ const compatSRGBA = gl => {
 }
 
 // Hard coded for faster lookup
-const nativeTypeHOF = gl => type => {
+const nativeTypeHOF = (gl) => (type) => {
   const map = {
     [GL.Repeat]: gl.REPEAT,
     [GL.MirroredRepeat]: gl.MIRRORED_REPEAT,
@@ -153,7 +155,7 @@ const nativeTypeHOF = gl => type => {
     [GL.RGB]: gl.RGB,
     [GL.RGBA]: gl.RGBA,
     [GL.SRGB]: compatSRGB(gl),
-    [GL.SRGBA]: compatSRGBA(gl)
+    [GL.SRGBA]: compatSRGBA(gl),
   }
   return map[type]
 }
@@ -172,25 +174,25 @@ export const initCubeTexture = (gl, val) => {
 
 export const initTextures = (gl, state) => {
   const textures = {}
-  Object.keys(state).forEach(key => {
+  Object.keys(state).forEach((key) => {
     const stateField = state[key]
     stateField.type = stateField.type || SchemaTypes.tex2D
 
-    const texture = stateField.type === SchemaTypes.tex2D
-      ? init2DTexture(gl, stateField)
-      : initCubeTexture(gl, stateField)
+    const texture =
+      stateField.type === SchemaTypes.tex2D
+        ? init2DTexture(gl, stateField)
+        : initCubeTexture(gl, stateField)
     textures[key] = texture
   })
 
   return textures
 }
 
-const supportMipmap = image => (
+const supportMipmap = (image) =>
   image &&
   miscUtils.isPowerOf2(image.width) &&
   miscUtils.isPowerOf2(image.height) &&
   image.nodeName !== 'VIDEO'
-)
 
 export const update2DTexture = (gl, texture, val) => {
   const native = nativeTypeHOF(gl)
@@ -230,9 +232,7 @@ export const update2DTexture = (gl, texture, val) => {
 
 export const updateCubeTexture = (gl, texture, val) => {
   const native = nativeTypeHOF(gl)
-  const {
-    images, level, flip, wrapS, wrapT, minFilter, magFilter, space
-  } = val
+  const { images, level, flip, wrapS, wrapT, minFilter, magFilter, space } = val
 
   gl.activeTexture(gl.TEXTURE0)
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
@@ -245,12 +245,16 @@ export const updateCubeTexture = (gl, texture, val) => {
   }
   if (minFilter) {
     gl.texParameteri(
-      gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, native(minFilter)
+      gl.TEXTURE_CUBE_MAP,
+      gl.TEXTURE_MIN_FILTER,
+      native(minFilter)
     )
   }
   if (magFilter) {
     gl.texParameteri(
-      gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, native(magFilter)
+      gl.TEXTURE_CUBE_MAP,
+      gl.TEXTURE_MAG_FILTER,
+      native(magFilter)
     )
   }
 
@@ -264,7 +268,7 @@ export const updateCubeTexture = (gl, texture, val) => {
       gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
       gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
       gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-      gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
     ]
     let count = 0
     const s = native(space || GL.RGBA)
@@ -296,7 +300,15 @@ const initColorOffscreen = (gl, state) => {
   const { width, height } = state
   gl.bindTexture(gl.TEXTURE_2D, colorTexture)
   gl.texImage2D(
-    gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
+    gl.TEXTURE_2D,
+    0,
+    gl.RGBA,
+    width,
+    height,
+    0,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    null
   )
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
@@ -306,10 +318,17 @@ const initColorOffscreen = (gl, state) => {
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
   gl.framebufferTexture2D(
-    gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colorTexture, 0
+    gl.FRAMEBUFFER,
+    gl.COLOR_ATTACHMENT0,
+    gl.TEXTURE_2D,
+    colorTexture,
+    0
   )
   gl.framebufferRenderbuffer(
-    gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rbo
+    gl.FRAMEBUFFER,
+    gl.DEPTH_ATTACHMENT,
+    gl.RENDERBUFFER,
+    rbo
   )
 
   const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
@@ -334,7 +353,15 @@ const initDepthOffscreen = (gl, state) => {
 
   gl.bindTexture(gl.TEXTURE_2D, colorTexture)
   gl.texImage2D(
-    gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
+    gl.TEXTURE_2D,
+    0,
+    gl.RGBA,
+    size,
+    size,
+    0,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    null
   )
 
   gl.bindTexture(gl.TEXTURE_2D, depthTexture)
@@ -355,10 +382,18 @@ const initDepthOffscreen = (gl, state) => {
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
   gl.framebufferTexture2D(
-    gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colorTexture, 0
+    gl.FRAMEBUFFER,
+    gl.COLOR_ATTACHMENT0,
+    gl.TEXTURE_2D,
+    colorTexture,
+    0
   )
   gl.framebufferTexture2D(
-    gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0
+    gl.FRAMEBUFFER,
+    gl.DEPTH_ATTACHMENT,
+    gl.TEXTURE_2D,
+    depthTexture,
+    0
   )
 
   const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
@@ -382,7 +417,12 @@ const padDefault = (schema, key, val) => {
 
 let lastProgram = null
 export const draw = (
-  gl, shader, vertexBuffers, indexResource, uniforms, textures
+  gl,
+  shader,
+  vertexBuffers,
+  indexResource,
+  uniforms,
+  textures
 ) => {
   const { schema, shaderRefs } = shader
   const { program } = shaderRefs
@@ -390,10 +430,14 @@ export const draw = (
     gl.useProgram(program)
     lastProgram = program
   }
-  Object.keys(shaderRefs.attributes).forEach(key => {
+  Object.keys(shaderRefs.attributes).forEach((key) => {
     if (
-      !schema.buffers[key] || schema.buffers[key].type === SchemaTypes.index || !vertexBuffers[key]
-    ) return
+      !schema.buffers[key] ||
+      schema.buffers[key].type === SchemaTypes.index ||
+      !vertexBuffers[key]
+    ) {
+      return
+    }
     const { location } = shaderRefs.attributes[key]
     const { n, type } = schema.buffers[key]
     const numComponents = n || miscUtils.getNumComponents(type)
@@ -409,7 +453,7 @@ export const draw = (
   }
 
   let unit = -1
-  Object.keys(shaderRefs.uniforms).forEach(key => {
+  Object.keys(shaderRefs.uniforms).forEach((key) => {
     const { type, location } = shaderRefs.uniforms[key]
     let val
     const isTexure = type === SchemaTypes.tex2D || type === SchemaTypes.texCube
@@ -455,7 +499,7 @@ export const draw = (
         gl.uniform1i(location, unit)
         gl.activeTexture(gl.TEXTURE0 + unit)
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
-      }
+      },
     }
     // FIXME uniform keys padded by default are always re-uploaded.
     if (val !== undefined || isTexure) uniformSetterMapping[type]()

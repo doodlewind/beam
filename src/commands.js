@@ -9,11 +9,13 @@ const beforeWithColor = (gl, resource) => {
   gl.viewport(0, 0, width, height)
   gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
   gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
-  gl.renderbufferStorage(
-    gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height
-  )
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height)
   gl.framebufferTexture2D(
-    gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colorTexture, 0
+    gl.FRAMEBUFFER,
+    gl.COLOR_ATTACHMENT0,
+    gl.TEXTURE_2D,
+    colorTexture,
+    0
   )
 
   gl.framebufferTexture2D(
@@ -51,12 +53,12 @@ const beforeWithDepth = (gl, resource) => {
 
 export const Offscreen2DCommand = {
   name: 'offscreen2D',
-  onBefore (gl, resource) {
+  onBefore(gl, resource) {
     const { depth } = resource.state
     depth ? beforeWithDepth(gl, resource) : beforeWithColor(gl, resource)
   },
-  onAfter (gl) {
+  onAfter(gl) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-  }
+  },
 }

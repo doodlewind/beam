@@ -3,7 +3,7 @@ export const ResourceTypes = {
   IndexBuffer: 'IndexBuffer',
   Uniforms: 'Uniforms',
   Textures: 'Textures',
-  OffscreenTarget: 'OffscreenTarget'
+  OffscreenTarget: 'OffscreenTarget',
 }
 
 export const SchemaTypes = {
@@ -16,7 +16,7 @@ export const SchemaTypes = {
   mat3: 'mat3',
   mat2: 'mat2',
   tex2D: 'tex2D',
-  texCube: 'texCube'
+  texCube: 'texCube',
 }
 
 export const GLTypes = {
@@ -33,10 +33,10 @@ export const GLTypes = {
   LinearMipmapLinear: 'LinearMipmapLinear',
   RGB: 'RGB',
   RGBA: 'RGBA',
-  SRGB: 'SRGB'
+  SRGB: 'SRGB',
 }
 
 export const RendererConfig = {
   contextAttributes: {},
-  extensions: ['OES_element_index_uint', 'WEBGL_depth_texture']
+  extensions: ['OES_element_index_uint', 'WEBGL_depth_texture'],
 }
