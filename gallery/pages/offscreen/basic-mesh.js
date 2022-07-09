@@ -33,7 +33,6 @@ const graphicsBuffers = [
 
 const target = beam.target(2048, 2048)
 const textures = beam.resource(Textures)
-textures.set('img', target)
 
 // screen quad
 const quad = createRect()
@@ -47,6 +46,7 @@ const render = () => {
   target.use(() => {
     beam.draw(lightingShader, ...graphicsBuffers, matrices, light)
   })
+  textures.set('img', target.texture)
   beam.draw(imageShader, ...quadBuffers, textures)
 
   // default draw to screen

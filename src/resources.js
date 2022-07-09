@@ -70,11 +70,8 @@ export const createResource = (gl, type, state) => {
       const oldVal = state[key]
       let texture
       // workaround OffscreenTarget
-      if (val.constructor.name !== 'Object') {
-        const offscreenTarget = val
-        texture = offscreenTarget.state.depth
-          ? offscreenTarget.depthTexture
-          : offscreenTarget.colorTexture
+      if (val instanceof WebGLTexture) {
+        texture = val
       } else if (oldVal) {
         const newVal = {
           ...val,

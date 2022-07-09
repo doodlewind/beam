@@ -150,7 +150,7 @@ declare namespace Beam {
 
     resource<S extends TexturesResourceState>(
       type: 'Textures',
-      state: TexturesResourceState
+      state?: TexturesResourceState
     ): TexturesResource<S>
 
     resource<S extends UniformsResourceState>(
@@ -203,6 +203,8 @@ declare namespace Beam {
       height: number
       depth: boolean
     }
+
+    readonly texture: WebGLTexture
 
     use(drawCallback: Function): void
   }

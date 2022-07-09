@@ -33,7 +33,6 @@ const ballBuffers = [
 
 const target = beam.target(2048, 2048, true)
 const textures = beam.resource(Textures)
-textures.set('img', target)
 
 // screen quad
 const quad = createRect()
@@ -56,7 +55,8 @@ const drawBalls = () => {
 
 const render = () => {
   beam.clear()
-  target.use(drawBalls)
+  target.use(() => drawBalls())
+  textures.set('img', target.texture)
 
   const options = beam.resource(Uniforms, { nearPlane: 0.1, farPlane: 100 })
   beam.draw(inspectDepthShader, ...quadBuffers, textures, options)

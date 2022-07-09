@@ -28,8 +28,6 @@ const ballBuffers = [
 
 const target = beam.target(2048, 2048, true)
 const textures = beam.resource(Textures)
-textures.set('img', target)
-textures.set('shadowMap', target)
 
 // screen quad
 const quadRect = createRect()
@@ -82,6 +80,8 @@ const render = () => {
       .set('projectionMat', shadowCamera.projectionMat)
     drawDepth()
   })
+  textures.set('img', target.texture)
+  textures.set('shadowMap', target.texture)
 
   const lightSpaceMat = create()
   multiply(lightSpaceMat, shadowCamera.projectionMat, shadowCamera.viewMat)

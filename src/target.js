@@ -20,6 +20,10 @@ export class OffscreenTarget {
     this.depthTexture = depthTexture
   }
 
+  get texture() {
+    return this.state.depth ? this.depthTexture : this.colorTexture
+  }
+
   // FIXME reset FBO state
   setSize(width, height) {
     this.state.width = width

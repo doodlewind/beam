@@ -71,8 +71,6 @@ const initRender = () => {
     beam.draw(conwayShader, ...quadBuffers, conwayTextures)
   })
 
-  const screenTexture = beam.resource(Textures)
-  screenTexture.set('img', targetA)
   tick()
 }
 
@@ -81,12 +79,13 @@ const render = () => {
   const targetTo = i % 2 === 0 ? targetB : targetA
 
   beam.clear()
-  conwayTextures.set('state', targetFrom)
+
   targetTo.use(() => {
+    conwayTextures.set('state', targetFrom.texture)
     beam.draw(conwayShader, ...quadBuffers, conwayTextures)
   })
+  screenTextures.set('img', targetTo.texture)
 
-  screenTextures.set('img', targetTo)
   beam.draw(imageShader, ...quadBuffers, screenTextures)
   i++
 }

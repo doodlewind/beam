@@ -42,27 +42,30 @@ const outputTextures = [beam.resource(Textures), beam.resource(Textures)]
 // Offscreen FBO resources
 const targets = [beam.target(2048, 2048), beam.target(2048, 2048)]
 
-outputTextures[0].set('img', targets[0])
-outputTextures[1].set('img', targets[1])
-
 const baseResources = [...quadBuffers, filterOptions]
 const render = () => {
-  inputTextures.set('img', { image, flip: true })
-
   beam.clear()
+
   // Draw brightness contrast shader with original input
   targets[0].use(() => {
     beam.draw(brightnessContrast, inputTextures, ...baseResources)
   })
+  outputTextures[0].set('img', targets[0].texture)
+
   // Draw hue saturation shader with output from previous step
   targets[1].use(() => {
     beam.draw(hueSaturation, outputTextures[0], ...baseResources)
   })
+  outputTextures[1].set('img', targets[1].texture)
+
   // Draw vignette shader to screen with outout from previous step
   beam.draw(vignette, outputTextures[1], ...baseResources)
 }
 
-updateImage('prague.jpg').then(render)
+updateImage('prague.jpg').then(() => {
+  inputTextures.set('img', { image, flip: true })
+  render()
+})
 
 const $imageSelect = document.getElementById('image-select')
 $imageSelect.addEventListener('change', () => {
