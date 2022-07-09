@@ -11,7 +11,7 @@ declare namespace Beam {
     mat3 = 'mat3',
     mat2 = 'mat2',
     tex2D = 'tex2D',
-    texCube = 'texCube'
+    texCube = 'texCube',
   }
 
   export enum ResourceTypes {
@@ -35,45 +35,53 @@ declare namespace Beam {
     LinearMipmapLinear = 'LinearMipmapLinear',
     RGB = 'RGB',
     RGBA = 'RGBA',
-    SRGB = 'SRGB'
+    SRGB = 'SRGB',
   }
 
   type Buffers = {
     [key: string]: {
-      type: SchemaTypes;
-      default?: any;
-      n?: number;
+      type: SchemaTypes
+      default?: number[] | Float32Array | Uint32Array
+      n?: number
     }
   }
 
   type Uniforms = {
     [key: string]: {
-      type: SchemaTypes;
-      default?: any;
+      type: SchemaTypes
+      default?: number | number[]
     }
   }
 
   type Textures = {
     [key: string]: {
-      type: SchemaTypes;
-      default?: any;
+      type: SchemaTypes
+      default?: any
     }
   }
 
   export class Beam {
-    constructor(canvas: HTMLCanvasElement, config?: {
-      contextAttributes: object;
-      extensions: string[];
-    })
+    constructor(
+      canvas: HTMLCanvasElement,
+      config?: {
+        contextAttributes: object
+        extensions: string[]
+        contextId: 'webgl' | 'webgl2'
+      }
+    )
 
-    clear(color?: [Number, Number, Number, Number]): this
+    clear(color?: [number, number, number, number]): this
 
-    shader<B extends Buffers, U extends Uniforms, T extends Textures>(shaderTemplate: {
-      vs: string,
-      fs: string,
-      buffers?: B,
-      uniforms?: U,
-      textures?: T,
+    shader<
+      B extends Buffers,
+      U extends Uniforms,
+      T extends Textures
+    >(shaderTemplate: {
+      vs: string
+      fs: string
+      buffers?: B
+      uniforms?: U
+      textures?: T
       mode?: GLTypes
     }): Shader<B, U, T>
 
@@ -81,34 +89,43 @@ declare namespace Beam {
 
     draw(shader: Shader, ...resources: DrawableResource[]): this
 
-    resource<T extends ResourceTypes, S extends object = {}>(type: T, state?: S): (
-      T extends ResourceTypes.VertexBuffers ? VertexBuffersResource<S> :
-      T extends ResourceTypes.IndexBuffer ? IndexBufferResource<S> :
-      T extends ResourceTypes.Textures ? TexturesResource<S> :
-      T extends ResourceTypes.Uniforms ? UniformsResource<S> :
-      never
-    )
+    resource<T extends ResourceTypes, S extends object = {}>(
+      type: T,
+      state?: S
+    ): T extends ResourceTypes.VertexBuffers
+      ? VertexBuffersResource<S>
+      : T extends ResourceTypes.IndexBuffer
+      ? IndexBufferResource<S>
+      : T extends ResourceTypes.Textures
+      ? TexturesResource<S>
+      : T extends ResourceTypes.Uniforms
+      ? UniformsResource<S>
+      : never
   }
 
-  interface Shader<B extends Buffers = {}, U extends Uniforms = {}, T extends Textures = {}> {
+  interface Shader<
+    B extends Buffers = {},
+    U extends Uniforms = {},
+    T extends Textures = {}
+  > {
     beam: Beam
     schema: {
-      buffers: B,
-      uniforms: U,
-      textures: T,
+      buffers: B
+      uniforms: U
+      textures: T
       mode: GLTypes
     }
     shaderRefs: {
-      program: WebGLProgram,
+      program: WebGLProgram
       attributes: {
         [key: string]: {
-          type: SchemaTypes,
+          type: SchemaTypes
           location: number
         }
-      },
+      }
       uniforms: {
         [key: string]: {
-          type: SchemaTypes,
+          type: SchemaTypes
           location: number
         }
       }
@@ -124,25 +141,29 @@ declare namespace Beam {
 
   interface OffscreenTarget {
     state: {
-      width: number,
-      height: number,
+      width: number
+      height: number
       depth: boolean
     }
 
     use(drawCallback: Function): void
   }
 
-  interface VertexBuffersResource<S = {}> extends Resource<ResourceTypes.VertexBuffers, S> {
+  interface VertexBuffersResource<S = {}>
+    extends Resource<ResourceTypes.VertexBuffers, S> {
     destroy(): void
   }
 
-  interface IndexBufferResource<S = {}> extends Resource<ResourceTypes.IndexBuffer, S> {
+  interface IndexBufferResource<S = {}>
+    extends Resource<ResourceTypes.IndexBuffer, S> {
     destroy(): void
   }
 
-  interface UniformsResource<S = {}> extends Resource<ResourceTypes.Uniforms, S> { }
+  interface UniformsResource<S = {}>
+    extends Resource<ResourceTypes.Uniforms, S> {}
 
-  interface TexturesResource<S = {}> extends Resource<ResourceTypes.Textures, S> {
+  interface TexturesResource<S = {}>
+    extends Resource<ResourceTypes.Textures, S> {
     destroy(): void
   }
 
