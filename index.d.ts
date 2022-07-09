@@ -19,7 +19,6 @@ declare namespace Beam {
     IndexBuffer = 'IndexBuffer',
     Uniforms = 'Uniforms',
     Textures = 'Textures',
-    OffscreenTarget = 'OffscreenTarget'
   }
 
   export enum GLTypes {
@@ -78,18 +77,17 @@ declare namespace Beam {
       mode?: GLTypes
     }): Shader<B, U, T>
 
+    target(width: number, height: number, depth?: boolean): OffscreenTarget
+
     draw(shader: Shader, ...resources: DrawableResource[]): this
 
     resource<T extends ResourceTypes, S extends object = {}>(type: T, state?: S): (
       T extends ResourceTypes.VertexBuffers ? VertexBuffersResource<S> :
       T extends ResourceTypes.IndexBuffer ? IndexBufferResource<S> :
-      T extends ResourceTypes.OffscreenTarget ? OffscreenTargetResource<S> :
       T extends ResourceTypes.Textures ? TexturesResource<S> :
       T extends ResourceTypes.Uniforms ? UniformsResource<S> :
       never
     )
-
-    offscreen2D(offscreenTarget: OffscreenTargetResource, handler: Function): void
   }
 
   interface Shader<B extends Buffers = {}, U extends Uniforms = {}, T extends Textures = {}> {
@@ -124,6 +122,16 @@ declare namespace Beam {
     set(state: Partial<S> | any): this
   }
 
+  interface OffscreenTarget {
+    state: {
+      width: number,
+      height: number,
+      depth: boolean
+    }
+
+    use(drawCallback: Function): void
+  }
+
   interface VertexBuffersResource<S = {}> extends Resource<ResourceTypes.VertexBuffers, S> { }
 
   interface IndexBufferResource<S = {}> extends Resource<ResourceTypes.IndexBuffer, S> {
@@ -136,14 +144,9 @@ declare namespace Beam {
     destroy(): void
   }
 
-  interface OffscreenTargetResource<S = {}> extends Resource<ResourceTypes.OffscreenTarget, S> {
-    destroy(): void
-  }
-
   type DrawableResource =
     | VertexBuffersResource
     | IndexBufferResource
     | UniformsResource
     | TexturesResource
-    | OffscreenTargetResource
 }

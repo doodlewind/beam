@@ -104,31 +104,11 @@ export const createResource = (gl, type, state) => {
     }
   }
 
-  class OffscreenTargetResource extends Resource {
-    constructor() {
-      super()
-
-      const { width = gl.canvas.width, height = gl.canvas.height } = this.state
-      this.state.width = width
-      this.state.height = height
-
-      const { fbo, rbo, colorTexture, depthTexture } = glUtils.initOffscreen(
-        gl,
-        state
-      )
-      this.fbo = fbo
-      this.rbo = rbo
-      this.colorTexture = colorTexture
-      this.depthTexture = depthTexture
-    }
-  }
-
   const resourceCreatorMap = {
     [Types.VertexBuffers]: () => new VertexBuffersResource(),
     [Types.IndexBuffer]: () => new IndexBufferResource(),
     [Types.Uniforms]: () => new UniformsResource(),
     [Types.Textures]: () => new TexturesResource(),
-    [Types.OffscreenTarget]: () => new OffscreenTargetResource(),
   }
   return resourceCreatorMap[type]()
 }

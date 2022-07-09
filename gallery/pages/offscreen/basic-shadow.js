@@ -1,20 +1,17 @@
-import { Beam, ResourceTypes, Offscreen2DCommand } from '../../../src/index.js'
+import { Beam, ResourceTypes } from '../../../src/index.js'
 import { InspectDepth, ShadowLighting, VoidDepth } from './shadow-shaders.js'
 import { createBall, createRect } from '../../utils/graphics-utils.js'
 import { createCamera } from '../../utils/camera.js'
 import { create, translate, multiply } from '../../utils/mat4.js'
 import { subtract } from '../../utils/vec3.js'
 import { createShadowCamera } from './utils.js'
-const {
-  VertexBuffers, IndexBuffer, Uniforms, Textures, OffscreenTarget
-} = ResourceTypes
+const { VertexBuffers, IndexBuffer, Uniforms, Textures } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 canvas.height = document.body.offsetHeight
 canvas.width = document.body.offsetWidth
-const beam = new Beam(canvas)
+const beam = new Beam(canvas, { contextId: 'webgl' })
 
-beam.define(Offscreen2DCommand)
 const voidDepthShader = beam.shader(VoidDepth)
 const lightingShader = beam.shader(ShadowLighting)
 
@@ -22,18 +19,17 @@ const ball = createBall()
 const plane = createRect([10, 5, -5], 1, 15)
 const planeBuffers = [
   beam.resource(VertexBuffers, plane.vertex),
-  beam.resource(IndexBuffer, plane.index)
+  beam.resource(IndexBuffer, plane.index),
 ]
 const ballBuffers = [
   beam.resource(VertexBuffers, ball.vertex),
-  beam.resource(IndexBuffer, ball.index)
+  beam.resource(IndexBuffer, ball.index),
 ]
 
-const offscreenTarget = beam.resource(OffscreenTarget, { depth: true })
+const target = beam.target(2048, 2048, true)
 const textures = beam.resource(Textures)
-textures
-  .set('img', offscreenTarget)
-  .set('shadowMap', offscreenTarget)
+textures.set('img', target)
+textures.set('shadowMap', target)
 
 // screen quad
 const quadRect = createRect()
@@ -80,7 +76,7 @@ const drawLighting = () => {
 
 const render = () => {
   beam.clear()
-  beam.offscreen2D(offscreenTarget, () => {
+  target.use(() => {
     uniforms
       .set('viewMat', shadowCamera.viewMat)
       .set('projectionMat', shadowCamera.projectionMat)
@@ -109,7 +105,7 @@ if (SHOW_DEPTH) {
 
 const $dirX = document.getElementById('dir-x')
 const $dirY = document.getElementById('dir-y')
-;[$dirX, $dirY].forEach(input => {
+;[$dirX, $dirY].forEach((input) => {
   input.addEventListener('input', () => {
     const dx = parseFloat($dirX.value)
     const dy = parseFloat($dirY.value)

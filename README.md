@@ -423,9 +423,9 @@ The `render` function begins with a `beam.clear`, then we're free to use `beam.d
 See the [Multi Graphics](./gallery/pages/basic-graphics/multi-graphics.js) page for a working example.
 
 ### Offscreen Rendering
-In WebGL we use framebuffer object for offscreen rendering, which renders the output to a texture. Beam has a corresponding `OffscreenTarget` resource type. Note that this type of resource can't be passed in `beam.draw`.
+In WebGL we use framebuffer object for offscreen rendering, which renders the output to a texture. To do that, Beam provides a corresponding `beam.target` API. It automatically creates such a target with texture attached. We can explictly `use` this target and smootyly make any `beam.draw` call rendering into this texture.
 
-Say the default render logic looks something like:
+Say the default render logic looks something like this:
 
 ``` js
 beam
@@ -435,19 +435,23 @@ beam
   .draw(shaderZ, ...resourcesC)
 ```
 
-With the optional `offscreen2D` method, this render logic can be simply nested in a function scope in this way:
+With the `target.use` method, this render logic can be simply nested in a function scope in this way:
 
 ``` js
+// Prepare an offscreen target with a 2048x2048 color texture attached
+const target = beam.target(2048, 2048)
 beam.clear()
-beam.offscreen2D(offscreenTarget, () => {
+// Draw into this texture
+target.use(() => {
   beam
     .draw(shaderX, ...resourcesA)
     .draw(shaderY, ...resourcesB)
     .draw(shaderZ, ...resourcesC)
 })
+// The texture attached to the target can now be used in following drawing process
 ```
 
-This simply redirects the render output to the offscreen texture resource.
+This redirects the render output to the offscreen texture resource.
 
 See the [Basic Mesh](./gallery/pages/offscreen/basic-mesh.js) page for a working example.
 

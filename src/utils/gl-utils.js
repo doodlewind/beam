@@ -344,7 +344,7 @@ const initColorOffscreen = (gl, state) => {
 }
 
 const initDepthOffscreen = (gl, state) => {
-  const { size } = state
+  const { width, height } = state
 
   const fbo = gl.createFramebuffer()
   const rbo = null
@@ -356,8 +356,8 @@ const initDepthOffscreen = (gl, state) => {
     gl.TEXTURE_2D,
     0,
     gl.RGBA,
-    size,
-    size,
+    width,
+    height,
     0,
     gl.RGBA,
     gl.UNSIGNED_BYTE,
@@ -372,8 +372,8 @@ const initDepthOffscreen = (gl, state) => {
     gl.TEXTURE_2D,
     0,
     gl.DEPTH_COMPONENT,
-    size,
-    size,
+    width,
+    height,
     0,
     gl.DEPTH_COMPONENT,
     gl.UNSIGNED_SHORT,
@@ -507,4 +507,57 @@ export const draw = (
 
   const drawMode = schema.mode === GL.Triangles ? gl.TRIANGLES : gl.LINES
   gl.drawElements(drawMode, count, gl.UNSIGNED_INT, offset * 4)
+}
+
+/**
+ * @param {WebGLRenderingContext} gl
+ * @param {*} target
+ */
+export const beforeDrawToColor = (gl, target) => {
+  const { state, colorTexture, fbo, rbo } = target
+  const { width, height } = state
+
+  gl.viewport(0, 0, width, height)
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+  gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height)
+  gl.framebufferTexture2D(
+    gl.FRAMEBUFFER,
+    gl.COLOR_ATTACHMENT0,
+    gl.TEXTURE_2D,
+    colorTexture,
+    0
+  )
+
+  gl.framebufferTexture2D(
+    gl.FRAMEBUFFER,
+    gl.DEPTH_STENCIL_ATTACHMENT,
+    gl.TEXTURE_2D,
+    null,
+    0
+  )
+  gl.framebufferTexture2D(
+    gl.FRAMEBUFFER,
+    gl.DEPTH_ATTACHMENT,
+    gl.TEXTURE_2D,
+    null,
+    0
+  )
+  gl.framebufferTexture2D(
+    gl.FRAMEBUFFER,
+    gl.STENCIL_ATTACHMENT,
+    gl.TEXTURE_2D,
+    null,
+    0
+  )
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+}
+
+export const beforeDrawToDepth = (gl, target) => {
+  const { state, fbo } = target
+  const { width, height } = state
+  gl.viewport(0, 0, width, height)
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)
+  gl.clear(gl.DEPTH_BUFFER_BIT)
 }

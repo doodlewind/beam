@@ -3,7 +3,6 @@ export const ResourceTypes = {
   IndexBuffer: 'IndexBuffer',
   Uniforms: 'Uniforms',
   Textures: 'Textures',
-  OffscreenTarget: 'OffscreenTarget',
 }
 
 export const SchemaTypes = {

@@ -1,16 +1,15 @@
 import { RendererConfig } from './consts.js'
 import { Shader } from './shader.js'
+import { OffscreenTarget } from './target.js'
 import { createResource } from './resources.js'
 import * as glUtils from './utils/gl-utils.js'
 import * as miscUtils from './utils/misc-utils.js'
-import { Offscreen2DCommand } from './commands.js'
 
 export class Beam {
   constructor(canvas, config = {}) {
     this.gl = glUtils.getWebGLInstance(canvas, config)
     this.config = { ...RendererConfig, ...config }
     this.gl.extensions = glUtils.getExtensions(this.gl, this.config)
-    this.define(Offscreen2DCommand)
   }
 
   clear(color = [0, 0, 0, 0]) {
@@ -33,12 +32,8 @@ export class Beam {
     return createResource(this.gl, type, state)
   }
 
-  define({ name, onBefore, onAfter }) {
-    this[name] = (arg, modifier = () => {}) => {
-      if (onBefore) onBefore(this.gl, arg)
-      modifier(arg)
-      if (onAfter) onAfter(this.gl, arg)
-      return this
-    }
+  target(width, height, depth = false) {
+    const offscreenTarget = new OffscreenTarget(this, width, height, depth)
+    return offscreenTarget
   }
 }
