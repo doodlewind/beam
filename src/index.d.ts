@@ -132,7 +132,9 @@ declare namespace Beam {
     use(drawCallback: Function): void
   }
 
-  interface VertexBuffersResource<S = {}> extends Resource<ResourceTypes.VertexBuffers, S> { }
+  interface VertexBuffersResource<S = {}> extends Resource<ResourceTypes.VertexBuffers, S> {
+    destroy(): void
+  }
 
   interface IndexBufferResource<S = {}> extends Resource<ResourceTypes.IndexBuffer, S> {
     destroy(): void
