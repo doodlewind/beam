@@ -6,8 +6,7 @@ import {
 } from '../../shaders/image-filter-shaders.js'
 import { createRect } from '../../utils/graphics-utils.js'
 import { loadImages } from '../../utils/image-loader.js'
-const { VertexBuffers, IndexBuffer, Textures, Uniforms, OffscreenTarget } =
-  ResourceTypes
+const { VertexBuffers, IndexBuffer, Textures, Uniforms } = ResourceTypes
 
 const canvas = document.querySelector('canvas')
 const beam = new Beam(canvas)
@@ -38,7 +37,7 @@ const updateImage = (name) =>
 // Input image texture resource
 const inputTextures = beam.resource(Textures)
 // Output texture resources
-const outputTextures = [beam.resource(Textures), beam.resource(Textures)]
+const textures = beam.resource(Textures)
 // Offscreen FBO resources
 const targets = [beam.target(2048, 2048), beam.target(2048, 2048)]
 
@@ -50,16 +49,16 @@ const render = () => {
   targets[0].use(() => {
     beam.draw(brightnessContrast, inputTextures, ...baseResources)
   })
-  outputTextures[0].set('img', targets[0].texture)
+  textures.set('img', targets[0].texture)
 
   // Draw hue saturation shader with output from previous step
   targets[1].use(() => {
-    beam.draw(hueSaturation, outputTextures[0], ...baseResources)
+    beam.draw(hueSaturation, textures, ...baseResources)
   })
-  outputTextures[1].set('img', targets[1].texture)
+  textures.set('img', targets[1].texture)
 
   // Draw vignette shader to screen with outout from previous step
-  beam.draw(vignette, outputTextures[1], ...baseResources)
+  beam.draw(vignette, textures, ...baseResources)
 }
 
 updateImage('prague.jpg').then(() => {

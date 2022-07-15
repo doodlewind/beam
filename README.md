@@ -13,6 +13,12 @@ Expressive WebGL
 
 ![beam-logo](./gallery/assets/images/beam-logo.png)
 
+中文介绍
+
+* [如何设计一个 WebGL 基础库](https://zhuanlan.zhihu.com/p/93500639)
+* [实用 WebGL 图像处理入门](https://zhuanlan.zhihu.com/p/100388037)
+* [WebGL 版康威生命游戏](https://zhuanlan.zhihu.com/p/197675822)
+
 ## Introduction
 Beam is a tiny (~10KB) WebGL library. It's **NOT** a renderer or 3D engine by itself. Instead, Beam provides some essential abstractions, allowing you to build WebGL infrastructures within a very small and easy-to-use API surface.
 
