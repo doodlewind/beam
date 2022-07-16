@@ -27,11 +27,12 @@ The WebGL API is known to be verbose, with a steep learning curve. Just like how
 How is this possible? Instead of just reorganizing boilerplate code, Beam defines some essential concepts on top of WebGL, which can be much easier to be understood and used. These highly simplified concepts include:
 
 * **Shaders** - Objects containing graphics algorithms. In contrast of JavaScript that only runs on CPU with a single thread, shaders are run in parallel on GPU, computing colors for millions of pixels every frame.
-* **Resources** - Objects containing graphics data. Just like how JSON works in your web app, resources are the data passed to shaders, which mainly includes triangle arrays (aka buffers), image textures, and global options.
+* **Resources** - Objects containing graphics data. Just like how JSON works in your web app, resources are the data passed to shaders, which mainly includes triangle arrays (aka buffers), image textures, and global options (uniforms).
 * **Draw** - Requests for running shaders with resources. To render a scene, different shaders and resources may be used. You are free to combine them, so as to fire multi draw calls that eventually compose a frame. In fact, each draw call will start the graphics render pipeline for once.
-* **Commands** - Setups before firing a draw call. WebGL is *very* stateful. Before every draw call, WebGL states must be carefully configured. These changes are indicated via commands. Beam makes use of conventions that greatly reduces manual command maintenance. Certainly you can also define and run custom commands easily.
 
-Since commands can be mostly automated, there are only 3 concepts for beginners to learn, represented by 3 core APIs in Beam: **beam.shader**, **beam.resource** and **beam.draw**. Conceptually only with these 3 methods, you can build a WebGL app.
+So there are only 3 concepts to learn, represented by 3 core APIs in Beam: **beam.shader**, **beam.resource** and **beam.draw**. Conceptually only with these 3 methods, you can render a frame with WebGL.
+
+If you are a beginner, you can check out the tutorial below to get started. For API definitions, please refer to [index.d.ts](./src/index.d.ts).
 
 ## Installation
 ``` bash
