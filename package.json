@@ -1,6 +1,6 @@
 {
   "name": "beam-gl",
-  "version": "0.2207.4",
+  "version": "0.2207.5",
   "description": "Expressive WebGL",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
