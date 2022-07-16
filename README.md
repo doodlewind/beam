@@ -7,6 +7,9 @@ Expressive WebGL
 <a href="./package.json">
   <img src="https://img.shields.io/bundlephobia/min/beam-gl"/>
 </a>
+<a href="./src/index.d.ts">
+  <img src="https://img.shields.io/npm/types/beam-gl"/>
+</a>
 <a href="https://github.com/prettier/prettier">
   <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg"/>
 </a>
