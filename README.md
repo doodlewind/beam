@@ -10,8 +10,8 @@ Expressive WebGL
 <a href="./src/index.d.ts">
   <img src="https://img.shields.io/npm/types/beam-gl"/>
 </a>
-<a href="https://github.com/prettier/prettier">
-  <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg"/>
+<a href="./package.json">
+  <img src="https://img.shields.io/maintenance/yes/2023"/>
 </a>
 
 ![beam-logo](./gallery/assets/images/beam-logo.png)

@@ -103,6 +103,12 @@ declare namespace Beam {
       | GLTypes.LinearMipmapLinear
     /** @default GLTypes.RGBA */
     space?: GLTypes.RGB | GLTypes.RGBA | GLTypes.SRGB
+
+    /**
+     * Only valid when provided with the initial `textures.set` call
+     * @default false
+     */
+    premultiplyAlpha?: boolean
   }
 
   interface TexturesResourceState {
@@ -122,6 +128,8 @@ declare namespace Beam {
         contextId?: 'webgl' | 'webgl2'
       }
     )
+
+    gl: WebGLRenderingContext
 
     clear(color?: [number, number, number, number]): this
 
@@ -204,7 +212,7 @@ declare namespace Beam {
       depth: boolean
     }
 
-    resize(width: number, height: number): void;
+    resize(width: number, height: number): void
 
     readonly texture: WebGLTexture
 

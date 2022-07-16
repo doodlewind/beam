@@ -197,10 +197,11 @@ const supportMipmap = (image) =>
 export const update2DTexture = (gl, texture, val) => {
   const native = nativeTypeHOF(gl)
   const { image, flip, space } = val
-  let { wrapS, wrapT, minFilter, magFilter } = val
+  let { wrapS, wrapT, minFilter, magFilter, premultiplyAlpha = false } = val
 
   gl.activeTexture(gl.TEXTURE0)
   gl.bindTexture(gl.TEXTURE_2D, texture)
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultiplyAlpha)
 
   // Image may not be provided when updating texture params
   if (image) {
