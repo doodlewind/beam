@@ -22,7 +22,7 @@ const cameraMats = createCamera({ eye: [0, 0, 8] }, { canvas })
 const uniforms = beam.resource(Uniforms, cameraMats)
 const textures = beam.resource(Textures)
 
-const names = ['ivan.jpg', 'prague.jpg', 'xiaomi.jpg']
+const names = ['prague.jpg', 'jade.jpg', 'venus.jpg']
 let images = []
 let time = 0
 let currentImage = null
