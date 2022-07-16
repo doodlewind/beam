@@ -410,6 +410,17 @@ export const initOffscreen = (gl, state) => {
   else return initColorOffscreen(gl, state)
 }
 
+/**
+ * @param {WebGLRenderingContext} gl
+ * @param {*} target
+ */
+export const resetOffscren = (gl, target) => {
+  gl.deleteFramebuffer(target.fbo)
+  gl.deleteRenderbuffer(target.rbo)
+  gl.deleteTexture(target.colorTexture)
+  gl.deleteTexture(target.depthTexture)
+}
+
 const padDefault = (schema, key, val) => {
   return val !== undefined ? val : schema.uniforms[key].default
 }

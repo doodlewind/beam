@@ -1,34 +1,41 @@
 import * as glUtils from './utils/gl-utils.js'
 
 export class OffscreenTarget {
-  constructor(beam, width, height, depth) {
+  constructor(beam, width, height, depth = false) {
     const { gl } = beam
     this.beam = beam
     this.state = {
-      width: Number.isInteger(width) ? width : gl.canvas.width,
-      height: Number.isInteger(height) ? height : gl.canvas.height,
+      width: width !== undefined ? width : gl.canvas.width,
+      height: height !== undefined ? height : gl.canvas.height,
       depth,
     }
-
-    const { fbo, rbo, colorTexture, depthTexture } = glUtils.initOffscreen(
-      gl,
-      this.state
-    )
-    this.fbo = fbo
-    this.rbo = rbo
-    this.colorTexture = colorTexture
-    this.depthTexture = depthTexture
+    this._init()
   }
 
   get texture() {
     return this.state.depth ? this.depthTexture : this.colorTexture
   }
 
-  // FIXME reset FBO state
-  setSize(width, height) {
-    this.state.width = width
-    this.state.height = height
+  resize(width, height) {
+    const { beam, state } = this
+    if (width === state.width && height === state.height) return
+
+    glUtils.resetOffscren(beam.gl, this)
+    state.width = width
+    state.height = height
+    this._init()
     return this
+  }
+
+  _init() {
+    const { fbo, rbo, colorTexture, depthTexture } = glUtils.initOffscreen(
+      this.beam.gl,
+      this.state
+    )
+    this.fbo = fbo
+    this.rbo = rbo
+    this.colorTexture = colorTexture
+    this.depthTexture = depthTexture
   }
 
   _before() {

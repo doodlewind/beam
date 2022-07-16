@@ -39,7 +39,7 @@ const inputTextures = beam.resource(Textures)
 // Output texture resources
 const textures = beam.resource(Textures)
 // Offscreen FBO resources
-const targets = [beam.target(2048, 2048), beam.target(2048, 2048)]
+const targets = [beam.target(128, 128), beam.target(128, 128)]
 
 const baseResources = [...quadBuffers, filterOptions]
 const render = () => {
@@ -63,12 +63,18 @@ const render = () => {
 
 updateImage('prague.jpg').then(() => {
   inputTextures.set('img', { image, flip: true })
+  // test target.resize
+  targets[0].resize(image.naturalWidth, image.naturalHeight)
+  targets[1].resize(image.naturalWidth, image.naturalHeight)
   render()
 })
 
 const $imageSelect = document.getElementById('image-select')
 $imageSelect.addEventListener('change', () => {
-  updateImage($imageSelect.value).then(render)
+  updateImage($imageSelect.value).then(() => {
+    inputTextures.set('img', { image, flip: true })
+    render()
+  })
 })
 
 const fields = ['brightness', 'contrast', 'hue', 'saturation', 'vignette']

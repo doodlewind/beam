@@ -204,6 +204,8 @@ declare namespace Beam {
       depth: boolean
     }
 
+    resize(width: number, height: number): void;
+
     readonly texture: WebGLTexture
 
     use(drawCallback: Function): void
