@@ -331,10 +331,10 @@ const initColorOffscreen = (gl, state) => {
     rbo
   )
 
-  const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
-  if (gl.FRAMEBUFFER_COMPLETE !== e) {
-    console.error('Frame buffer object is incomplete: ' + e.toString())
-  }
+  // const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
+  // if (gl.FRAMEBUFFER_COMPLETE !== e) {
+  //   console.error('Frame buffer object is incomplete: ' + e.toString())
+  // }
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, null)
   gl.bindTexture(gl.TEXTURE_2D, null)
@@ -415,7 +415,7 @@ export const initOffscreen = (gl, state) => {
  * @param {WebGLRenderingContext} gl
  * @param {*} target
  */
-export const resetOffscren = (gl, target) => {
+export const resetOffscreen = (gl, target) => {
   gl.deleteFramebuffer(target.fbo)
   gl.deleteRenderbuffer(target.rbo)
   gl.deleteTexture(target.colorTexture)
@@ -467,8 +467,8 @@ export const draw = (
   Object.keys(shaderRefs.uniforms).forEach((key) => {
     const { type, location } = shaderRefs.uniforms[key]
     let val
-    const isTexure = type === SchemaTypes.tex2D || type === SchemaTypes.texCube
-    if (!isTexure) {
+    const isTexture = type === SchemaTypes.tex2D || type === SchemaTypes.texCube
+    if (!isTexture) {
       val = padDefault(schema, key, uniforms[key])
     }
 
@@ -513,7 +513,7 @@ export const draw = (
       },
     }
     // FIXME uniform keys padded by default are always re-uploaded.
-    if (val !== undefined || isTexure) uniformSetterMapping[type]()
+    if (val !== undefined || isTexture) uniformSetterMapping[type]()
   })
 
   const drawMode = schema.mode === GL.Triangles ? gl.TRIANGLES : gl.LINES
