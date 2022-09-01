@@ -297,7 +297,7 @@ const initColorOffscreen = (gl, state) => {
   const colorTexture = gl.createTexture()
   const depthTexture = null
 
-  const { width, height } = state
+  const { width, height, debug = false } = state
   gl.bindTexture(gl.TEXTURE_2D, colorTexture)
   gl.texImage2D(
     gl.TEXTURE_2D,
@@ -331,10 +331,12 @@ const initColorOffscreen = (gl, state) => {
     rbo
   )
 
-  // const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
-  // if (gl.FRAMEBUFFER_COMPLETE !== e) {
-  //   console.error('Frame buffer object is incomplete: ' + e.toString())
-  // }
+  if (debug) {
+    const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
+    if (gl.FRAMEBUFFER_COMPLETE !== e) {
+      console.error('Frame buffer object is incomplete: ' + e.toString())
+    }
+  }
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, null)
   gl.bindTexture(gl.TEXTURE_2D, null)
@@ -344,7 +346,7 @@ const initColorOffscreen = (gl, state) => {
 }
 
 const initDepthOffscreen = (gl, state) => {
-  const { width, height } = state
+  const { width, height, debug = false } = state
 
   const fbo = gl.createFramebuffer()
   const rbo = null
@@ -396,9 +398,11 @@ const initDepthOffscreen = (gl, state) => {
     0
   )
 
-  const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
-  if (e !== gl.FRAMEBUFFER_COMPLETE) {
-    console.error('framebuffer not complete', e.toString())
+  if (debug) {
+    const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
+    if (e !== gl.FRAMEBUFFER_COMPLETE) {
+      console.error('framebuffer not complete', e.toString())
+    }
   }
 
   gl.bindTexture(gl.TEXTURE_2D, null)

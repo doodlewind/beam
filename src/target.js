@@ -1,13 +1,14 @@
 import * as glUtils from './utils/gl-utils.js'
 
 export class OffscreenTarget {
-  constructor(beam, width, height, depth = false) {
+  constructor(beam, width, height, depth = false, debug = false) {
     const { gl } = beam
     this.beam = beam
     this.state = {
       width: width !== undefined ? width : gl.canvas.width,
       height: height !== undefined ? height : gl.canvas.height,
       depth,
+      debug,
     }
     this._init()
   }
