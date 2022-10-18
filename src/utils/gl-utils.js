@@ -297,7 +297,7 @@ const initColorOffscreen = (gl, state) => {
   const colorTexture = gl.createTexture()
   const depthTexture = null
 
-  const { width, height } = state
+  const { width, height, debug = false } = state
   gl.bindTexture(gl.TEXTURE_2D, colorTexture)
   gl.texImage2D(
     gl.TEXTURE_2D,
@@ -331,9 +331,11 @@ const initColorOffscreen = (gl, state) => {
     rbo
   )
 
-  const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
-  if (gl.FRAMEBUFFER_COMPLETE !== e) {
-    console.error('Frame buffer object is incomplete: ' + e.toString())
+  if (debug) {
+    const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
+    if (gl.FRAMEBUFFER_COMPLETE !== e) {
+      console.error('Frame buffer object is incomplete: ' + e.toString())
+    }
   }
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, null)
@@ -344,7 +346,7 @@ const initColorOffscreen = (gl, state) => {
 }
 
 const initDepthOffscreen = (gl, state) => {
-  const { width, height } = state
+  const { width, height, debug = false } = state
 
   const fbo = gl.createFramebuffer()
   const rbo = null
@@ -396,9 +398,11 @@ const initDepthOffscreen = (gl, state) => {
     0
   )
 
-  const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
-  if (e !== gl.FRAMEBUFFER_COMPLETE) {
-    console.error('framebuffer not complete', e.toString())
+  if (debug) {
+    const e = gl.checkFramebufferStatus(gl.FRAMEBUFFER)
+    if (e !== gl.FRAMEBUFFER_COMPLETE) {
+      console.error('framebuffer not complete', e.toString())
+    }
   }
 
   gl.bindTexture(gl.TEXTURE_2D, null)
@@ -415,7 +419,7 @@ export const initOffscreen = (gl, state) => {
  * @param {WebGLRenderingContext} gl
  * @param {*} target
  */
-export const resetOffscren = (gl, target) => {
+export const resetOffscreen = (gl, target) => {
   gl.deleteFramebuffer(target.fbo)
   gl.deleteRenderbuffer(target.rbo)
   gl.deleteTexture(target.colorTexture)
@@ -467,8 +471,8 @@ export const draw = (
   Object.keys(shaderRefs.uniforms).forEach((key) => {
     const { type, location } = shaderRefs.uniforms[key]
     let val
-    const isTexure = type === SchemaTypes.tex2D || type === SchemaTypes.texCube
-    if (!isTexure) {
+    const isTexture = type === SchemaTypes.tex2D || type === SchemaTypes.texCube
+    if (!isTexture) {
       val = padDefault(schema, key, uniforms[key])
     }
 
@@ -513,7 +517,7 @@ export const draw = (
       },
     }
     // FIXME uniform keys padded by default are always re-uploaded.
-    if (val !== undefined || isTexure) uniformSetterMapping[type]()
+    if (val !== undefined || isTexture) uniformSetterMapping[type]()
   })
 
   const drawMode = schema.mode === GL.Triangles ? gl.TRIANGLES : gl.LINES

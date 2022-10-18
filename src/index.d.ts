@@ -85,7 +85,7 @@ declare namespace Beam {
   }
 
   interface TextureState {
-    image?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
+    image?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | ImageBitmap
     /** @default false */
     flip?: boolean
     /** @default GLTypes.Repeat */

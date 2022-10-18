@@ -1,13 +1,14 @@
 import * as glUtils from './utils/gl-utils.js'
 
 export class OffscreenTarget {
-  constructor(beam, width, height, depth = false) {
+  constructor(beam, width, height, depth = false, debug = false) {
     const { gl } = beam
     this.beam = beam
     this.state = {
       width: width !== undefined ? width : gl.canvas.width,
       height: height !== undefined ? height : gl.canvas.height,
       depth,
+      debug,
     }
     this._init()
   }
@@ -20,7 +21,7 @@ export class OffscreenTarget {
     const { beam, state } = this
     if (width === state.width && height === state.height) return
 
-    glUtils.resetOffscren(beam.gl, this)
+    glUtils.resetOffscreen(beam.gl, this)
     state.width = width
     state.height = height
     this._init()
@@ -40,7 +41,6 @@ export class OffscreenTarget {
 
   _before() {
     const { gl } = this.beam
-    this._viewport = gl.getParameter(gl.VIEWPORT)
     this.state.depth
       ? glUtils.beforeDrawToDepth(this.beam.gl, this)
       : glUtils.beforeDrawToColor(this.beam.gl, this)
@@ -49,7 +49,6 @@ export class OffscreenTarget {
   _after() {
     const { gl } = this.beam
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
-    gl.viewport(...this._viewport)
   }
 
   use(drawCallback = () => {}) {
