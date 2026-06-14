@@ -157,16 +157,18 @@ class TargetImpl implements Target, FrameSurface {
 
   // ---- FrameSurface: build this frame's attachment views ----
   surface(): PassSurface {
+    const depthTex = this.#depthTex
+    const depthView = depthTex ? () => depthTex.createView() : null
     if (this.#samples === 4 && this.#msaaColor) {
       return {
         colorView: this.#msaaColor.createView(),
         resolveTarget: this.#colorTex.createView(),
-        depthView: this.#depthTex ? this.#depthTex.createView() : null,
+        depthView,
       }
     }
     return {
       colorView: this.#colorTex.createView(),
-      depthView: this.#depthTex ? this.#depthTex.createView() : null,
+      depthView,
     }
   }
 

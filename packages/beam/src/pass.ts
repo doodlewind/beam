@@ -14,6 +14,7 @@
 
 import type { Bindings, Pass, Pipeline } from './types'
 import { resolveBindings } from './bindings'
+import { pipelineInternal } from './pipeline'
 import { beamError } from './errors'
 
 export type Color = [number, number, number, number]
@@ -28,13 +29,15 @@ const BLACK: Color = [0, 0, 0, 1]
  *  - `colorView`     is the attachment written by the fragment shader. With MSAA
  *    it is the multisample texture; `resolveTarget` is the single-sample target.
  *  - `resolveTarget` is set only for samples:4 (resolve destination).
- *  - `depthView`     is the depth attachment (must match the pipeline's depth
- *    format + sample count); null when the surface has no depth.
+ *  - `depthView`     lazily produces the depth attachment view (must match the
+ *    pipeline's depth format + sample count). It is a thunk so the depth texture
+ *    is only allocated when a draw with a depth pipeline actually needs it; null
+ *    when the surface fundamentally has no depth (e.g. a target without depth).
  */
 export interface PassSurface {
   colorView: GPUTextureView
   resolveTarget?: GPUTextureView
-  depthView: GPUTextureView | null
+  depthView: (() => GPUTextureView) | null
 }
 
 /** Pending load state, set by clear() before/while a pass is open. */
@@ -57,6 +60,11 @@ class PassImpl implements Pass {
   // Next-pass load state. Starts as a clear-to-black (DESIGN §3.6: a surface
   // drawn without an explicit clear() still clears on its first pass).
   #load: LoadState = { color: BLACK, depth: 1 }
+
+  // Whether the pass needs a depth attachment — set from the first drawn
+  // pipeline's depth state, so the screen pass only attaches (and allocates)
+  // depth when a depth pipeline is actually drawn into it.
+  #needsDepth = false
 
   constructor(
     device: GPUDevice,
@@ -94,9 +102,9 @@ class PassImpl implements Pass {
     const desc: GPURenderPassDescriptor = {
       colorAttachments: [colorAttachment],
     }
-    if (s.depthView) {
+    if (this.#needsDepth && s.depthView) {
       desc.depthStencilAttachment = {
-        view: s.depthView,
+        view: s.depthView(),
         depthLoadOp: clear ? 'clear' : 'load',
         depthStoreOp: 'store',
         ...(clear ? { depthClearValue: this.#load.depth } : {}),
@@ -122,6 +130,9 @@ class PassImpl implements Pass {
   }
 
   draw(pipeline: Pipeline, bindings: Bindings): this {
+    // Decide depth BEFORE opening: the pass attaches depth iff this pipeline
+    // uses it. (clear() doesn't open the pass, so the first draw opens it.)
+    if (!this.#gpu) this.#needsDepth = pipelineInternal(pipeline).hasDepth
     const pass = this.#open()
     const r = resolveBindings(this.#device, pipeline, bindings)
 

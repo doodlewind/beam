@@ -38,15 +38,17 @@ fn vs(
 }
 
 // Returns 1.0 when lit, 0.0 when fully in shadow, using a comparison sampler.
+// textureSampleCompare must run in uniform control flow, so we sample it
+// unconditionally and then `select` the out-of-frustum (lit) case.
 fn shadowLit(lightSpacePos : vec4f, bias : f32) -> f32 {
-  var proj = lightSpacePos.xyz / lightSpacePos.w;
+  let proj = lightSpacePos.xyz / lightSpacePos.w;
   // WebGPU clip XY -> [0,1] UV (flip Y); clip Z is already [0,1].
   let uv = vec2f(proj.x * 0.5 + 0.5, proj.y * -0.5 + 0.5);
+  let lit = textureSampleCompare(shadowMap, shadowSamp, uv, proj.z - bias);
   // Outside the light frustum: treat as lit.
-  if (proj.z > 1.0 || uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
-    return 1.0;
-  }
-  return textureSampleCompare(shadowMap, shadowSamp, uv, proj.z - bias);
+  let outside =
+    proj.z > 1.0 || uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0;
+  return select(lit, 1.0, outside);
 }
 
 @fragment

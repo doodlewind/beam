@@ -18,6 +18,9 @@ const pipe = beam.pipeline({
   uniforms: { modelMat: 'mat4', viewMat: 'mat4', projectionMat: 'mat4' },
   textures: { img: 'tex2d' },
   samplers: { samp: 'sampler' },
+  // The map is dark paths on a transparent background; alpha-blend it over the
+  // (white) clear so the landmasses show.
+  blend: 'alpha',
 })
 
 // loadImages routes the .svg path through the SVG blob loader for us.
@@ -37,7 +40,7 @@ const img = beam.texture(image, { flipY: true })
 const samp = beam.sampler({ wrap: 'clamp', min: 'linear', mag: 'linear' })
 
 beam.frame(() => {
-  beam.clear([0, 0, 0, 1]).draw(pipe, {
+  beam.clear([1, 1, 1, 1]).draw(pipe, {
     verts,
     index,
     uniforms,

@@ -125,6 +125,8 @@ export interface PipelineInternal {
   readonly hasUniforms: boolean
   /** Whether group 1 (textures+samplers) exists. */
   readonly hasTextures: boolean
+  /** Whether this pipeline has a depth-stencil state (needs a depth attachment). */
+  readonly hasDepth: boolean
   /** Vertex attribute keys in @location / setVertexBuffer slot order. */
   readonly vertexOrder: string[]
   /** Texture keys in @binding order (binding 0..T-1). */
@@ -361,6 +363,7 @@ export function makePipeline<
     emptyGroup0Layout,
     hasUniforms: uniformLayout !== null,
     hasTextures: textureLayout !== null,
+    hasDepth: !!template.depth,
     vertexOrder: vl.order,
     textureOrder,
     samplerOrder,

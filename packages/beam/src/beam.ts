@@ -61,7 +61,6 @@ export class Beam implements ScreenSurfaceProvider {
   readonly canvas: HTMLCanvasElement
 
   #hidpi: boolean
-  #hasDepth: boolean
   #samples: 1 | 4 = 1
 
   #frame: FrameController
@@ -86,7 +85,6 @@ export class Beam implements ScreenSurfaceProvider {
     this.ctx = ctx
     this.format = format
     this.#hidpi = config.hidpi ?? false
-    this.#hasDepth = config.depth ?? false
 
     this.#frame = new FrameController(device, this)
     this.#screen = this.#frame.screen()
@@ -136,7 +134,11 @@ export class Beam implements ScreenSurfaceProvider {
 
   screenSurface(): PassSurface {
     const colorView = this.ctx.getCurrentTexture().createView()
-    const depthView = this.#hasDepth ? this.#ensureDepth().createView() : null
+    // Depth is offered lazily: the screen depth texture is only allocated when
+    // a draw with a depth pipeline actually attaches it (see Pass). So a
+    // `depth: true` pipeline drawn to the screen just works, with no config and
+    // no cost for 2D apps. `config.depth` is kept as a no-op for back-compat.
+    const depthView = () => this.#ensureDepth().createView()
 
     if (this.#samples === 4) {
       return {

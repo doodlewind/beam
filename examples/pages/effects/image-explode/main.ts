@@ -62,7 +62,7 @@ const verts = beam.verts(pipe.schema.vertex, { position, center, texCoord })
 const idx = beam.index({ array: new Uint32Array(index) })
 
 const { viewMat, projectionMat } = createCamera(
-  { eye: [0, 0, 8] },
+  { eye: [0, 0, 4] },
   { canvas, fov: Math.PI / 4 }
 )
 
@@ -78,10 +78,13 @@ const uniforms = beam.uniforms(pipe.schema.uniforms, {
 })
 
 // progress oscillates 0 -> 2*SCALE -> 0: assemble, explode, reassemble.
-// `t` is in ms; scale to ~1.2 rad/s to match the original's slow cycle.
+// Offset time so the first frame starts assembled (progress 0); the loop's `t`
+// is a performance.now() timestamp, not zero-based.
 const SCALE = 8
+let start = -1
 beam.loop((t) => {
-  const time = t * 0.0012
+  if (start < 0) start = t
+  const time = (t - start) * 0.0012
   uniforms.set('progress', (Math.sin(time - Math.PI / 2) + 1) * SCALE)
   beam.clear([0, 0, 0, 1]).draw(pipe, {
     verts,

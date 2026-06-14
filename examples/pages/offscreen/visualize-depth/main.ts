@@ -75,7 +75,14 @@ for (let i = 1; i < 10; i++) {
 }
 
 const target = beam.target({ width: 1024, height: 1024, depth: true })
-const sampler = beam.sampler({ min: 'nearest', mag: 'nearest', wrap: 'clamp' })
+// All filters nearest (incl. mip) so this is a true non-filtering sampler,
+// required to sample the non-filterable depth32float target.
+const sampler = beam.sampler({
+  min: 'nearest',
+  mag: 'nearest',
+  mip: 'nearest',
+  wrap: 'clamp',
+})
 const inspectUniforms = beam.uniforms(inspect.schema.uniforms, {
   nearPlane: near,
   farPlane: far,
