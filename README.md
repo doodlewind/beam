@@ -3,10 +3,9 @@
 **Expressive WebGPU** — a tiny, teachable WebGPU library.
 
 > This is `beam-gpu`, the TypeScript + native-WebGPU rewrite of the original
-> [`beam-gl`](https://github.com/doodlewind/beam/tree/master) (Expressive WebGL).
-> It keeps Beam's "make data, then draw it" aesthetic while honestly exposing
-> WebGPU's real model — every Beam verb maps 1:1 to a real WebGPU call, and every
-> handle exposes its raw object.
+> `beam-gl` (Expressive WebGL). It keeps Beam's "make data, then draw it"
+> aesthetic while honestly exposing WebGPU's real model — every Beam verb maps
+> 1:1 to a real WebGPU call, and every handle exposes its raw object.
 
 ## What is Beam?
 
