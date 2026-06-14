@@ -1,29 +1,29 @@
 {
-  "name": "beam-gl",
-  "version": "0.2211.0",
-  "description": "Expressive WebGL",
-  "main": "./src/index.js",
-  "types": "./src/index.d.ts",
-  "dependencies": {},
-  "devDependencies": {
-    "prettier": "^2.7.1"
+  "name": "beam-gpu-monorepo",
+  "private": true,
+  "version": "0.3.0",
+  "description": "Expressive WebGPU — monorepo (library, examples, docs)",
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20"
   },
   "scripts": {
-    "serve": "python3 -m http.server",
-    "lint": "prettier --check src/**/*.js"
+    "build": "pnpm --filter beam-gpu build",
+    "build:examples": "pnpm --filter beam-examples build",
+    "test": "pnpm --filter beam-gpu test",
+    "typecheck": "pnpm -r typecheck",
+    "docs:dev": "pnpm --filter beam-docs dev",
+    "docs:build": "pnpm --filter beam-docs build",
+    "dev": "pnpm --filter beam-examples dev",
+    "lint": "prettier --check \"packages/**/*.{ts,wgsl}\" \"examples/**/*.{ts,wgsl}\""
   },
   "repository": "https://github.com/doodlewind/beam.git",
-  "keywords": [
-    "webgl",
-    "shader",
-    "geometry",
-    "gl",
-    "pbr",
-    "webgl library",
-    "webgl framework",
-    "image processing",
-    "shadow mapping"
-  ],
   "author": "Yifeng Wang",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
 }

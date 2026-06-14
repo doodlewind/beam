@@ -1,0 +1,61 @@
+name: Deploy site
+
+# Builds the VitePress docs (served at /beam/) plus the examples gallery
+# (served at /beam/play/) and publishes them to GitHub Pages.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; don't cancel an in-progress production run.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The lib must build first: docs + examples depend on its dist.
+      - run: pnpm --filter beam-gpu build
+      - run: pnpm --filter beam-docs build
+      - run: pnpm --filter beam-examples build
+
+      - name: Assemble site (docs at /, examples at /play)
+        run: |
+          mkdir -p site/play
+          cp -r docs/.vitepress/dist/. site/
+          cp -r examples/dist/. site/play/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

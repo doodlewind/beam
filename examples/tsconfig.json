@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "verbatimModuleSyntax": false,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "types": ["@webgpu/types", "node", "vite/client"]
+  },
+  "include": ["pages", "shared", "env.d.ts", "vite.config.ts"]
+}
