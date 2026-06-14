@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Material Ball — Beam</title>
+    <style>
+      * { background: #000; margin: 0; padding: 0; }
+      body { display: flex; height: 100vh; justify-content: center; align-items: center; }
+      #control {
+        position: fixed; top: 0; right: 0; width: 300px;
+        padding: 10px; box-sizing: border-box;
+        background: #fff; opacity: 0.3; color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="control">
+      <input type="range" min="-180" max="180" value="0" step="0.01" id="model-x" />
+      <label for="model-x">Ball X Rotate</label>
+
+      <input type="range" min="-180" max="180" value="0" step="0.01" id="model-y" />
+      <label for="model-y">Ball Y Rotate</label>
+
+      <input type="range" min="-180" max="180" value="0" step="0.01" id="model-z" />
+      <label for="model-z">Ball Z Rotate</label>
+
+      <input type="range" min="-180" max="180" value="0" step="0.01" id="camera-rotate" />
+      <label for="camera-rotate">Camera Y Rotate</label>
+
+      <input type="range" min="0" max="1" value="1" step="0.01" id="metallic" />
+      <label for="metallic">Metalness</label>
+
+      <input type="range" min="0" max="1" value="0.2" step="0.01" id="roughness" />
+      <label for="roughness">Roughness</label>
+
+      <br />
+      <input type="range" min="-1" max="1" value="1" step="0.01" id="light-x" />
+      <label for="light-x">Light X</label>
+
+      <input type="range" min="-1" max="1" value="1" step="0.01" id="light-y" />
+      <label for="light-y">Light Y</label>
+
+      <input type="range" min="-1" max="1" value="1" step="0.01" id="light-z" />
+      <label for="light-z">Light Z</label>
+
+      <input type="range" min="0" max="2" value="1" step="0.01" id="light-strength" />
+      <label for="light-strength">Light Strength</label>
+
+      <br />
+      <input type="color" value="#ffffff" id="light-color" />
+      <label for="light-color">Light Color</label>
+    </div>
+    <canvas width="600" height="600"></canvas>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
