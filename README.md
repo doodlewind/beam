@@ -2,10 +2,9 @@
 
 **Expressive WebGPU** — a tiny, teachable WebGPU library.
 
-> This is `beam-gpu`, the TypeScript + native-WebGPU rewrite of the original
-> `beam-gl` (Expressive WebGL). It keeps Beam's "make data, then draw it"
-> aesthetic while honestly exposing WebGPU's real model — every Beam verb maps
-> 1:1 to a real WebGPU call, and every handle exposes its raw object.
+> `beam-gpu` keeps Beam's "make data, then draw it" aesthetic while honestly
+> exposing WebGPU's real model — every Beam verb maps 1:1 to a real WebGPU call,
+> and every handle exposes its raw object.
 
 ## What is Beam?
 
@@ -53,10 +52,9 @@ beam.frame(() => {
 })
 ```
 
-See [`DESIGN.md`](./DESIGN.md) for the full design rationale and the
-[migration map](./DESIGN.md#5-migration-map-old-beam-gl--beam-gpu) from the old
-WebGL API, and [`packages/beam/reference-api.d.ts`](./packages/beam/reference-api.d.ts)
-for the complete public type surface.
+See [`DESIGN.md`](./DESIGN.md) for the full design rationale, and
+[`packages/beam/reference-api.d.ts`](./packages/beam/reference-api.d.ts) for the
+complete public type surface.
 
 ## Requirements
 
@@ -66,9 +64,9 @@ A WebGPU-capable browser (Chrome/Edge 113+, Safari 18+, recent Firefox).
 
 ```
 packages/beam/   the library (npm: beam-gpu)
-examples/        the gallery — every example ported to WGSL/WebGPU (Vite MPA)
+examples/        the gallery — runnable WGSL/WebGPU examples (Vite MPA)
 docs/            the documentation site (VitePress, English + 简体中文)
-DESIGN.md        the locked API design + WebGL→WebGPU migration map
+DESIGN.md        the locked API design + type-surface contract
 ```
 
 ### Develop

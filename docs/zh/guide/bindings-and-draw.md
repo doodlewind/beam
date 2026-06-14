@@ -4,16 +4,9 @@ title: 绑定与绘制
 
 # 绑定与绘制
 
-在旧版 Beam 中，你通过位置参数展开来绘制：
-
-```js
-beam.draw(shader, vertexBuffers, indexBuffer, uniforms)
-```
-
-这种方式之所以可行，是因为 WebGL 按名称绑定资源。而 WebGPU 不是这样——它按
-**组 + 绑定索引（group + binding index）** 来绑定。因此 beam-gpu 用一个带键的
-对象来取代参数展开，这就是 **`Bindings`**，而且这个对象会针对你所绘制的管线进行
-泛型类型检查：
+WebGPU 按 **组 + 绑定索引（group + binding index）** 来绑定资源，而不是按名称或
+顺序。因此 beam-gpu 把一次绘制的数据收进一个带键的对象，这就是 **`Bindings`**，
+而且这个对象会针对你所绘制的管线进行泛型类型检查：
 
 ```ts
 beam.draw(pipe, { verts, index, uniforms, textures, samplers, instances })
@@ -114,9 +107,8 @@ const hello = ({ beam }) => {
 </script>
 
 ::: tip 不使用索引时
-`index` 是可选的。省略它，绘制就直接使用 `verts.count` 个顶点，和非索引的
-WebGPU 绘制完全一样。带上它，绘制就使用 `index.count` 个索引去引用顶点缓冲区
-——这正是旧版 Beam 的 `IndexBuffer` 所用的那套复用技巧。
+`index` 是可选的。省略它，绘制就直接使用 `verts.count` 个顶点，做一次非索引绘制。
+带上它，绘制就使用 `index.count` 个索引去引用顶点缓冲区——以此复用共享的顶点。
 :::
 
 ## 加入纹理和采样器
@@ -239,10 +231,10 @@ beam.frame(() => {
 想要的。要做动画，就用 `.set(...)` 去修改每个对象自己的资源（开销很低，原地修改）；
 只要保持它们彼此独立即可。
 
-::: warning 为什么旧版 Beam 没有这条规则
-WebGL 在每次 `draw` 时都会即时上传 uniform，所以一个共享资源反映的就是你最后一次
-`.set` 的内容。WebGPU 则会把整帧批处理，于是逐对象的数据就需要逐对象的资源。这不是
-Beam 强加的繁文缛节——它就是 WebGPU 实际的执行方式，值得尽早内化于心。
+::: warning 为什么会这样
+WebGPU 会把整帧批处理：所有 `writeBuffer` 调用都在已记录的绘制执行之前落地，于是
+逐对象的数据就需要逐对象的资源。这不是 Beam 强加的繁文缛节——它就是 WebGPU 实际的
+执行方式，值得尽早内化于心。
 :::
 
 共享的、整帧恒定的数据——相机的视图/投影矩阵、一个全局光源——应该放进它**自己的**

@@ -8,9 +8,8 @@ Beam 中的一切都从**设备（device）**开始。设备把一个 `GPUAdapte
 `GPUDevice` 以及画布的呈现上下文封装成单一句柄——你用它来创建管线和资源，也用它来
 绘制。
 
-与旧版 WebGL 的 `new Beam(canvas)` 不同，创建设备是**异步的**：在 WebGPU 中，获取适配器
-和获取设备都是 promise。Beam 把整个握手流程——请求适配器、请求设备、读取首选格式、配置
-画布——折叠进单个 `await`。
+创建设备是**异步的**：在 WebGPU 中，获取适配器和获取设备都是 promise。Beam 把整个握手
+流程——请求适配器、请求设备、读取首选格式、配置画布——折叠进单个 `await`。
 
 ```ts
 import { Beam } from 'beam-gpu'

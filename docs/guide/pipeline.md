@@ -191,7 +191,7 @@ const pipe = beam.pipeline({
 | `blend`      | `'none'`             | `'alpha'` for transparency, `'add'` for additive.       |
 | `targets`    | one canvas-format target | `ColorTarget[]` for MRT or per-target blend.        |
 | `samples`    | `1`                  | `4` enables MSAA (Beam manages the resolve).            |
-| `constants`  | none                 | WGSL `override` constants, replacing GLSL `defines`.    |
+| `constants`  | none                 | WGSL `override` constants set at pipeline creation.     |
 | `vsEntry` / `fsEntry` | `'vs'` / `'fs'` | Rename the entry points Beam looks for.            |
 
 ### `depth` in detail

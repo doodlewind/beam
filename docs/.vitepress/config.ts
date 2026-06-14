@@ -30,10 +30,7 @@ const enSidebar = [
   },
   {
     text: 'Reference',
-    items: [
-      { text: 'WGSL Conventions', link: '/guide/wgsl-conventions' },
-      { text: 'Migrating from WebGL', link: '/guide/migrating-from-webgl' },
-    ],
+    items: [{ text: 'WGSL Conventions', link: '/guide/wgsl-conventions' }],
   },
 ]
 
@@ -64,10 +61,7 @@ const zhSidebar = [
   },
   {
     text: '参考',
-    items: [
-      { text: 'WGSL 约定', link: '/zh/guide/wgsl-conventions' },
-      { text: '从 WebGL 迁移', link: '/zh/guide/migrating-from-webgl' },
-    ],
+    items: [{ text: 'WGSL 约定', link: '/zh/guide/wgsl-conventions' }],
   },
 ]
 

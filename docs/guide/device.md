@@ -8,10 +8,9 @@ Everything in Beam starts from a **device**. The device wraps a `GPUAdapter`, a
 `GPUDevice`, and the canvas's presentation context into one handle — the thing you
 make pipelines and resources from, and the thing you draw with.
 
-Unlike the old WebGL `new Beam(canvas)`, creating a device is **asynchronous**:
-acquiring an adapter and a device are both promises in WebGPU. Beam folds the whole
-handshake — request adapter, request device, read the preferred format, configure the
-canvas — into a single `await`.
+Creating a device is **asynchronous**: acquiring an adapter and a device are both
+promises in WebGPU. Beam folds the whole handshake — request adapter, request device,
+read the preferred format, configure the canvas — into a single `await`.
 
 ```ts
 import { Beam } from 'beam-gpu'

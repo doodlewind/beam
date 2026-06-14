@@ -251,53 +251,6 @@ window.addEventListener('resize', () => {
 
 When a target is no longer needed, free its GPU textures with `target.destroy()`.
 
-## Migrating from old Beam
-
-Old Beam created a target with positional `width, height` and redirected draws
-with a `target.use(cb)` callback, then exposed a single `target.texture`:
-
-```js
-// Old (beam-gl)
-const target = beam.target(2048, 2048)
-beam.clear()
-target.use(() => {
-  beam
-    .draw(shaderX, ...resourcesA)
-    .draw(shaderY, ...resourcesB)
-})
-myTextures.set('img', target.texture)
-```
-
-In beam-gpu the options are keyed, the target *is* the draw surface (no `use`
-wrapper — it has its own `clear`/`draw`), and color and depth are separate
-sampleable textures:
-
-```ts
-// New (beam-gpu)
-const target = beam.target({ width: 2048, height: 2048, depth: true })
-
-beam.frame(() => {
-  target
-    .clear()
-    .draw(shaderX, bindingsA)
-    .draw(shaderY, bindingsB)
-
-  // Sample the result in a later draw.
-  beam.draw(present, {
-    verts, index,
-    textures: { img: target.color },   // was target.texture
-    samplers: { samp }
-  })
-})
-```
-
-| Old beam-gl | beam-gpu |
-|-------------|----------|
-| `beam.target(w, h, depth)` | `beam.target({ width, height, depth?, format?, samples? })` |
-| `target.use(cb)` | `target.clear().draw(pipe, bindings)` — same chain as `beam.draw` |
-| `target.texture` | `target.color` (and `target.depth` for sampleable depth) |
-| `textures.set('img', target.texture)` | `bindings.textures = { img: target.color }` |
-
 For the power-path equivalent (your own command encoder, explicit
 `pass.end()` / `submit()`), see [Frame & Loop](/guide/frame-and-loop) and
 `beam.pass({ target })`.

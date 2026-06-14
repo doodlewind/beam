@@ -1,5 +1,6 @@
 import { asset } from '../../../shared/asset'
 import { Beam } from 'beam-gpu'
+import { Pane } from 'tweakpane'
 import { createRect } from '../../../shared/geometry'
 import { loadBitmap } from '../../../shared/image-loader'
 import brightnessContrastWgsl from './brightness-contrast.wgsl?raw'
@@ -97,24 +98,49 @@ const updateImage = async (name: string) => {
   render()
 }
 
-await updateImage('prague.jpg')
-
-const $imageSelect = document.getElementById(
-  'image-select'
-) as HTMLSelectElement
-$imageSelect.addEventListener('change', () => updateImage($imageSelect.value))
-
-const setters: Record<string, (v: number) => void> = {
-  brightness: (v) => bcUniforms.set('brightness', v),
-  contrast: (v) => bcUniforms.set('contrast', v),
-  hue: (v) => hsUniforms.set('hue', v),
-  saturation: (v) => hsUniforms.set('saturation', v),
-  vignette: (v) => vgUniforms.set('vignette', v),
+// Single state object holding every value the old controls drove.
+const params = {
+  image: 'prague.jpg',
+  brightness: 0,
+  contrast: 0,
+  hue: 0,
+  saturation: 0,
+  vignette: 0,
 }
-Object.keys(setters).forEach((field) => {
-  const $field = document.getElementById(field) as HTMLInputElement
-  $field.addEventListener('input', () => {
-    setters[field](Number($field.value))
-    render()
+
+await updateImage(params.image)
+
+const pane = new Pane({ title: 'Controls' })
+
+pane
+  .addBinding(params, 'image', {
+    label: 'Image',
+    options: { Prague: 'prague.jpg', Jade: 'jade.jpg' },
   })
-})
+  .on('change', (ev) => {
+    void updateImage(ev.value)
+  })
+
+const bcFolder = pane.addFolder({ title: 'Brightness / Contrast' })
+bcFolder.addBinding(params, 'brightness', { min: -0.5, max: 0.5, step: 0.01 })
+bcFolder.addBinding(params, 'contrast', { min: -0.3, max: 0.3, step: 0.01 })
+
+const hsFolder = pane.addFolder({ title: 'Hue / Saturation' })
+hsFolder.addBinding(params, 'hue', { min: -1, max: 1, step: 0.01 })
+hsFolder.addBinding(params, 'saturation', { min: -0.5, max: 0.5, step: 0.005 })
+
+const vgFolder = pane.addFolder({ title: 'Vignette' })
+vgFolder.addBinding(params, 'vignette', { min: 0, max: 1, step: 0.005 })
+
+// All sliders feed the uniforms, then re-render the static frame.
+const updateFilters = () => {
+  bcUniforms.set('brightness', params.brightness)
+  bcUniforms.set('contrast', params.contrast)
+  hsUniforms.set('hue', params.hue)
+  hsUniforms.set('saturation', params.saturation)
+  vgUniforms.set('vignette', params.vignette)
+  render()
+}
+bcFolder.on('change', updateFilters)
+hsFolder.on('change', updateFilters)
+vgFolder.on('change', updateFilters)

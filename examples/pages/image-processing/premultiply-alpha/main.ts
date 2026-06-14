@@ -1,5 +1,6 @@
 import { asset } from '../../../shared/asset'
 import { Beam } from 'beam-gpu'
+import { Pane } from 'tweakpane'
 import { createRect } from '../../../shared/geometry'
 import { loadImage } from '../../../shared/image-loader'
 import wgsl from './premultiply.wgsl?raw'
@@ -46,9 +47,12 @@ const render = () =>
     })
   })
 
-const $toggle = document.getElementById('toggle') as HTMLInputElement
-$toggle.addEventListener('change', () => {
-  uniforms.set({ premultiply: $toggle.checked ? 1 : 0 })
+const params = { premultiply: true }
+
+const pane = new Pane({ title: 'Controls' })
+pane.addBinding(params, 'premultiply', { label: 'Premultiply Alpha' })
+pane.on('change', () => {
+  uniforms.set({ premultiply: params.premultiply ? 1 : 0 })
   render()
 })
 

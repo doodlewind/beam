@@ -6,18 +6,9 @@
     <style>
       * { background: #ddd; margin: 0; padding: 0; }
       body { display: flex; height: 100vh; justify-content: center; align-items: center; }
-      #control {
-        position: fixed; top: 0; right: 0; width: 300px;
-        padding: 10px; box-sizing: border-box;
-        background: white; opacity: 0.3; color: #666;
-      }
     </style>
   </head>
   <body>
-    <div id="control">
-      <input type="checkbox" id="toggle" name="alpha" checked />
-      <label for="toggle">Premultiply Alpha</label>
-    </div>
     <canvas></canvas>
     <script type="module" src="./main.ts"></script>
   </body>

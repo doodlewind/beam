@@ -151,15 +151,14 @@ const triangle = async ({ beam }) => {
 
 ## Why WebGPU?
 
-The old Beam was built on WebGL — a 2010-era API modeled as a hidden global state
-machine. WebGPU is the modern replacement, and it is a better teacher:
+WebGPU is a modern, explicit GPU API, and it is a good teacher:
 
 - **Explicit, validated objects** instead of implicit state. A pipeline bundles its
   shaders, vertex layout, and render state into one immutable object, so there is no
   stray state leaking between draws.
 - **Bind groups** describe resources by `@group` and `@binding` index — a clear,
   cacheable contract between your data and your shaders.
-- **WGSL**, a typed shading language designed for the modern GPU, replaces GLSL.
+- **WGSL** is a typed shading language designed for the modern GPU.
 - It runs on Vulkan / Metal / D3D12 under the hood, and is shipping in Chrome, Edge,
   and Safari.
 
@@ -167,26 +166,15 @@ Beam embraces this model rather than hiding it. The one thing it removes — the
 per-frame command-encoder dance — is the only part of WebGPU that has a single sensible
 shape every frame. Everything else stays a first-class concept.
 
-## How this differs from the old WebGL Beam
+## Three things to keep in mind
 
-If you used the original `beam-gl`, the aesthetic is identical — "make data, then draw
-it" — but the vocabulary is updated to WebGPU's real model:
-
-| Old Beam (WebGL) | beam-gpu (WebGPU) |
-| --- | --- |
-| `new Beam(canvas)` | `await Beam.gpu(canvas)` — async adapter + device init |
-| `beam.shader({ vs, fs })` (GLSL) | `beam.pipeline({ wgsl, ... })` (one WGSL module) |
-| `beam.resource(Type, ...)` | named factories: `beam.verts` / `beam.index` / `beam.uniforms` / `beam.texture` |
-| positional `draw(shader, ...resources)` | keyed `draw(pipeline, { verts, index, uniforms })` |
-| implicit GL state machine | explicit per-frame encoder inside `beam.frame(cb)` |
-| `beam.target(w, h)` + `target.use(cb)` | `beam.target(opts)` + `target.clear().draw(...)` |
-
-Three differences are worth calling out. Init is **async**, because acquiring a GPU
-adapter and device is async. A draw's data is a **keyed object**, not a positional
-spread, because WebGPU binds by group and binding index, not by argument order — and the
-keys let TypeScript check the call site. And **frames are explicit**: your draws live
-inside `beam.frame(cb)` (or the rAF-driven `beam.loop(cb)`), which encodes and submits
-one frame of work.
+Three of Beam's choices follow directly from WebGPU's model. Init is **async**, because
+acquiring a GPU adapter and device is async, so you write `await Beam.gpu(canvas)`. A
+draw's data is a **keyed object** — `draw(pipeline, { verts, index, uniforms })` — not a
+positional spread, because WebGPU binds by group and binding index, not by argument
+order, and the keys let TypeScript check the call site. And **frames are explicit**: your
+draws live inside `beam.frame(cb)` (or the rAF-driven `beam.loop(cb)`), which encodes and
+submits one frame of work.
 
 ## Where to next
 
@@ -195,4 +183,3 @@ one frame of work.
 - [Pipeline](/guide/pipeline) — how the schema drives types, vertex layout, and bind
   groups.
 - [Resources](/guide/resources) — verts, index, uniforms, textures, and samplers.
-- [Migrating from WebGL](/guide/migrating-from-webgl) — the full old-to-new map.

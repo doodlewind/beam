@@ -145,36 +145,21 @@ const triangle = async ({ beam }) => {
 > 上面的 WGSL 在本页演示中是以字符串形式内联的。在真实项目里，你会把它放进一个 `.wgsl`
 > 文件，并用 `?raw` 导入，就和代码示例里展示的一样。
 
-## 为什么选 WebGPU？
+## WebGPU 的形状
 
-旧版 Beam 建立在 WebGL 之上——那是一套 2010 年代的 API，被建模成一个隐藏的全局状态机。WebGPU
-是它的现代替代品，而且是一位更好的老师：
+WebGPU 由显式、受校验的对象构成，Beam 拥抱这套模型，而非隐藏它：
 
 - **显式、受校验的对象**，取代了隐式状态。一个管线把它的着色器、顶点布局和渲染状态打包进一个
   不可变对象，因此不会有游离的状态在绘制之间泄漏。
 - **绑定组**通过 `@group` 与 `@binding` 索引来描述资源——这是数据与着色器之间清晰、可缓存的
   契约。
-- **WGSL**，一门为现代 GPU 设计的强类型着色语言，取代了 GLSL。
+- **WGSL**，一门为现代 GPU 设计的强类型着色语言。
 - 它在底层运行于 Vulkan / Metal / D3D12 之上，并已在 Chrome、Edge 与 Safari 中发布。
 
-Beam 拥抱这套模型，而非隐藏它。它唯一移除的东西——每帧那套命令编码器的繁文缛节——恰恰是
-WebGPU 中每帧都只有一种合理形态的部分。其余一切都保持为一等概念。
+Beam 唯一移除的东西——每帧那套命令编码器的繁文缛节——恰恰是 WebGPU 中每帧都只有一种合理形态的
+部分。其余一切都保持为一等概念。
 
-## 它与旧版 WebGL Beam 有何不同
-
-如果你用过最初的 `beam-gl`，整体气质是一致的——「先造数据，再画出来」——但词汇被更新为
-WebGPU 的真实模型：
-
-| 旧版 Beam（WebGL） | beam-gpu（WebGPU） |
-| --- | --- |
-| `new Beam(canvas)` | `await Beam.gpu(canvas)` —— 异步的 adapter + device 初始化 |
-| `beam.shader({ vs, fs })`（GLSL） | `beam.pipeline({ wgsl, ... })`（单个 WGSL 模块） |
-| `beam.resource(Type, ...)` | 具名工厂：`beam.verts` / `beam.index` / `beam.uniforms` / `beam.texture` |
-| 位置参数 `draw(shader, ...resources)` | 带键 `draw(pipeline, { verts, index, uniforms })` |
-| 隐式的 GL 状态机 | `beam.frame(cb)` 内部显式的每帧编码器 |
-| `beam.target(w, h)` + `target.use(cb)` | `beam.target(opts)` + `target.clear().draw(...)` |
-
-有三处差异值得特别点出。初始化是**异步的**，因为获取 GPU 适配器与设备本身就是异步的。一次
+有三处设计值得特别点出。初始化是**异步的**，因为获取 GPU 适配器与设备本身就是异步的。一次
 绘制的数据是一个**带键对象**，而非位置参数展开，因为 WebGPU 是按组与绑定索引来绑定的，而不是
 按参数顺序——而且这些键让 TypeScript 能检查调用处。还有，**帧是显式的**：你的绘制位于
 `beam.frame(cb)`（或由 rAF 驱动的 `beam.loop(cb)`）之内，它会编码并提交一帧的工作。
@@ -184,4 +169,3 @@ WebGPU 的真实模型：
 - [快速开始](/zh/guide/getting-started) —— 安装 beam-gpu，在你自己的项目里运行三角形。
 - [管线](/zh/guide/pipeline) —— 模式如何驱动类型、顶点布局与绑定组。
 - [资源](/zh/guide/resources) —— verts、index、uniforms、textures 与 samplers。
-- [从 WebGL 迁移](/zh/guide/migrating-from-webgl) —— 完整的新旧对照表。

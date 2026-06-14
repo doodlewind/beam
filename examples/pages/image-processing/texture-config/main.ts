@@ -4,6 +4,7 @@ import type { Wrap, Filter } from 'beam-gpu'
 import wgsl from './texture-config.wgsl?raw'
 import { createRect } from '../../../shared/geometry'
 import { loadBitmap } from '../../../shared/image-loader'
+import { Pane } from 'tweakpane'
 
 const canvas = document.querySelector('canvas')!
 canvas.width = 400
@@ -24,17 +25,21 @@ const verts = beam.verts(pipe.schema.vertex, quad.vertex)
 const index = beam.index(quad.index)
 const uniforms = beam.uniforms(pipe.schema.uniforms, { scale: 1 })
 
-// Sampler config lives in these mutable bits of state; the sampler is immutable,
+// Sampler config lives in this mutable params object; the sampler is immutable,
 // so each change rebuilds it. The texture's flipY is set when we (re)upload.
-let wrap: Wrap = 'repeat'
-let mag: Filter = 'linear'
-let min: Filter = 'linear'
-let flipY = true
+const params = {
+  wrap: 'repeat' as Wrap,
+  mag: 'linear' as Filter,
+  min: 'linear' as Filter,
+  flipY: true,
+  scale: 1,
+}
 
 const img = beam.texture()
-let samp = beam.sampler({ wrap, mag, min })
+let samp = beam.sampler({ wrap: params.wrap, mag: params.mag, min: params.min })
 
-const upload = (image: ImageBitmap) => img.set(image, { flipY, mips: true })
+const upload = (image: ImageBitmap) =>
+  img.set(image, { flipY: params.flipY, mips: true })
 
 const render = () => {
   beam.frame(() => {
@@ -52,30 +57,44 @@ const image = await loadBitmap(asset('/assets/images/venus.jpg'))
 upload(image)
 render()
 
-const $ = (id: string) =>
-  document.getElementById(id) as HTMLInputElement | HTMLSelectElement
+const rebuildSampler = () => {
+  samp = beam.sampler({ wrap: params.wrap, mag: params.mag, min: params.min })
+  render()
+}
 
-$('wrap-select').addEventListener('input', (e) => {
-  wrap = (e.target as HTMLSelectElement).value as Wrap
-  samp = beam.sampler({ wrap, mag, min })
-  render()
-})
-$('mag-filter-select').addEventListener('input', (e) => {
-  mag = (e.target as HTMLSelectElement).value as Filter
-  samp = beam.sampler({ wrap, mag, min })
-  render()
-})
-$('min-filter-select').addEventListener('input', (e) => {
-  min = (e.target as HTMLSelectElement).value as Filter
-  samp = beam.sampler({ wrap, mag, min })
-  render()
-})
-$('flip-y').addEventListener('input', (e) => {
-  flipY = (e.target as HTMLInputElement).checked
+const pane = new Pane({ title: 'Controls' })
+
+const sampler = pane.addFolder({ title: 'Sampler' })
+sampler
+  .addBinding(params, 'wrap', {
+    options: {
+      Repeat: 'repeat',
+      'Mirrored Repeat': 'mirror',
+      'Clamp to Edge': 'clamp',
+    },
+  })
+  .on('change', rebuildSampler)
+sampler
+  .addBinding(params, 'mag', {
+    label: 'Mag Filter',
+    options: { Linear: 'linear', Nearest: 'nearest' },
+  })
+  .on('change', rebuildSampler)
+sampler
+  .addBinding(params, 'min', {
+    label: 'Min Filter',
+    options: { Linear: 'linear', Nearest: 'nearest' },
+  })
+  .on('change', rebuildSampler)
+
+const texture = pane.addFolder({ title: 'Texture' })
+texture.addBinding(params, 'flipY', { label: 'Flip Y' }).on('change', () => {
   upload(image)
   render()
 })
-$('scale').addEventListener('input', (e) => {
-  uniforms.set('scale', parseFloat((e.target as HTMLInputElement).value))
-  render()
-})
+texture
+  .addBinding(params, 'scale', { min: 0.05, max: 6, step: 0.01 })
+  .on('change', () => {
+    uniforms.set('scale', params.scale)
+    render()
+  })

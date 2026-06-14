@@ -1,8 +1,8 @@
-// 4x4 matrix helpers — typed port of the old gallery util (inlined from gl-matrix).
+// 4x4 matrix helpers (inlined from gl-matrix).
 //
-// IMPORTANT (WebGPU): `perspective` and `ortho` here use the zero-to-one (ZO)
-// depth convention — clip-space Z maps to [0, 1], which is what WebGPU expects.
-// The old WebGL Beam used the [-1, 1] convention; do not copy a WebGL projection.
+// IMPORTANT: `perspective` and `ortho` here use the zero-to-one (ZO) depth
+// convention — clip-space Z maps to [0, 1], which is what WebGPU expects. Do
+// not use a [-1, 1] depth projection.
 export type Mat4 = number[] | Float32Array
 export type Vec3 = number[] | Float32Array
 

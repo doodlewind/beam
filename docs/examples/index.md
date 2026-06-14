@@ -28,20 +28,20 @@ canvas stays blank, check that `navigator.gpu` is available.
 Start here. These cover the core loop: build a pipeline from WGSL + schemas,
 make resources, and draw.
 
-- [Hello world](/play/pages/basic-graphics/hello-world/) — the gold-standard
+- <PlayLink to="basic-graphics/hello-world">Hello world</PlayLink> — the gold-standard
   starting point. A single triangle from one pipeline, one `verts` resource, and
   one `frame`. Read this first.
-- [Image box](/play/pages/basic-graphics/image-box/) — a textured cube under
+- <PlayLink to="basic-graphics/image-box">Image box</PlayLink> — a textured cube under
   a perspective camera, introducing `texture`, `sampler`, and a `mat4` uniform.
-- [Basic ball](/play/pages/basic-graphics/basic-ball/) — a normal-shaded
+- <PlayLink to="basic-graphics/basic-ball">Basic ball</PlayLink> — a normal-shaded
   sphere, showing indexed geometry and a camera matrix.
-- [Zooming ball](/play/pages/basic-graphics/zooming-ball/) — animates the
+- <PlayLink to="basic-graphics/zooming-ball">Zooming ball</PlayLink> — animates the
   same ball with `beam.loop`, updating uniforms every frame.
-- [Multi-balls](/play/pages/basic-graphics/multi-balls/) — many balls in one
+- <PlayLink to="basic-graphics/multi-balls">Multi-balls</PlayLink> — many balls in one
   frame, with one `uniforms` resource per object (DESIGN §3.3).
-- [Multi-graphics](/play/pages/basic-graphics/multi-graphics/) — boxes and
+- <PlayLink to="basic-graphics/multi-graphics">Multi-graphics</PlayLink> — boxes and
   balls drawn together, mixing geometries in a single frame.
-- [Wireframe](/play/pages/basic-graphics/wireframe/) — overlays a wireframe
+- <PlayLink to="basic-graphics/wireframe">Wireframe</PlayLink> — overlays a wireframe
   pass on a shaded mesh using two pipelines.
 
 ## Image processing
@@ -49,20 +49,20 @@ make resources, and draw.
 Full-screen-quad pipelines: every fragment is a pixel, and the fun is in the
 shader. A shared unit quad feeds them all.
 
-- [Basic image](/play/pages/image-processing/basic-image/) — fill the canvas
+- <PlayLink to="image-processing/basic-image">Basic image</PlayLink> — fill the canvas
   with a texture on a flat quad, no projection. The simplest texture sample.
-- [Single filter](/play/pages/image-processing/single-filter/) — one filter
+- <PlayLink to="image-processing/single-filter">Single filter</PlayLink> — one filter
   with live slider controls writing a named uniform before each redraw.
-- [Multi-filters](/play/pages/image-processing/multi-filters/) — three
+- <PlayLink to="image-processing/multi-filters">Multi-filters</PlayLink> — three
   single-pass filters sharing one vertex schema, each with its own pipeline.
-- [Mix images](/play/pages/image-processing/mix-images/) — blend two
+- <PlayLink to="image-processing/mix-images">Mix images</PlayLink> — blend two
   textures in one shader, reusing a single sampler for both.
-- [Load SVG](/play/pages/image-processing/load-svg/) — rasterize an SVG via
+- <PlayLink to="image-processing/load-svg">Load SVG</PlayLink> — rasterize an SVG via
   a blob loader and upload it as a texture.
-- [Premultiply alpha](/play/pages/image-processing/premultiply-alpha/) —
+- <PlayLink to="image-processing/premultiply-alpha">Premultiply alpha</PlayLink> —
   composite the canvas over the page background with a premultiplied-alpha
   context and matching shader output.
-- [Texture config](/play/pages/image-processing/texture-config/) — explore
+- <PlayLink to="image-processing/texture-config">Texture config</PlayLink> — explore
   sampler and texture options (wrap, filter, `flipY`), rebuilding the immutable
   sampler on each change.
 
@@ -70,12 +70,12 @@ shader. A shared unit quad feeds them all.
 
 Lit geometry, normal matrices, and physically based shading.
 
-- [Basic lighting](/play/pages/3d-models/basic-lighting/) — directional
+- <PlayLink to="3d-models/basic-lighting">Basic lighting</PlayLink> — directional
   lighting with interactive controls for model rotation and light
   direction/color/strength.
-- [Material ball](/play/pages/3d-models/material-ball/) — a PBR sphere using
+- <PlayLink to="3d-models/material-ball">Material ball</PlayLink> — a PBR sphere using
   environment maps and a BRDF LUT, with the uniform struct laid out to std140.
-- [Material balls](/play/pages/3d-models/material-balls/) — a grid of PBR
+- <PlayLink to="3d-models/material-balls">Material balls</PlayLink> — a grid of PBR
   balls sweeping roughness and metalness, one `uniforms` resource per ball.
 
 ## Offscreen
@@ -83,28 +83,28 @@ Lit geometry, normal matrices, and physically based shading.
 Render-to-texture targets: draw into an offscreen `Target`, then sample its
 color or depth in a second pass.
 
-- [Basic mesh](/play/pages/offscreen/basic-mesh/) — render a lit mesh into a
+- <PlayLink to="offscreen/basic-mesh">Basic mesh</PlayLink> — render a lit mesh into a
   color + depth target, then blit that color onto a full-screen quad.
-- [Basic shadow](/play/pages/offscreen/basic-shadow/) — a two-pass shadow
+- <PlayLink to="offscreen/basic-shadow">Basic shadow</PlayLink> — a two-pass shadow
   map: render depth from the light's view, then shade from the camera with a
   comparison sampler.
-- [Visualize depth](/play/pages/offscreen/visualize-depth/) — fill an
+- <PlayLink to="offscreen/visualize-depth">Visualize depth</PlayLink> — fill an
   offscreen depth buffer, then sample `target.depth` into a grayscale view.
 
 ## Effects
 
 Multi-pass and ping-pong techniques.
 
-- [Conway](/play/pages/effects/conway/) — Conway's Game of Life on the GPU,
+- <PlayLink to="effects/conway">Conway</PlayLink> — Conway's Game of Life on the GPU,
   ping-ponging state between two targets with a step pipeline and a display
   pipeline.
-- [Image explode](/play/pages/effects/image-explode/) — a grid of textured
+- <PlayLink to="effects/image-explode">Image explode</PlayLink> — a grid of textured
   quads that explode outward and reassemble, animated by a progress uniform.
 
 ## Design patterns
 
 Higher-level structure built on the terse core.
 
-- [Build renderer](/play/pages/design-patterns/build-renderer/) — wrap
+- <PlayLink to="design-patterns/build-renderer">Build renderer</PlayLink> — wrap
   `beam-gpu` in a small `MeshRenderer` / `Mesh` abstraction that owns the device,
   pipelines, and scene, keeping the app code tiny.

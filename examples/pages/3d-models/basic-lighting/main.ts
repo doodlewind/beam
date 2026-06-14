@@ -1,5 +1,6 @@
 import { asset } from '../../../shared/asset'
 import { Beam } from 'beam-gpu'
+import { Pane } from 'tweakpane'
 import wgsl from './lighting.wgsl?raw'
 import { parseOBJ } from '../../../shared/obj-loader'
 import { createCamera } from '../../../shared/camera'
@@ -57,29 +58,31 @@ index = beam.index(model.index)
 render()
 
 // --- Controls: model rotation + light direction / color / strength ---------
-const $ = (id: string) => document.getElementById(id) as HTMLInputElement
+const params = {
+  modelX: 0,
+  modelY: 0,
+  modelZ: 0,
+  dirX: 1,
+  dirY: 1,
+  dirZ: 1,
+  strength: 0.5,
+  color: '#ffffff',
+}
 
 const updateModel = () => {
   const modelMat = create()
-  rotate(modelMat, modelMat, (+$('model-x').value / 180) * Math.PI, [1, 0, 0])
-  rotate(modelMat, modelMat, (+$('model-y').value / 180) * Math.PI, [0, 1, 0])
-  rotate(modelMat, modelMat, (+$('model-z').value / 180) * Math.PI, [0, 0, 1])
+  rotate(modelMat, modelMat, (params.modelX / 180) * Math.PI, [1, 0, 0])
+  rotate(modelMat, modelMat, (params.modelY / 180) * Math.PI, [0, 1, 0])
+  rotate(modelMat, modelMat, (params.modelZ / 180) * Math.PI, [0, 0, 1])
   uniforms.set('modelMat', modelMat)
   uniforms.set('normalMat', normalMatrix(create(), modelMat))
   render()
 }
-;['model-x', 'model-y', 'model-z'].forEach((id) =>
-  $(id).addEventListener('input', updateModel)
-)
 
 const updateLight = () => {
-  uniforms.set('lightDir', [
-    +$('dir-x').value,
-    +$('dir-y').value,
-    +$('dir-z').value,
-  ])
-  uniforms.set('strength', +$('dir-strength').value)
-  const hex = $('dir-color').value
+  uniforms.set('lightDir', [params.dirX, params.dirY, params.dirZ])
+  uniforms.set('strength', params.strength)
+  const hex = params.color
   uniforms.set('lightColor', [
     parseInt(hex.slice(1, 3), 16) / 256,
     parseInt(hex.slice(3, 5), 16) / 256,
@@ -87,6 +90,54 @@ const updateLight = () => {
   ])
   render()
 }
-;['dir-x', 'dir-y', 'dir-z', 'dir-strength', 'dir-color'].forEach((id) =>
-  $(id).addEventListener('input', updateLight)
-)
+
+const pane = new Pane({ title: 'Controls' })
+
+const modelFolder = pane.addFolder({ title: 'Model' })
+modelFolder.addBinding(params, 'modelX', {
+  label: 'Rotate X',
+  min: -180,
+  max: 180,
+  step: 0.01,
+})
+modelFolder.addBinding(params, 'modelY', {
+  label: 'Rotate Y',
+  min: -180,
+  max: 180,
+  step: 0.01,
+})
+modelFolder.addBinding(params, 'modelZ', {
+  label: 'Rotate Z',
+  min: -180,
+  max: 180,
+  step: 0.01,
+})
+modelFolder.on('change', updateModel)
+
+const lightFolder = pane.addFolder({ title: 'Light' })
+lightFolder.addBinding(params, 'dirX', {
+  label: 'Light X',
+  min: -1,
+  max: 1,
+  step: 0.01,
+})
+lightFolder.addBinding(params, 'dirY', {
+  label: 'Light Y',
+  min: -1,
+  max: 1,
+  step: 0.01,
+})
+lightFolder.addBinding(params, 'dirZ', {
+  label: 'Light Z',
+  min: -1,
+  max: 1,
+  step: 0.01,
+})
+lightFolder.addBinding(params, 'strength', {
+  label: 'Strength',
+  min: 0,
+  max: 1,
+  step: 0.01,
+})
+lightFolder.addBinding(params, 'color', { label: 'Color' })
+lightFolder.on('change', updateLight)

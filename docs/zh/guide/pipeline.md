@@ -11,9 +11,8 @@ WGSL 加上几个 schema——并返回一个 `Pipeline<V, U, T, S>`，它同时
 - **顶点缓冲布局**（stride、offset、format），以及
 - **绑定组布局**（哪些 uniform、纹理和采样器分别位于何处）。
 
-它是旧版 Beam 中 `beam.shader(template)` 的继任者。最大的转变在于：在 WebGPU 中
-你手写一个 WGSL 模块，而 Beam 绝不会改写它。Beam 只会根据你声明的 schema，在你的
-着色器 *周围* 推导布局。
+关键在于：在 WebGPU 中你手写一个 WGSL 模块，而 Beam 绝不会改写它。Beam 只会根据你
+声明的 schema，在你的着色器 *周围* 推导布局。
 
 ## 最小的管线
 
@@ -187,7 +186,7 @@ const pipe = beam.pipeline({
 | `blend`      | `'none'`             | `'alpha'` 用于透明，`'add'` 用于加法混合。              |
 | `targets`    | 一个画布格式的目标   | 用 `ColorTarget[]` 实现 MRT 或逐目标混合。              |
 | `samples`    | `1`                  | `4` 启用 MSAA（由 Beam 管理解析过程）。                 |
-| `constants`  | 无                   | WGSL `override` 常量，取代 GLSL 的 `defines`。          |
+| `constants`  | 无                   | WGSL `override` 常量。                                   |
 | `vsEntry` / `fsEntry` | `'vs'` / `'fs'` | 重命名 Beam 查找的入口点。                          |
 
 ### `depth` 详解

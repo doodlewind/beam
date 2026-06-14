@@ -2,6 +2,7 @@ import { asset } from '../../../shared/asset'
 import { Beam } from 'beam-gpu'
 import { createRect } from '../../../shared/geometry'
 import { loadImage } from '../../../shared/image-loader'
+import { Pane } from 'tweakpane'
 import conwayWgsl from './conway.wgsl?raw'
 import displayWgsl from './display.wgsl?raw'
 
@@ -108,11 +109,23 @@ const initImage = async (name: string) => {
   start()
 }
 
-const $select = document.getElementById('pattern-select') as HTMLSelectElement
-$select.addEventListener('change', () => {
-  const name = $select.value
-  if (name === 'random') initRandom()
-  else initImage(name)
-})
+const params = { pattern: 'oscillators.png' }
 
-await initImage('oscillators.png')
+const pane = new Pane({ title: 'Controls' })
+pane
+  .addBinding(params, 'pattern', {
+    options: {
+      Oscillators: 'oscillators.png',
+      Constructor: 'constructor.png',
+      Loom: 'loom.png',
+      Breeder: 'breeder.png',
+      Emitter: 'emitter.png',
+      Random: 'random',
+    },
+  })
+  .on('change', (ev) => {
+    if (ev.value === 'random') initRandom()
+    else void initImage(ev.value)
+  })
+
+await initImage(params.pattern)

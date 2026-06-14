@@ -162,39 +162,7 @@ from the schema; you follow ONE fixed convention.
 
 ---
 
-## 5. Migration map (old beam-gl → beam-gpu)
-
-| Old Beam (beam-gl)                                  | beam-gpu equivalent                                                                 |
-|-----------------------------------------------------|-------------------------------------------------------------------------------------|
-| `new Beam(canvas, config)`                          | `await Beam.gpu(canvas, config)` (alias `Beam.create`) — async                      |
-| `beam.gl`                                           | `beam.device` (+ `beam.adapter`, `beam.ctx`, `beam.format`, `beam.canvas`)          |
-| `beam.shader(template)`                             | `beam.pipeline(template)` → `Pipeline<V,U,T,S>`                                      |
-| template `{ vs, fs }` (GLSL)                        | template `{ wgsl }` (one WGSL module); `vsEntry`/`fsEntry`                           |
-| template `buffers` schema                           | template `vertex` schema (keys → `@location` order)                                 |
-| template `uniforms` schema                          | template `uniforms` schema (one std140 UBO at `@group(0)@binding(0)`)               |
-| template `textures` schema                          | template `textures` + `samplers` schemas (→ `@group(1)`)                            |
-| template `mode` (Triangles/Lines)                   | template `primitive: 'tri'\|'tri-strip'\|'line'\|'point'`                           |
-| template `defines`                                  | template `constants` (WGSL override constants)                                      |
-| `beam.resource(VertexBuffers, state)`               | `beam.verts(schema, state)` → `Verts<V>`                                            |
-| `beam.resource(IndexBuffer, { array, offset })`     | `beam.index({ array, offset?, count? })` → `Index`                                  |
-| `beam.resource(Uniforms, state)`                    | `beam.uniforms(schema, state)` → `Uniforms<U>` (single UBO; dotted nested keys)    |
-| `beam.resource(Textures, state)`                    | `beam.texture(src, opts)` / `beam.cube(faces, opts)` + `beam.sampler(opts)`         |
-| `resource.set(key, val)`                            | `resource.set(key, val)` / `.set(obj)` — same mutable, chainable model              |
-| `ResourceTypes` enum                                | removed (named factories; WebGPU has no such enum)                                  |
-| `SchemaTypes.vec2/3/4,int,float,mat2/3/4`           | `'vec2'\|'vec3'\|'vec4'\|'i32'\|'f32'\|'mat2'\|'mat3'\|'mat4'` (+ `'u32'`)          |
-| `SchemaTypes.tex2D` / `texCube`                     | `'tex2d'` + `beam.texture` / `'texCube'` + `beam.cube`                              |
-| `beam.clear([r,g,b,a])`                             | `beam.clear([r,g,b,a], depth?)` — sets next screen pass loadOp; returns `this`      |
-| `beam.draw(shader, vbuf, ibuf, uniforms, tex)`      | `beam.draw(pipe, { verts, index, uniforms, textures, samplers, instances? })`       |
-| `beam.target(w, h, depth)`                          | `beam.target({ width, height, depth?, format?, samples? })` → `Target`             |
-| `target.use(cb)`                                    | `target.clear().draw(pipe, bindings)` (same chain as `beam.draw`)                   |
-| `target.texture`                                    | `target.color` (Texture) and `target.depth` (sampleable depth Texture)             |
-| `textures.set('img', target.texture)`              | `bindings.textures = { img: target.color }` / `{ shadowMap: target.depth }`         |
-| (manual rAF loop)                                   | `beam.loop((t, dt) => {...})` → `stop()`; or `beam.frame((t) => {...})`             |
-| (implicit GL state machine)                         | implicit per-frame encoder inside `frame`/`loop`; `beam.pass()` power path          |
-
----
-
-## 6. What we deliberately did NOT do
+## 5. What we deliberately did NOT do
 - No `layout: 'auto'`; no WGSL codegen; no positional `...resources`; no scattered
   per-uniform setters; no mutable samplers; no compute/indirect in the terse surface
   (reachable via `beam.device`); no `.end()/.submit()` on the happy path.

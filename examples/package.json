@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "beam-gpu": "workspace:*"
+    "beam-gpu": "workspace:*",
+    "tweakpane": "^4"
   },
   "devDependencies": {
+    "@tweakpane/core": "^2",
     "@webgpu/types": "^0.1.49",
     "typescript": "^5.6.3",
     "vite": "^5.4.10"

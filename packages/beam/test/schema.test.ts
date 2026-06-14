@@ -94,7 +94,7 @@ describe('uniformLayout (WGSL memory layout)', () => {
     expect(size).toBe(48)
   })
 
-  it('sizes mat2 as 16 bytes (WGSL, not GLSL std140 32)', () => {
+  it('sizes mat2 as 16 bytes (WGSL layout)', () => {
     const { size } = uniformLayout({ m: 'mat2' })
     expect(size).toBe(16)
   })

@@ -6,45 +6,9 @@
     <style>
       * { background: #000; margin: 0; padding: 0; }
       body { display: flex; height: 100vh; justify-content: center; align-items: center; }
-      #control {
-        position: fixed; top: 0; right: 0; width: 240px;
-        padding: 10px; box-sizing: border-box;
-        background: #fff; opacity: 0.4; color: #333;
-      }
-      #control * { background: transparent; }
     </style>
   </head>
   <body>
-    <div id="control">
-      <select id="wrap-select">
-        <option value="repeat">Repeat</option>
-        <option value="mirror">Mirrored Repeat</option>
-        <option value="clamp">Clamp to Edge</option>
-      </select>
-      <label for="wrap-select">Wrap</label>
-      <br/>
-
-      <select id="mag-filter-select">
-        <option value="linear">Linear</option>
-        <option value="nearest">Nearest</option>
-      </select>
-      <label for="mag-filter-select">Mag Filter</label>
-      <br/>
-
-      <select id="min-filter-select">
-        <option value="linear">Linear</option>
-        <option value="nearest">Nearest</option>
-      </select>
-      <label for="min-filter-select">Min Filter</label>
-      <br/>
-
-      <input type="checkbox" id="flip-y" checked>
-      <label for="flip-y">Flip Y</label>
-      <br/>
-
-      <input type="range" min="0.05" max="6" value="1" step="0.01" id="scale">
-      <label for="scale">Scale</label>
-    </div>
     <canvas width="400" height="400"></canvas>
     <script type="module" src="./main.ts"></script>
   </body>

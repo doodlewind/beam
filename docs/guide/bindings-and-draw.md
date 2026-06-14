@@ -4,16 +4,9 @@ title: Bindings & Draw
 
 # Bindings & Draw
 
-In old Beam you drew with a positional spread:
-
-```js
-beam.draw(shader, vertexBuffers, indexBuffer, uniforms)
-```
-
-That worked because WebGL binds resources by name. WebGPU does not — it binds by
-**group + binding index**. So beam-gpu replaces the spread with a single keyed
-object, the **`Bindings`**, and that object is generically type-checked against
-the pipeline you draw with:
+WebGPU binds resources by **group + binding index**, not by name or order. So a
+draw's data is a single keyed object, the **`Bindings`**, and that object is
+generically type-checked against the pipeline you draw with:
 
 ```ts
 beam.draw(pipe, { verts, index, uniforms, textures, samplers, instances })
@@ -119,8 +112,7 @@ const hello = ({ beam }) => {
 ::: tip Without an index
 `index` is optional. Omit it and the draw uses `verts.count` vertices directly,
 exactly like a non-indexed WebGPU draw. With it, the draw uses `index.count`
-indices into the vertex buffers — the same reuse trick as old Beam's
-`IndexBuffer`.
+indices into the vertex buffers, so shared vertices are stored once and reused.
 :::
 
 ## Adding textures and samplers
@@ -254,11 +246,11 @@ therefore distinct values per draw — exactly what you want. To animate, mutate
 each object's own resource with `.set(...)` (cheap, in place); just keep them
 separate.
 
-::: warning Why old Beam didn't have this rule
-WebGL uploaded uniforms eagerly at each `draw`, so a shared resource reflected
-whatever you'd last `.set`. WebGPU batches the whole frame, so per-object data
-needs per-object resources. It's not Beam ceremony — it's how WebGPU actually
-executes, and it's worth internalizing early.
+::: warning Why this rule exists
+WebGPU batches the whole frame: the writes you queue between draws all land
+before any draw executes, so per-object data needs per-object resources. It's not
+Beam ceremony — it's how WebGPU actually executes, and it's worth internalizing
+early.
 :::
 
 Shared, frame-constant data — the camera's view/projection matrices, a global

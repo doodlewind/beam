@@ -1,6 +1,7 @@
 import { asset } from '../../../shared/asset'
 import { Beam } from 'beam-gpu'
 import type { Pipeline } from 'beam-gpu'
+import { Pane } from 'tweakpane'
 import { createRect } from '../../../shared/geometry'
 import { loadBitmap } from '../../../shared/image-loader'
 import brightnessContrastWGSL from './brightness-contrast.wgsl?raw'
@@ -91,32 +92,59 @@ const updateImage = async (name: string) => {
 
 await updateImage('prague.jpg')
 
-const $imageSelect = document.getElementById(
-  'image-select'
-) as HTMLSelectElement
-$imageSelect.addEventListener('change', () => updateImage($imageSelect.value))
+// Every value the old HTML controls drove, with the same defaults.
+const params = {
+  image: 'prague.jpg',
+  filter: 'brightness-contrast' as FilterName,
+  brightness: 0,
+  contrast: 0,
+  hue: 0,
+  saturation: 0,
+  vignette: 0,
+}
 
-// Live slider bindings. Each input writes its named uniform then redraws.
-const fields = ['brightness', 'contrast', 'hue', 'saturation', 'vignette']
-fields.forEach((field) => {
-  const $field = document.getElementById(field) as HTMLInputElement
-  $field.addEventListener('input', () => {
-    filters[current].uniforms.set(field, Number($field.value))
+const pane = new Pane({ title: 'Controls' })
+
+pane
+  .addBinding(params, 'image', {
+    options: { Prague: 'prague.jpg', Jade: 'jade.jpg' },
+  })
+  .on('change', (ev) => {
+    void updateImage(ev.value)
+  })
+
+pane
+  .addBinding(params, 'filter', {
+    options: {
+      'Brightness Contrast': 'brightness-contrast',
+      'Hue Saturation': 'hue-saturation',
+      Vignette: 'vignette',
+    },
+  })
+  .on('change', (ev) => {
+    current = ev.value
     render()
   })
-})
 
-const groups = ['brightness-contrast', 'hue-saturation', 'vignette'] as const
-const $groups = groups.map(
-  (id) => document.getElementById(id + '-group') as HTMLDivElement
-)
-const $filterSelect = document.getElementById(
-  'filter-select'
-) as HTMLSelectElement
-$filterSelect.addEventListener('change', () => {
-  current = $filterSelect.value as FilterName
-  $groups.forEach(($group, i) => {
-    $group.hidden = groups[i] !== current
-  })
+const bcFolder = pane.addFolder({ title: 'Brightness Contrast' })
+bcFolder.addBinding(params, 'brightness', { min: -0.5, max: 0.5, step: 0.01 })
+bcFolder.addBinding(params, 'contrast', { min: -0.3, max: 0.3, step: 0.01 })
+
+const hsFolder = pane.addFolder({ title: 'Hue Saturation' })
+hsFolder.addBinding(params, 'hue', { min: -1, max: 1, step: 0.01 })
+hsFolder.addBinding(params, 'saturation', { min: -0.5, max: 0.5, step: 0.005 })
+
+const vigFolder = pane.addFolder({ title: 'Vignette' })
+vigFolder.addBinding(params, 'vignette', { min: 0, max: 1, step: 0.005 })
+
+// Write every named uniform from params, then redraw the active filter.
+pane.on('change', () => {
+  filters['brightness-contrast'].uniforms
+    .set('brightness', params.brightness)
+    .set('contrast', params.contrast)
+  filters['hue-saturation'].uniforms
+    .set('hue', params.hue)
+    .set('saturation', params.saturation)
+  filters.vignette.uniforms.set('vignette', params.vignette)
   render()
 })

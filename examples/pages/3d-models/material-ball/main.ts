@@ -1,5 +1,6 @@
 import { asset } from '../../../shared/asset'
 import { Beam } from 'beam-gpu'
+import { Pane } from 'tweakpane'
 import wgsl from './pbr.wgsl?raw'
 import { createBall } from '../../../shared/geometry'
 import { createCamera } from '../../../shared/camera'
@@ -113,19 +114,31 @@ const render = () => {
 }
 render()
 
-// --- Controls -------------------------------------------------------------
-const $ = (id: string) => document.getElementById(id) as HTMLInputElement
+// --- Controls (Tweakpane) -------------------------------------------------
+const params = {
+  modelX: 0,
+  modelY: 0,
+  modelZ: 0,
+  cameraRotate: 0,
+  metallic: 1,
+  roughness: 0.2,
+  lightX: 1,
+  lightY: 1,
+  lightZ: 1,
+  lightStrength: 1,
+  lightColor: '#ffffff',
+}
 
 const updateScene = () => {
   const modelMat = create()
-  rotate(modelMat, modelMat, (+$('model-x').value / 180) * Math.PI, [1, 0, 0])
-  rotate(modelMat, modelMat, (+$('model-y').value / 180) * Math.PI, [0, 1, 0])
-  rotate(modelMat, modelMat, (+$('model-z').value / 180) * Math.PI, [0, 0, 1])
+  rotate(modelMat, modelMat, (params.modelX / 180) * Math.PI, [1, 0, 0])
+  rotate(modelMat, modelMat, (params.modelY / 180) * Math.PI, [0, 1, 0])
+  rotate(modelMat, modelMat, (params.modelZ / 180) * Math.PI, [0, 0, 1])
   const eye = rotateY(
     [0, 0, 0],
     baseEye,
     [0, 0, 0],
-    (+$('camera-rotate').value / 180) * Math.PI
+    (params.cameraRotate / 180) * Math.PI
   )
   uniforms
     .set('modelMat', modelMat)
@@ -133,29 +146,17 @@ const updateScene = () => {
     .set('cameraPos', eye)
   render()
 }
-;['model-x', 'model-y', 'model-z', 'camera-rotate'].forEach((id) =>
-  $(id).addEventListener('input', updateScene)
-)
 
 const updateMaterial = () => {
-  uniforms
-    .set('metallic', +$('metallic').value)
-    .set('roughness', +$('roughness').value)
+  uniforms.set('metallic', params.metallic).set('roughness', params.roughness)
   render()
 }
-;['metallic', 'roughness'].forEach((id) =>
-  $(id).addEventListener('input', updateMaterial)
-)
 
 const updateLight = () => {
-  const hex = $('light-color').value
+  const hex = params.lightColor
   uniforms
-    .set('lightDir', [
-      +$('light-x').value,
-      +$('light-y').value,
-      +$('light-z').value,
-    ])
-    .set('lightStrength', +$('light-strength').value)
+    .set('lightDir', [params.lightX, params.lightY, params.lightZ])
+    .set('lightStrength', params.lightStrength)
     .set('lightColor', [
       parseInt(hex.slice(1, 3), 16) / 256,
       parseInt(hex.slice(3, 5), 16) / 256,
@@ -163,6 +164,75 @@ const updateLight = () => {
     ])
   render()
 }
-;['light-x', 'light-y', 'light-z', 'light-strength', 'light-color'].forEach(
-  (id) => $(id).addEventListener('input', updateLight)
-)
+
+const pane = new Pane({ title: 'Controls' })
+
+const sceneFolder = pane.addFolder({ title: 'Scene' })
+sceneFolder.addBinding(params, 'modelX', {
+  label: 'Ball X Rotate',
+  min: -180,
+  max: 180,
+  step: 0.01,
+})
+sceneFolder.addBinding(params, 'modelY', {
+  label: 'Ball Y Rotate',
+  min: -180,
+  max: 180,
+  step: 0.01,
+})
+sceneFolder.addBinding(params, 'modelZ', {
+  label: 'Ball Z Rotate',
+  min: -180,
+  max: 180,
+  step: 0.01,
+})
+sceneFolder.addBinding(params, 'cameraRotate', {
+  label: 'Camera Y Rotate',
+  min: -180,
+  max: 180,
+  step: 0.01,
+})
+sceneFolder.on('change', () => updateScene())
+
+const materialFolder = pane.addFolder({ title: 'Material' })
+materialFolder.addBinding(params, 'metallic', {
+  label: 'Metalness',
+  min: 0,
+  max: 1,
+  step: 0.01,
+})
+materialFolder.addBinding(params, 'roughness', {
+  label: 'Roughness',
+  min: 0,
+  max: 1,
+  step: 0.01,
+})
+materialFolder.on('change', () => updateMaterial())
+
+const lightFolder = pane.addFolder({ title: 'Light' })
+lightFolder.addBinding(params, 'lightX', {
+  label: 'Light X',
+  min: -1,
+  max: 1,
+  step: 0.01,
+})
+lightFolder.addBinding(params, 'lightY', {
+  label: 'Light Y',
+  min: -1,
+  max: 1,
+  step: 0.01,
+})
+lightFolder.addBinding(params, 'lightZ', {
+  label: 'Light Z',
+  min: -1,
+  max: 1,
+  step: 0.01,
+})
+lightFolder.addBinding(params, 'lightStrength', {
+  label: 'Light Strength',
+  min: 0,
+  max: 2,
+  step: 0.01,
+})
+lightFolder.addBinding(params, 'lightColor', { label: 'Light Color' })
+lightFolder.on('change', () => updateLight())

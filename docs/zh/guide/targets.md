@@ -246,28 +246,13 @@ window.addEventListener('resize', () => {
 
 当不再需要某个 target 时，用 `target.destroy()` 释放它的 GPU 纹理。
 
-## 从旧版 Beam 迁移
+## 多次绘制叠加到同一个 target
 
-旧版 Beam 用位置参数 `width, height` 创建 target，并通过 `target.use(cb)`
-回调来重定向绘制，然后暴露单一的 `target.texture`：
-
-```js
-// 旧版（beam-gl）
-const target = beam.target(2048, 2048)
-beam.clear()
-target.use(() => {
-  beam
-    .draw(shaderX, ...resourcesA)
-    .draw(shaderY, ...resourcesB)
-})
-myTextures.set('img', target.texture)
-```
-
-在 beam-gpu 中，选项采用键名传递，target *本身*就是绘制表面（没有 `use`
-包装器——它有自己的 `clear`/`draw`），并且颜色和深度是各自独立的可采样纹理：
+一个 target *本身*就是绘制表面：它有自己的 `clear` / `draw` 链。你可以把任意
+多次绘制叠加进同一个 target，然后在后续的绘制中把它的颜色（或深度）当作普通
+纹理采样：
 
 ```ts
-// 新版（beam-gpu）
 const target = beam.target({ width: 2048, height: 2048, depth: true })
 
 beam.frame(() => {
@@ -279,19 +264,14 @@ beam.frame(() => {
   // 在后续的绘制中采样结果。
   beam.draw(present, {
     verts, index,
-    textures: { img: target.color },   // 原来是 target.texture
+    textures: { img: target.color },
     samplers: { samp }
   })
 })
 ```
 
-| 旧版 beam-gl | beam-gpu |
-|-------------|----------|
-| `beam.target(w, h, depth)` | `beam.target({ width, height, depth?, format?, samples? })` |
-| `target.use(cb)` | `target.clear().draw(pipe, bindings)` —— 与 `beam.draw` 相同的链式调用 |
-| `target.texture` | `target.color`（以及用于可采样深度的 `target.depth`） |
-| `textures.set('img', target.texture)` | `bindings.textures = { img: target.color }` |
+颜色和深度是各自独立的可采样纹理：用 `target.color` 取颜色，用 `target.depth`
+取深度，二者都可以直接交给 `bindings.textures`。
 
-如果需要 power-path 的等价写法（你自己的命令编码器、显式的
-`pass.end()` / `submit()`），请参阅 [Frame & Loop](/zh/guide/frame-and-loop) 和
-`beam.pass({ target })`。
+如果需要更底层的控制（你自己的命令编码器、显式的 `pass.end()` / `submit()`），
+请参阅 [Frame & Loop](/zh/guide/frame-and-loop) 和 `beam.pass({ target })`。
