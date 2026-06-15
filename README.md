@@ -84,7 +84,7 @@ pnpm docs:dev                      # run the docs site (VitePress)
 ## Install
 
 ```bash
-npm i beam-gpu
+pnpm add beam-gpu
 ```
 
 ## License
